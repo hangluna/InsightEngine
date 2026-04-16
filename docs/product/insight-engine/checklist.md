@@ -130,7 +130,9 @@
 ### Epic 2.2: Xuất Excel (`tao-excel`)
 
 - [ ] **US-2.2.1** — Excel output with formulas and formatting
-  - Status: PLANNED
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-2.2.1
   - Blocked By: ~~US-1.2.1~~ ✅
 
 ### Epic 2.3: Xuất PDF (`tao-pdf`)
@@ -296,7 +298,9 @@
 ### Epic 2.2: Xuất Excel (`tao-excel`)
 
 - [ ] **US-2.2.1** — Xuất Excel với công thức và formatting
-  - Trạng thái: PLANNED
+  - Trạng thái: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-2.2.1
   - Bị chặn bởi: ~~US-1.2.1~~ ✅
 
 ### Epic 2.3: Xuất PDF (`tao-pdf`)
