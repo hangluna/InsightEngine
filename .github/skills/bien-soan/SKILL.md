@@ -2,10 +2,11 @@
 name: bien-soan
 description: |
   Synthesize and merge multi-source content into coherent documents.
+  Two modes: standard (concise) and comprehensive (3-5x richer detail).
   Identifies overlapping content, resolves conflicts, proposes outline.
   Supports translation Vietnamese ↔ English (US-1.2.2).
   Use when user says "tổng hợp", "gộp nội dung", "biên soạn", or "/bien-soan".
-argument-hint: "[content from thu-thap or direct text]"
+argument-hint: "[content from thu-thap or direct text] [mode: standard|comprehensive]"
 ---
 
 # Biên Soạn — Content Synthesis Skill
@@ -38,6 +39,13 @@ MODES:
   synthesis:
     trigger: Default mode — merge multiple sources into one document
     steps: analyze → outline → synthesize → format
+    depth: standard (~1000-3000 words)
+    
+  comprehensive:
+    trigger: "chi tiết", "comprehensive", "đầy đủ", "chuyên sâu", "--mode=comprehensive"
+    steps: analyze → deep_outline → enriched_synthesize → section_summaries → format
+    depth: 3-5x standard (~5000-15000 words)
+    see: "Comprehensive Mode" section below (US-4.4.1)
     
   translation:
     trigger: "dịch", "translate", "dịch sang"
@@ -47,6 +55,16 @@ MODES:
   summary:
     trigger: "tóm tắt", "summarize"
     steps: extract_key_points → condense → format
+
+MODE_SELECTION:
+  interactive:
+    - Ask user: "Bạn muốn biên soạn ở chế độ nào? Standard hay Comprehensive (chi tiết)?"
+    - If user says "chi tiết", "đầy đủ", "comprehensive" → comprehensive mode
+    - If user says nothing specific → standard mode
+  pipeline:
+    - tong-hop can specify mode in routing
+    - Default: standard unless user's original request implies depth
+    - Depth indicators: "báo cáo chi tiết", "detailed report", "phân tích chuyên sâu"
 ```
 
 ---
@@ -165,6 +183,127 @@ FORMAT:
       [Show preview of first section]
       
       Bạn muốn chỉnh sửa gì trước khi xuất file?
+```
+
+---
+
+## Comprehensive Mode (US-4.4.1)
+
+Produces 3-5x more content than standard mode with richer detail, examples, and analysis.
+
+### When to Use
+
+```yaml
+TRIGGERS:
+  explicit:
+    - "chi tiết", "comprehensive", "đầy đủ", "chuyên sâu"
+    - "--mode=comprehensive"
+    - "báo cáo chi tiết", "detailed report"
+  implicit:
+    - User's request implies depth (research paper, whitepaper, detailed analysis)
+    - Pipeline routes with mode=comprehensive
+```
+
+### Comprehensive Outline (Deep Structure)
+
+```yaml
+DEEP_OUTLINE:
+  # Standard outline creates H2 sections with content
+  # Comprehensive adds H3 sub-sections, context paragraphs, and enrichment markers
+  
+  for_each_section:
+    1. H2 section heading (same as standard)
+    2. Introduction paragraph (context and relevance)
+    3. H3 sub-sections:
+       a. Core content from sources
+       b. Analysis and implications
+       c. Examples and case studies (inferred or from sources)
+       d. Data points and supporting evidence
+    4. Section summary and key takeaways
+    
+  additional_sections:
+    - Executive Summary (generated after all sections complete)
+    - Methodology / Approach (if applicable)
+    - Key Findings and Recommendations
+    - Conclusion with forward-looking insights
+```
+
+### Enriched Synthesis
+
+```yaml
+ENRICHED_SYNTHESIZE:
+  principles:
+    - Everything from standard SYNTHESIZE, PLUS:
+    - Add explanatory context for each key point
+    - Include concrete examples where sources provide them
+    - Add comparative analysis when multiple perspectives exist
+    - Expand bullet points into explanatory paragraphs
+    - Create transitional paragraphs between sections
+    - Add data tables summarizing quantitative information
+    
+  for_each_section:
+    1. Write introduction paragraph (why this section matters)
+    2. Expand each key point with:
+       - Definition/explanation
+       - Example or case study
+       - Data support (numbers, percentages, dates)
+       - Source attribution
+    3. Add analysis paragraph (implications, trends, patterns)
+    4. Write section summary (3-5 key takeaways as bullet points)
+    
+  content_multiplier:
+    standard: ~200-500 words per section
+    comprehensive: ~800-2000 words per section
+    ratio: 3-5x more content
+```
+
+### Section Summaries & Key Takeaways
+
+```yaml
+SECTION_SUMMARIES:
+  format_per_section: |
+    ---
+    **📌 Tóm tắt phần "{section_title}":**
+    - {takeaway_1}
+    - {takeaway_2}
+    - {takeaway_3}
+    ---
+  
+  executive_summary:
+    location: Top of document (after title)
+    content:
+      - Purpose of the document
+      - Key findings (3-5 bullets)
+      - Main recommendations (if applicable)
+      - Scope and limitations
+    length: ~300-500 words
+    
+  conclusion:
+    location: End of document
+    content:
+      - Summary of all sections
+      - Connections between findings
+      - Forward-looking insights
+      - Recommended next steps
+    length: ~200-400 words
+```
+
+### Comprehensive Mode Delivery
+
+```yaml
+DELIVER_COMPREHENSIVE:
+  to_pipeline: Return enriched Markdown for output skill
+  to_user: |
+    ✅ Biên soạn chi tiết hoàn tất:
+    - Chế độ: Comprehensive (chi tiết)
+    - Cấu trúc: {N} phần chính, {M} phần phụ
+    - Độ dài: ~{word_count} từ ({multiplier}x so với standard)
+    - Tóm tắt: Executive summary + {N} section summaries
+    - Kết luận: Có
+    
+    [Show executive summary preview]
+    
+    Bạn muốn chỉnh sửa gì trước khi xuất file?
 ```
 
 ---
