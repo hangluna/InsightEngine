@@ -269,8 +269,8 @@
 
 ### Epic 4.4: Nâng cấp Content Depth
 
-- [ ] **US-4.4.1** — bien-soan comprehensive mode
-  - Status: IN_PROGRESS
+- [x] **US-4.4.1** — bien-soan comprehensive mode
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-4.4.1
   - Blocked By: ~~US-1.2.1~~ ✅, ~~US-3.2.1~~ ✅
@@ -278,7 +278,7 @@
 - [ ] **US-4.4.2** — Content enrichment from multiple sources
   - Status: PLANNED
   - Assignee: —
-  - Blocked By: ~~US-2.1.1~~ ✅, US-4.4.1
+  - Blocked By: ~~US-2.1.1~~ ✅, ~~US-4.4.1~~ ✅
 
 ### Epic 4.5: Template Library HTML
 
@@ -560,8 +560,8 @@ Wave 13 (parallel): US-4.3.3, US-4.5.2
 
 ### Epic 4.4: Nâng cấp Content Depth
 
-- [ ] **US-4.4.1** — bien-soan comprehensive mode
-  - Trạng thái: IN_PROGRESS
+- [x] **US-4.4.1** — bien-soan comprehensive mode
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-4.4.1
   - Bị chặn bởi: ~~US-1.2.1~~ ✅, ~~US-3.2.1~~ ✅
@@ -569,7 +569,7 @@ Wave 13 (parallel): US-4.3.3, US-4.5.2
 - [ ] **US-4.4.2** — Tự động làm giàu nội dung từ web
   - Trạng thái: PLANNED
   - Assignee: —
-  - Bị chặn bởi: ~~US-2.1.1~~ ✅, US-4.4.1
+  - Bị chặn bởi: ~~US-2.1.1~~ ✅, ~~US-4.4.1~~ ✅
 
 ### Epic 4.5: Template Library HTML
 
