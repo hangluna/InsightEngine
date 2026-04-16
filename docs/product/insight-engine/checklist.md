@@ -217,8 +217,9 @@
   - Refs: slidemembers.com, aippt.com, canva.com
 
 - [ ] **US-4.1.2** — Template preview and selection
-  - Status: PLANNED
-  - Assignee: —
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-4.1.2
   - Blocked By: ~~US-4.1.1~~ ✅
 
 - [x] **US-4.1.3** — PPTX script architecture
@@ -514,8 +515,9 @@ Wave 13 (parallel): US-4.3.3, US-4.5.2
   - Tham khảo: slidemembers.com, aippt.com, canva.com
 
 - [ ] **US-4.1.2** — Preview và chọn template
-  - Trạng thái: PLANNED
-  - Assignee: —
+  - Trạng thái: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-4.1.2
   - Bị chặn bởi: ~~US-4.1.1~~ ✅
 
 - [x] **US-4.1.3** — Kiến trúc script cho tao-slide
