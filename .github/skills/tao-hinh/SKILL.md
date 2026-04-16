@@ -1,11 +1,12 @@
 ---
 name: tao-hinh
 description: |
-  Generate professional charts from data using matplotlib (Agg backend).
+  Generate professional charts from data using matplotlib + seaborn (Agg backend).
   Supports bar, line, pie, radar, scatter charts with consistent color palettes.
   Output PNG at dpi=160 with Vietnamese label support.
+  Uses bundled scripts/gen_chart.py for all chart types.
   Use when user says "tạo biểu đồ", "vẽ chart", "create chart", or "/tao-hinh".
-argument-hint: "[chart type] [data source: Excel/CSV/inline]"
+argument-hint: "[chart type: bar|line|pie|radar|scatter] [data source: Excel/CSV/inline]"
 ---
 
 # Tạo Hình — Chart & Data Visualization
@@ -13,10 +14,11 @@ argument-hint: "[chart type] [data source: Excel/CSV/inline]"
 Generate professional charts from data for reports and presentations.
 
 ```yaml
-MODE: Script-based — generates Python script, runs via terminal
+MODE: Script-based — uses bundled scripts/gen_chart.py via terminal
 LANGUAGE: All Copilot responses in Vietnamese
 OUTPUT: PNG files at dpi=160, bbox_inches='tight'
 BACKEND: matplotlib with Agg (headless, no display needed)
+LIBRARIES: matplotlib (charts), seaborn (enhanced styling, optional)
 ```
 
 ---
@@ -128,37 +130,74 @@ CHART_DEFAULTS:
 
 ---
 
-## Step 3: Generate Chart Script
+## Step 3: Generate Chart
+
+### Primary Method — Use bundled gen_chart.py (recommended)
 
 ```yaml
-SCRIPT_TEMPLATE:
-  ALWAYS_START_WITH: |
-    import matplotlib
-    matplotlib.use('Agg')  # MUST be before any other matplotlib import
-    import matplotlib.pyplot as plt
-    import matplotlib.ticker as mticker
-    import numpy as np
+SCRIPT_ARCHITECTURE:
+  script: .github/skills/tao-hinh/scripts/gen_chart.py
+  usage: |
+    python3 .github/skills/tao-hinh/scripts/gen_chart.py \
+      --input data.json --output chart.png --type bar
+    # Override title:
+    python3 gen_chart.py --input data.json --output out.png --type line --title "Xu hướng"
+    # Scatter with trend line:
+    python3 gen_chart.py --input data.json --output out.png --type scatter --trend
 
-  FONT_HANDLING:
-    vietnamese: |
-      # Vietnamese font support
-      plt.rcParams['font.family'] = 'sans-serif'
-      plt.rcParams['font.sans-serif'] = ['Arial', 'Helvetica', 'DejaVu Sans']
-      plt.rcParams['axes.unicode_minus'] = False
+  json_format: |
+    {
+      "title": "Chart Title",
+      "x_label": "X Axis Label",
+      "y_label": "Y Axis Label",
+      "type": "bar",           // optional — overrides --type flag
+      "data": {
+        "labels": ["Q1", "Q2", "Q3"],
+        "series": {
+          "Doanh thu": [100, 150, 200],
+          "Chi phí":   [80, 90, 110]
+        }
+      }
+    }
 
-  SAVE_PATTERN: |
-    plt.savefig(output_path, dpi=160, bbox_inches='tight',
-                facecolor='white', edgecolor='none')
-    plt.close()
-    print(f"Chart saved: {output_path}")
+    // For pie: data = { "labels": [...], "values": [...] }
+    // For radar: data = { "categories": [...], "series": { "Name": [...] } }
+    // For scatter: data = { "x": [...], "y": [...], "label": "Series" }
 
+  output: "✅ Saved: {path} ({size} KB, {type}, {W}×{H}px)"
+  
+  workflow:
+    1. Copilot prepares data as JSON (from Excel/CSV/inline)
+    2. Save JSON to tmp/ directory
+    3. Run gen_chart.py with appropriate --type
+    4. Verify output PNG exists
+    5. Optionally embed into .docx/.pptx via tao-word/tao-slide chaining
+```
+
+### Alternative — Inline script (for custom/complex charts)
+
+Use when gen_chart.py doesn't cover the specific chart variant needed.
+
+```yaml
 SCRIPT_RULES:
   - ALWAYS call matplotlib.use('Agg') BEFORE importing pyplot
   - ALWAYS plt.close() after saving to free memory
   - ALWAYS use dpi=160, bbox_inches='tight'
   - NEVER call plt.show() (headless environment)
+  - For enhanced styling: import seaborn as sns; sns.set_theme(style='whitegrid')
   - Use f-strings for dynamic values
   - Handle missing data gracefully (skip NaN)
+
+SEABORN_USAGE:
+  when_to_use:
+    - Distribution plots (histplot, kdeplot, boxplot, violinplot)
+    - Heatmaps (sns.heatmap)
+    - Statistical regression (sns.lmplot, sns.regplot)
+    - Pair plots for multi-variable analysis
+  setup: |
+    import seaborn as sns
+    sns.set_theme(style='whitegrid', palette=PALETTE)
+  note: seaborn is already installed per tech-stack requirements
 ```
 
 ---
@@ -340,8 +379,12 @@ ax.grid(alpha=0.3)
 
 ## Image Generation Mode (Apple Silicon Only) — US-3.1.2
 
-Text-to-image generation using Stable Diffusion on Apple Silicon MPS backend.
-This is an **optional** capability — only available on Apple Silicon Macs.
+Basic text-to-image generation using SD-Turbo on Apple Silicon MPS.
+This is an **optional, basic** capability for simple illustrations.
+
+> **Need more?** For advanced image generation (image-to-image restyling, portrait with face
+> preservation, IP-Adapter, FaceID), use the `gen-image` skill from a-z-copilot-flow instead.
+> `tao-hinh` only covers basic t2i for inline illustrations.
 
 ```yaml
 AVAILABILITY_CHECK:
