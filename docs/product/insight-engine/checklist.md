@@ -34,7 +34,9 @@
 ### Epic 0.1: Workspace Setup
 
 - [ ] **US-0.1.1** — Repo structure & Copilot configuration
-  - Status: PLANNED
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-0.1.1
   - Blocked By: None
 
 ### Epic 0.2: Cài đặt môi trường (`cai-dat`)
@@ -176,7 +178,9 @@
 ### Epic 0.1: Workspace Setup
 
 - [ ] **US-0.1.1** — Cấu trúc repo & cấu hình Copilot
-  - Trạng thái: PLANNED
+  - Trạng thái: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-0.1.1
   - Bị chặn bởi: None
 
 ### Epic 0.2: Cài đặt môi trường (`cai-dat`)
