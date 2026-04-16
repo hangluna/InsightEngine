@@ -260,6 +260,70 @@ STYLE_INFERENCE:
 
 ---
 
+## Output Chaining (US-2.5.1)
+
+Supports multi-format output chains where one output feeds the next.
+
+```yaml
+CHAIN_DETECTION:
+  trigger:
+    - User requests multiple output formats in one request
+    - User describes a workflow: "tạo Excel rồi vẽ biểu đồ rồi đưa vào PPT"
+    - Output of one format is input for another
+    
+  common_chains:
+    data_to_presentation:
+      - tao-excel (generate data) -> tao-hinh (charts from data) -> tao-slide (embed charts)
+    report_multi_format:
+      - bien-soan (synthesize) -> tao-word + tao-pdf (parallel export)
+    visual_report:
+      - thu-thap (gather) -> bien-soan (synthesize) -> tao-hinh (charts) -> tao-html (embed all)
+
+CHAIN_EXECUTION:
+  1_DETECT:
+    - Parse user request for multiple output indicators
+    - Identify dependencies between outputs
+    - Build execution DAG (directed acyclic graph)
+    
+  2_PRESENT_PLAN:
+    format: |
+      Chuoi output:
+      1. {step_1_skill} -> {output_1}
+      2. {step_2_skill} (input: {output_1}) -> {output_2}
+      3. {step_3_skill} (input: {output_2}) -> {output_3}
+      
+      Thoi gian du kien: ~{estimated_time}
+      Ban dong y khong?
+      
+  3_EXECUTE_CHAIN:
+    - Execute steps sequentially (respect dependencies)
+    - Pass output path of step N as input to step N+1
+    - Store intermediate files in tmp/ directory
+    - Report progress after each step
+    
+  4_CLEANUP:
+    - After chain completes, list all final output files
+    - Remove intermediate files from tmp/
+    - Report total files generated with paths and sizes
+    
+  5_REPORT:
+    format: |
+      Chuoi output hoan tat:
+      - Buoc 1: {file_1} ({size_1})
+      - Buoc 2: {file_2} ({size_2})
+      - Buoc 3: {file_3} ({size_3})
+      
+      Tong: {total_files} file, {total_size}
+
+INTERMEDIATE_FILES:
+  directory: tmp/
+  naming: "{timestamp}_{skill}_{step}.{ext}"
+  cleanup: Auto-delete after chain completes
+  on_error: Preserve intermediate files for debugging
+```
+
+---
+
 ## What This Skill Does NOT Do
 
 - Does NOT generate content itself — delegates to sub-skills

@@ -153,8 +153,8 @@
 
 ### Epic 2.5: Chaining Output
 
-- [ ] **US-2.5.1** — Pipeline output chaining
-  - Status: IN_PROGRESS
+- [x] **US-2.5.1** — Pipeline output chaining
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-2.5.1
   - Blocked By: ~~US-1.3.1~~ ✅, ~~US-1.4.1~~ ✅, ~~US-2.2.1~~ ✅
@@ -191,7 +191,7 @@
 
 - [ ] **US-3.4.1** — Pipeline UX improvements
   - Status: PLANNED
-  - Blocked By: ~~US-0.3.1~~ ✅, US-2.5.1
+  - Blocked By: ~~US-0.3.1~~ ✅, ~~US-2.5.1~~ ✅
 
 ---
 
@@ -329,8 +329,8 @@
 
 ### Epic 2.5: Chaining Output
 
-- [ ] **US-2.5.1** — Chuỗi output trong pipeline
-  - Trạng thái: IN_PROGRESS
+- [x] **US-2.5.1** — Chuỗi output trong pipeline
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-2.5.1
   - Bị chặn bởi: ~~US-1.3.1~~ ✅, ~~US-1.4.1~~ ✅, ~~US-2.2.1~~ ✅
@@ -367,7 +367,7 @@
 
 - [ ] **US-3.4.1** — Cải thiện UX pipeline
   - Trạng thái: PLANNED
-  - Bị chặn bởi: ~~US-0.3.1~~ ✅, US-2.5.1
+  - Bị chặn bởi: ~~US-0.3.1~~ ✅, ~~US-2.5.1~~ ✅
 
 ---
 
