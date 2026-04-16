@@ -93,8 +93,8 @@
   - Branch: feature/insight-engine-us-1.2.1
   - Blocked By: ~~US-0.3.2~~ ✅
 
-- [ ] **US-1.2.2** — Basic translation Vietnamese ↔ English
-  - Status: IN_PROGRESS
+- [x] **US-1.2.2** — Basic translation Vietnamese ↔ English
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-1.2.2
   - Blocked By: ~~US-1.2.1~~ ✅
@@ -257,8 +257,8 @@
   - Branch: feature/insight-engine-us-1.2.1
   - Bị chặn bởi: ~~US-0.3.2~~ ✅
 
-- [ ] **US-1.2.2** — Dịch thuật cơ bản Việt ↔ Anh
-  - Trạng thái: IN_PROGRESS
+- [x] **US-1.2.2** — Dịch thuật cơ bản Việt ↔ Anh
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-1.2.2
   - Bị chặn bởi: ~~US-1.2.1~~ ✅
