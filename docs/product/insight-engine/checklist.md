@@ -166,7 +166,9 @@
 ### Epic 3.1: Biểu đồ & Hình ảnh (`tao-hinh`)
 
 - [ ] **US-3.1.1** — Chart generation from data
-  - Status: PLANNED
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-3.1.1
   - Blocked By: ~~US-2.2.1~~ ✅
 
 - [ ] **US-3.1.2** — Image generation for slides (Apple Silicon)
@@ -342,7 +344,9 @@
 ### Epic 3.1: Biểu đồ & Hình ảnh (`tao-hinh`)
 
 - [ ] **US-3.1.1** — Tạo biểu đồ từ dữ liệu
-  - Trạng thái: PLANNED
+  - Trạng thái: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-3.1.1
   - Bị chặn bởi: ~~US-2.2.1~~ ✅
 
 - [ ] **US-3.1.2** — Tạo hình minh họa cho slide (Apple Silicon)
