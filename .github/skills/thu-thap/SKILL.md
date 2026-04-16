@@ -140,11 +140,52 @@ FETCH_URLS:
       args:
         urls: [url]
         query: "main content"
-      extract: Main content from result
+      extract: Main content text from tool result
+      check: len(content.strip()) >= 50
       
-    2_REPORT:
-      format: "  ✅ {url_title} — {char_count} ký tự"
-      on_error: "  ❌ {url} — Lỗi: {status_code or timeout}"
+    2_FALLBACK_HTTPX:
+      condition: fetch_webpage unavailable or returned empty/error
+      script: |
+        import httpx
+        from bs4 import BeautifulSoup
+        
+        resp = httpx.get(url, follow_redirects=True, timeout=15)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "html.parser")
+        
+        # Extract title
+        title = soup.title.string if soup.title else url
+        
+        # Remove non-content elements
+        for tag in soup(["script", "style", "nav", "footer", "header",
+                          "aside", "form", "iframe", "noscript"]):
+            tag.decompose()
+        
+        # Try article/main content first, fallback to body
+        main = soup.find("article") or soup.find("main") or soup.find("body")
+        content = main.get_text(separator="\n", strip=True) if main else ""
+      
+    3_CONTENT_CLEANING:
+      steps:
+        - Remove duplicate blank lines
+        - Strip navigation breadcrumbs
+        - Remove "cookie consent" / "subscribe" boilerplate
+        - Limit to first 50,000 chars (truncate with notice)
+      
+    4_REPORT:
+      format: "  ✅ {page_title} ({url_domain}) — {char_count} ký tự"
+      on_error: |
+        ❌ Không thể lấy nội dung từ: {url}
+           Lỗi: {error_type} — {error_message}
+           (HTTP {status_code} / Timeout / Connection refused)
+      
+    5_ERROR_TYPES:
+      404: "Trang không tồn tại (404)"
+      403: "Truy cập bị từ chối (403)"
+      timeout: "Hết thời gian chờ (timeout 15s)"
+      ssl_error: "Lỗi chứng chỉ SSL"
+      connection: "Không thể kết nối đến server"
+      parse_error: "Không thể trích xuất nội dung"
 ```
 
 ---
