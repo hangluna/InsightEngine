@@ -165,15 +165,15 @@
 
 ### Epic 3.1: Biểu đồ & Hình ảnh (`tao-hinh`)
 
-- [ ] **US-3.1.1** — Chart generation from data
-  - Status: IN_PROGRESS
+- [x] **US-3.1.1** — Chart generation from data
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-3.1.1
   - Blocked By: ~~US-2.2.1~~ ✅
 
 - [ ] **US-3.1.2** — Image generation for slides (Apple Silicon)
   - Status: PLANNED
-  - Blocked By: US-3.1.1
+  - Blocked By: ~~US-3.1.1~~ ✅
 
 ### Epic 3.2: Xử lý tài liệu lớn
 
@@ -343,15 +343,15 @@
 
 ### Epic 3.1: Biểu đồ & Hình ảnh (`tao-hinh`)
 
-- [ ] **US-3.1.1** — Tạo biểu đồ từ dữ liệu
-  - Trạng thái: IN_PROGRESS
+- [x] **US-3.1.1** — Tạo biểu đồ từ dữ liệu
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-3.1.1
   - Bị chặn bởi: ~~US-2.2.1~~ ✅
 
 - [ ] **US-3.1.2** — Tạo hình minh họa cho slide (Apple Silicon)
   - Trạng thái: PLANNED
-  - Bị chặn bởi: US-3.1.1
+  - Bị chặn bởi: ~~US-3.1.1~~ ✅
 
 ### Epic 3.2: Xử lý tài liệu lớn
 
