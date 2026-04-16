@@ -171,8 +171,8 @@
   - Branch: feature/insight-engine-us-3.1.1
   - Blocked By: ~~US-2.2.1~~ ✅
 
-- [ ] **US-3.1.2** — Image generation for slides (Apple Silicon)
-  - Status: IN_PROGRESS
+- [x] **US-3.1.2** — Image generation for slides (Apple Silicon)
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-3.1.2
   - Blocked By: ~~US-3.1.1~~ ✅
@@ -353,8 +353,8 @@
   - Branch: feature/insight-engine-us-3.1.1
   - Bị chặn bởi: ~~US-2.2.1~~ ✅
 
-- [ ] **US-3.1.2** — Tạo hình minh họa cho slide (Apple Silicon)
-  - Trạng thái: IN_PROGRESS
+- [x] **US-3.1.2** — Tạo hình minh họa cho slide (Apple Silicon)
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-3.1.2
   - Bị chặn bởi: ~~US-3.1.1~~ ✅
