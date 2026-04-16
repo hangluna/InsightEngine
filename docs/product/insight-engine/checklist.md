@@ -79,8 +79,8 @@
   - Branch: feature/insight-engine-us-1.1.1
   - Blocked By: ~~US-0.3.2~~ ✅
 
-- [ ] **US-1.1.2** — Fetch URL content
-  - Status: IN_PROGRESS
+- [x] **US-1.1.2** — Fetch URL content
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-1.1.2
   - Blocked By: ~~US-1.1.1~~ ✅
@@ -241,8 +241,8 @@
   - Branch: feature/insight-engine-us-1.1.1
   - Bị chặn bởi: ~~US-0.3.2~~ ✅
 
-- [ ] **US-1.1.2** — Fetch nội dung URL
-  - Trạng thái: IN_PROGRESS
+- [x] **US-1.1.2** — Fetch nội dung URL
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-1.1.2
   - Bị chặn bởi: ~~US-1.1.1~~ ✅
