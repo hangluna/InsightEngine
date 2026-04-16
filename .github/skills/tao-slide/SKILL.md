@@ -2,10 +2,10 @@
 name: tao-slide
 description: |
   Create professional PowerPoint (.pptx) presentations from synthesized content.
-  Supports 5 template styles: corporate, academic, minimal, dark-modern, creative.
+  10 templates with light/dark variants. Template preview and auto-selection.
   Uses pptxgenjs (Node.js). Triggers on "tạo slide", "làm thuyết trình",
   "create powerpoint", or "/tao-slide".
-argument-hint: "[content from bien-soan or direct text] [style: corporate|academic|minimal|dark-modern|creative]"
+argument-hint: "[content] [template: corporate-blue|corporate-red|academic-serif|minimal-white|minimal-gray|dark-gradient|dark-neon|creative-gradient|creative-warm|tech-modern]"
 ---
 
 # Tạo Slide — PowerPoint Output Skill
@@ -19,6 +19,66 @@ INPUT: Structured Markdown from bien-soan or user text
 OUTPUT: .pptx file saved to user-specified path
 LIBRARY: pptxgenjs (Node.js)
 LAYOUT: 16:9 (LAYOUT_WIDE)
+```
+
+---
+
+## Template Preview and Selection (US-4.1.2)
+
+### Available Templates
+
+When user asks what templates are available, show this table:
+
+```yaml
+LIGHT_TEMPLATES:
+  corporate-blue:      "Professional navy/blue — business reports, quarterly reviews"
+  corporate-red:       "Bold red corporate — executive summaries, annual reports"
+  academic-serif:      "Scholarly serif — research papers, lectures, thesis defense"
+  minimal-white:       "Clean whitespace — product demos, startup pitches"
+  minimal-gray:        "Soft gray tones — internal memos, team updates"
+  creative-gradient:   "Purple-amber vibrant — marketing decks, launch events"
+  creative-warm:       "Earthy warm tones — non-profit, community events"
+  tech-modern:         "Teal/blue modern — product launches, SaaS demos"
+
+DARK_TEMPLATES:
+  dark-gradient:       "Indigo/cyan dark — tech conferences, engineering reviews"
+  dark-neon:           "Neon cyan/magenta — gaming, hackathons, bold showcases"
+```
+
+### Preview Files
+
+Preview .pptx files (7 slides each) at: `references/previews/preview-<template>.pptx`
+Regenerate with: `node scripts/gen_previews.js`
+
+### Auto-Selection Logic (AC4)
+
+```yaml
+AUTO_SELECT:
+  # Copilot picks template based on content type / user context:
+  formal_business: corporate-blue
+  executive_annual: corporate-red
+  research_academic: academic-serif
+  simple_brief: minimal-white
+  internal_team: minimal-gray
+  tech_engineering: dark-gradient
+  gaming_bold: dark-neon
+  marketing_launch: creative-gradient
+  community_wellness: creative-warm
+  product_saas: tech-modern
+
+  # Style aliases also work (routed by gen_slide.js):
+  corporate → corporate-blue
+  academic → academic-serif
+  minimal → minimal-white
+  dark-modern → dark-gradient
+  creative → creative-gradient
+
+SELECTION_WORKFLOW:
+  1. If user specifies template name: use it directly
+  2. If user specifies style (corporate/academic/etc): use alias mapping
+  3. If no preference: auto-detect from content context
+  4. Show selected template + brief description to user before generating
+  5. User can switch: "dùng template dark-neon thay đi" → re-generate
 ```
 
 ---
