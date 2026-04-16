@@ -1,6 +1,6 @@
 # Copilot Instructions — InsightEngine
 
-<!-- Version: 1.0 | Product: insight-engine | Activated: 2026-04-16 -->
+<!-- Version: 1.1 | Product: insight-engine | Updated: 2026-04-16 -->
 
 This file is read automatically by GitHub Copilot.
 It defines how Copilot MUST behave in this workspace.
@@ -105,7 +105,7 @@ SKILLS:
       - "/tao-excel"
 
   tao-slide:
-    purpose: "Tạo bài thuyết trình PowerPoint (.pptx) chuyên nghiệp với nhiều style template / Create professional PowerPoint presentations with style templates"
+    purpose: "Tạo bài thuyết trình PowerPoint (.pptx) chuyên nghiệp với 5 style template / Create professional PowerPoint presentations with style templates"
     location: ".github/skills/tao-slide/SKILL.md"
     triggers:
       - "tạo slide"
@@ -129,7 +129,7 @@ SKILLS:
       - "/tao-pdf"
 
   tao-html:
-    purpose: "Tạo trang HTML tĩnh chuyên nghiệp với 3 style template (corporate, academic, minimal) / Create professional static HTML pages with 3 style templates"
+    purpose: "Tạo trang HTML tĩnh chuyên nghiệp với 5 style template (corporate, academic, minimal, dark-modern, creative) / Create professional static HTML pages with 5 style templates"
     location: ".github/skills/tao-html/SKILL.md"
     triggers:
       - "tạo trang web"
@@ -175,8 +175,8 @@ CHAINING:
   - File trung gian lưu vào tmp/ và dọn dẹp sau
 
 STYLE_SELECTION:
-  - User chọn style (corporate/academic/minimal) hoặc
-  - Tự suy luận từ context: formal → corporate, research → academic, simple → minimal
+  - User chọn style (corporate/academic/minimal/dark-modern/creative) hoặc
+  - Tự suy luận từ context: formal → corporate, research → academic, simple → minimal, tech → dark-modern, marketing → creative
 ```
 
 ---
