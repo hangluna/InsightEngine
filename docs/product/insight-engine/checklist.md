@@ -154,7 +154,9 @@
 ### Epic 2.5: Chaining Output
 
 - [ ] **US-2.5.1** — Pipeline output chaining
-  - Status: PLANNED
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-2.5.1
   - Blocked By: ~~US-1.3.1~~ ✅, ~~US-1.4.1~~ ✅, ~~US-2.2.1~~ ✅
 
 ---
@@ -328,7 +330,9 @@
 ### Epic 2.5: Chaining Output
 
 - [ ] **US-2.5.1** — Chuỗi output trong pipeline
-  - Trạng thái: PLANNED
+  - Trạng thái: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-2.5.1
   - Bị chặn bởi: ~~US-1.3.1~~ ✅, ~~US-1.4.1~~ ✅, ~~US-2.2.1~~ ✅
 
 ---
