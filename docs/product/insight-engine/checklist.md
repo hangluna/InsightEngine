@@ -145,8 +145,8 @@
 
 ### Epic 2.4: Xuất HTML (`tao-html`)
 
-- [ ] **US-2.4.1** — Static HTML page output with 3 template styles
-  - Status: IN_PROGRESS
+- [x] **US-2.4.1** — Static HTML page output with 3 template styles
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-2.4.1
   - Blocked By: ~~US-1.2.1~~ ✅
@@ -181,7 +181,7 @@
 
 - [ ] **US-3.3.1** — Additional template styles (dark/modern, creative)
   - Status: PLANNED
-  - Blocked By: ~~US-1.3.1~~ ✅, ~~US-1.4.1~~ ✅, US-2.4.1
+  - Blocked By: ~~US-1.3.1~~ ✅, ~~US-1.4.1~~ ✅, ~~US-2.4.1~~ ✅
 
 ### Epic 3.4: Cải thiện UX Pipeline
 
@@ -317,8 +317,8 @@
 
 ### Epic 2.4: Xuất HTML (`tao-html`)
 
-- [ ] **US-2.4.1** — Xuất HTML tĩnh với 3 template style
-  - Trạng thái: IN_PROGRESS
+- [x] **US-2.4.1** — Xuất trang HTML tĩnh với 3 template style
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-2.4.1
   - Bị chặn bởi: ~~US-1.2.1~~ ✅
@@ -353,7 +353,7 @@
 
 - [ ] **US-3.3.1** — Thêm style dark/modern và creative
   - Trạng thái: PLANNED
-  - Bị chặn bởi: ~~US-1.3.1~~ ✅, ~~US-1.4.1~~ ✅, US-2.4.1
+  - Bị chặn bởi: ~~US-1.3.1~~ ✅, ~~US-1.4.1~~ ✅, ~~US-2.4.1~~ ✅
 
 ### Epic 3.4: Cải thiện UX Pipeline
 
