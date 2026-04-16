@@ -98,7 +98,9 @@
 ### Epic 1.3: Xuất Word (`tao-word`)
 
 - [ ] **US-1.3.1** — Word document output with 3 template styles
-  - Status: PLANNED
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-1.3.1
   - Blocked By: ~~US-1.2.1~~ ✅, ~~US-1.1.1~~ ✅
 
 ### Epic 1.4: Xuất PowerPoint (`tao-slide`)
@@ -254,7 +256,9 @@
 ### Epic 1.3: Xuất Word (`tao-word`)
 
 - [ ] **US-1.3.1** — Xuất Word với 3 template style
-  - Trạng thái: PLANNED
+  - Trạng thái: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-1.3.1
   - Bị chặn bởi: ~~US-1.2.1~~ ✅, ~~US-1.1.1~~ ✅
 
 ### Epic 1.4: Xuất PowerPoint (`tao-slide`)
