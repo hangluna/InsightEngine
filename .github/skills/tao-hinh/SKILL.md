@@ -338,22 +338,155 @@ ax.grid(alpha=0.3)
 
 ---
 
+## Image Generation Mode (Apple Silicon Only) — US-3.1.2
+
+Text-to-image generation using Stable Diffusion on Apple Silicon MPS backend.
+This is an **optional** capability — only available on Apple Silicon Macs.
+
+```yaml
+AVAILABILITY_CHECK:
+  script: |
+    import platform, sys
+    if platform.machine() != 'arm64' or platform.system() != 'Darwin':
+        print("⚠️ Tạo hình ảnh chỉ hỗ trợ trên Apple Silicon Mac.")
+        print("Bạn vẫn có thể dùng chức năng tạo biểu đồ (chart).")
+        sys.exit(1)
+    import torch
+    if not torch.backends.mps.is_available():
+        print("⚠️ MPS backend không khả dụng. Cần macOS 12.3+.")
+        sys.exit(1)
+    print("✅ Apple Silicon + MPS sẵn sàng.")
+
+REQUIREMENTS:
+  - torch (with MPS support, macOS 12.3+)
+  - diffusers
+  - transformers
+  - accelerate
+  install: pip3 install --user torch diffusers transformers accelerate
+```
+
+### Style Presets
+
+```yaml
+STYLE_PRESETS:
+  flat-icon:
+    prompt_suffix: "flat design icon, simple shapes, solid colors, no text, white background"
+    size: [512, 512]
+    use_for: App icons, UI icons, logos
+
+  dark-tech:
+    prompt_suffix: "dark technology background, neon glow, cyberpunk aesthetic, no text"
+    size: [768, 768]
+    use_for: Tech presentations, dark-themed slides
+
+  cartoon:
+    prompt_suffix: "cartoon illustration style, vibrant colors, clean lines, no text"
+    size: [768, 768]
+    use_for: Training materials, fun presentations
+
+  minimal:
+    prompt_suffix: "minimalist illustration, clean lines, muted colors, lots of whitespace, no text"
+    size: [512, 512]
+    use_for: Clean docs, subtle illustrations
+
+  watercolor:
+    prompt_suffix: "watercolor painting style, soft colors, artistic, no text"
+    size: [768, 768]
+    use_for: Creative presentations, artistic reports
+
+  realistic:
+    prompt_suffix: "photorealistic, high quality, detailed, professional photography, no text"
+    size: [768, 768]
+    use_for: Business presentations, professional docs
+```
+
+### SD-Turbo Configuration
+
+```yaml
+SD_TURBO:
+  model: "stabilityai/sd-turbo"
+  settings:
+    guidance_scale: 0.0
+    num_inference_steps: 4
+    device: "mps"
+    dtype: torch.float16
+
+  script_template: |
+    import torch
+    from diffusers import AutoPipelineForText2Image
+
+    pipe = AutoPipelineForText2Image.from_pretrained(
+        "stabilityai/sd-turbo",
+        torch_dtype=torch.float16,
+        variant="fp16"
+    )
+    pipe = pipe.to("mps")
+
+    prompt = "{user_prompt}, {style_suffix}"
+    image = pipe(
+        prompt=prompt,
+        guidance_scale=0.0,
+        num_inference_steps=4,
+        width={width},
+        height={height}
+    ).images[0]
+
+    image.save("{output_path}")
+    print(f"Image saved: {output_path} ({width}x{height})")
+
+  RULES:
+    - NEVER include text rendering in prompts (SD cannot render text reliably)
+    - Always append "no text, no letters, no words" to prompts
+    - Model auto-downloads on first use (~2GB) to ~/.cache/huggingface/
+    - Use torch.float16 for memory efficiency on MPS
+    - Output minimum 512x512; 768x768 for presentation images
+```
+
+### Image Generation Workflow
+
+```yaml
+WORKFLOW:
+  1_CHECK: Verify Apple Silicon + MPS available (exit gracefully if not)
+  2_PROMPT: Build prompt from user description + style preset suffix
+  3_GENERATE: Run SD-Turbo pipeline (4 steps, ~5 seconds on M1/M2)
+  4_SAVE: Save to output path as PNG
+  5_REPORT: Print path, dimensions, file size
+  
+  on_non_apple:
+    message: |
+      ⚠️ Chức năng tạo hình ảnh từ prompt chỉ hỗ trợ trên Apple Silicon Mac.
+      Bạn vẫn có thể sử dụng chức năng tạo biểu đồ (bar, line, pie, radar, scatter).
+    action: Skip image generation, suggest alternatives (stock photos, manual design)
+```
+
+---
+
 ## Output Conventions
 
 ```yaml
 FILE_NAMING:
-  pattern: "{name}_{chart_type}_{timestamp}.png"
-  examples:
-    - "sales_bar_20260416.png"
-    - "revenue_line_20260416.png"
-    - "market_share_pie_20260416.png"
+  charts:
+    pattern: "{name}_{chart_type}_{timestamp}.png"
+    examples:
+      - "sales_bar_20260416.png"
+      - "revenue_line_20260416.png"
+  images:
+    pattern: "{name}_{style}_{timestamp}.png"
+    examples:
+      - "hero_dark-tech_20260416.png"
+      - "icon_flat-icon_20260416.png"
   directory: Same as source data, or user-specified, or tmp/
 
 QUALITY:
-  dpi: 160 (always)
-  format: PNG (default), SVG (if user requests vector)
-  background: White (#FFFFFF)
-  no_extra_whitespace: bbox_inches='tight'
+  charts:
+    dpi: 160
+    format: PNG (default), SVG (if user requests vector)
+    background: White (#FFFFFF)
+    no_extra_whitespace: bbox_inches='tight'
+  images:
+    min_size: 512x512
+    presentation_size: 768x768
+    format: PNG
 ```
 
 ---
@@ -361,7 +494,8 @@ QUALITY:
 ## What This Skill Does NOT Do
 
 - Does NOT display charts interactively (headless only, Agg backend)
-- Does NOT generate images from text prompts (that is image generation mode, US-3.1.2)
+- Does NOT render text inside generated images (SD limitation)
 - Does NOT modify source data files
-- Does NOT install matplotlib — assumes already installed (see /cai-dat)
+- Does NOT install dependencies — assumes already installed (see /cai-dat)
 - Does NOT use plt.show() — always saves to file
+- Does NOT attempt image generation on non-Apple Silicon (graceful skip)
