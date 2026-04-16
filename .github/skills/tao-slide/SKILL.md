@@ -100,8 +100,61 @@ STRUCTURE:
 ## Step 2: Generate Node.js Script
 
 ```yaml
+SCRIPT_ARCHITECTURE:
+  # US-4.1.3: SKILL.md acts as ROUTER — picks template, prepares JSON, calls script
+  # Scripts are in .github/skills/tao-slide/scripts/
+  # Each template is a standalone .js file accepting --input JSON --output .pptx
+  
+  AVAILABLE_TEMPLATES:
+    corporate-blue:    Professional blue business style (Arial Black + Arial)
+    corporate-red:     Bold red corporate style (Arial Black + Calibri)
+    academic-serif:    Clean scholarly style (Georgia + Calibri)
+    minimal-white:     Ultra-clean whitespace (Helvetica Neue)
+    minimal-gray:      Soft gray tones (Helvetica Neue)
+    dark-gradient:     Dark with indigo/cyan accents (Inter)
+    dark-neon:         Dark with neon cyan/magenta (Inter)
+    creative-gradient: Purple-to-amber vibrant style (Poppins + Open Sans)
+    creative-warm:     Warm earthy tones (Poppins + Open Sans)
+    tech-modern:       Modern teal/blue tech company (Inter)
+  
+  STYLE_TO_TEMPLATE_MAPPING:
+    corporate: corporate-blue      # default corporate
+    academic: academic-serif        # default academic
+    minimal: minimal-white          # default minimal
+    dark-modern: dark-gradient      # default dark
+    creative: creative-gradient     # default creative
+    # User can request specific template by name for more variety
+
+  ROUTING_WORKFLOW:
+    1. Determine style from user or pipeline
+    2. Map style → template name (or use user-specified template)
+    3. Prepare content as JSON data file:
+       - Save to tmp/<timestamp>_slides.json
+       - JSON structure matches slide-utils.js expected format
+    4. Run template script:
+       command: node .github/skills/tao-slide/scripts/<template>.js --input <json> --output <output.pptx>
+    5. Check exit code and output
+    6. Report result to user
+    7. Clean up tmp JSON file
+
+  JSON_DATA_FORMAT:
+    {
+      "title": "Presentation Title",
+      "slides": [
+        {"type": "title", "title": "...", "subtitle": "..."},
+        {"type": "section", "title": "..."},
+        {"type": "content", "title": "...", "bullets": ["...", "..."]},
+        {"type": "two-column", "title": "...", "left": ["..."], "right": ["..."]},
+        {"type": "image", "title": "...", "image_path": "...", "caption": "..."},
+        {"type": "chart", "title": "...", "chart_image": "..."},
+        {"type": "table", "title": "...", "headers": ["..."], "rows": [["..."]]},
+        {"type": "quote", "text": "...", "author": "..."},
+        {"type": "closing", "title": "Cảm ơn!", "subtitle": "Questions?"}
+      ]
+    }
+
 SCRIPT:
-  location: scripts/ (ephemeral, generated per task)
+  location: .github/skills/tao-slide/scripts/
   
   CRITICAL_RULES:
     colors:
@@ -241,12 +294,13 @@ STYLES:
 
 ```yaml
 EXECUTE:
-  1. Write script to scripts/gen_slide_<timestamp>.js
-  2. Run via run_in_terminal:
-     command: node scripts/gen_slide_<timestamp>.js
-  3. Check exit code:
+  1. Prepare JSON data from structured content → save to tmp/<ts>_slides.json
+  2. Select template from STYLE_TO_TEMPLATE_MAPPING
+  3. Run via run_in_terminal:
+     command: node .github/skills/tao-slide/scripts/<template>.js --input <json_path> --output <output_path>
+  4. Check exit code:
      - 0: Success → read output path and size
-     - Non-zero: Read error → fix script → retry (max 2 retries)
+     - Non-zero: Read error → fix data → retry (max 2 retries)
   4. Report to user:
      format: |
        ✅ File PowerPoint đã tạo thành công:
