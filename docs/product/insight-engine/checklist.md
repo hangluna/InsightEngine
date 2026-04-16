@@ -228,8 +228,8 @@
 
 ### Epic 4.2: HTML Presentation Mode (reveal.js)
 
-- [ ] **US-4.2.1** — reveal.js integration for tao-html
-  - Status: IN_PROGRESS
+- [x] **US-4.2.1** — reveal.js integration for tao-html
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-4.2.1
   - Blocked By: ~~US-2.4.1~~ ✅, ~~US-3.3.1~~ ✅
@@ -238,13 +238,13 @@
 - [ ] **US-4.2.2** — Transitions, animations, and visual effects
   - Status: PLANNED
   - Assignee: —
-  - Blocked By: US-4.2.1
+  - Blocked By: ~~US-4.2.1~~ ✅
   - Refs: revealjs.com, deckdeckgo.com
 
 - [ ] **US-4.2.3** — HTML presentation themes and backgrounds
   - Status: PLANNED
   - Assignee: —
-  - Blocked By: US-4.2.1
+  - Blocked By: ~~US-4.2.1~~ ✅
   - Refs: slides.com/templates, deckdeckgo.com
 
 ### Epic 4.3: Script Architecture cho Skills
@@ -258,7 +258,7 @@
 - [ ] **US-4.3.2** — tao-html scripts/ directory
   - Status: PLANNED
   - Assignee: —
-  - Blocked By: US-4.2.1
+  - Blocked By: ~~US-4.2.1~~ ✅
 
 - [ ] **US-4.3.3** — Script architecture for remaining output skills
   - Status: PLANNED
@@ -283,7 +283,7 @@
 - [ ] **US-4.5.1** — HTML reveal.js template collection
   - Status: PLANNED
   - Assignee: —
-  - Blocked By: US-4.2.1, US-4.2.3
+  - Blocked By: ~~US-4.2.1~~ ✅, US-4.2.3
   - Refs: slides.com/templates, deckdeckgo.com
 
 - [ ] **US-4.5.2** — Presenter notes and PDF export
@@ -518,8 +518,8 @@ Wave 13 (parallel): US-4.3.3, US-4.5.2
 
 ### Epic 4.2: HTML Presentation Mode (reveal.js)
 
-- [ ] **US-4.2.1** — Tích hợp reveal.js cho tao-html
-  - Trạng thái: IN_PROGRESS
+- [x] **US-4.2.1** — Tích hợp reveal.js cho tao-html
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-4.2.1
   - Bị chặn bởi: ~~US-2.4.1~~ ✅, ~~US-3.3.1~~ ✅
@@ -528,13 +528,13 @@ Wave 13 (parallel): US-4.3.3, US-4.5.2
 - [ ] **US-4.2.2** — Hiệu ứng chuyển đổi và animation
   - Trạng thái: PLANNED
   - Assignee: —
-  - Bị chặn bởi: US-4.2.1
+  - Bị chặn bởi: ~~US-4.2.1~~ ✅
   - Tham khảo: revealjs.com, deckdeckgo.com
 
 - [ ] **US-4.2.3** — Themes và backgrounds
   - Trạng thái: PLANNED
   - Assignee: —
-  - Bị chặn bởi: US-4.2.1
+  - Bị chặn bởi: ~~US-4.2.1~~ ✅
   - Tham khảo: slides.com/templates, deckdeckgo.com
 
 ### Epic 4.3: Script Architecture cho Skills
@@ -548,7 +548,7 @@ Wave 13 (parallel): US-4.3.3, US-4.5.2
 - [ ] **US-4.3.2** — scripts/ cho tao-html
   - Trạng thái: PLANNED
   - Assignee: —
-  - Bị chặn bởi: US-4.2.1
+  - Bị chặn bởi: ~~US-4.2.1~~ ✅
 
 - [ ] **US-4.3.3** — Script architecture cho tao-word, tao-excel, tao-pdf
   - Trạng thái: PLANNED
@@ -572,7 +572,7 @@ Wave 13 (parallel): US-4.3.3, US-4.5.2
 - [ ] **US-4.5.1** — Thư viện template HTML reveal.js
   - Trạng thái: PLANNED
   - Assignee: —
-  - Bị chặn bởi: US-4.2.1, US-4.2.3
+  - Bị chặn bởi: ~~US-4.2.1~~ ✅, US-4.2.3
   - Tham khảo: slides.com/templates, deckdeckgo.com
 
 - [ ] **US-4.5.2** — Presenter notes và PDF export

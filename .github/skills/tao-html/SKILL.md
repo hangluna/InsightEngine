@@ -1,23 +1,36 @@
 ---
 name: tao-html
 description: |
-  Create professional static HTML pages from synthesized content.
-  Uses jinja2 templates with inline CSS (no external dependencies).
+  Create professional static HTML pages OR reveal.js presentations from synthesized content.
+  Two modes: "page" (static page with inline CSS) and "presentation" (reveal.js slides).
   5 styles: corporate, academic, minimal, dark-modern, creative. Single-file portable output.
   Use when user says "tạo trang web", "tạo html", or "/tao-html".
-argument-hint: "[content from bien-soan or direct text] [style: corporate|academic|minimal|dark-modern|creative]"
+argument-hint: "[content] [style: corporate|academic|minimal|dark-modern|creative] [mode: page|presentation]"
 ---
 
-# Tạo HTML — Static HTML Page Output Skill
+# Tạo HTML — Static HTML Page & Presentation Output Skill
 
-Generates self-contained `.html` files with inline CSS for maximum portability.
+Generates self-contained `.html` files — either static pages (inline CSS) or reveal.js presentations.
 
 ```yaml
-MODE: Interactive (asks style) or Pipeline (from tong-hop)
+MODES:
+  page: Static HTML page with inline CSS (original mode)
+  presentation: reveal.js slide deck with CDN, keyboard nav, transitions
+
+MODE_DETECTION:
+  presentation_triggers:
+    - "tạo slide html", "html presentation", "trình chiếu html"
+    - "reveal.js", "slide deck html", "presentation html"
+    - Content has clear slide structure (numbered sections, short bullets)
+  page_triggers:
+    - "tạo trang web", "static page", "html report"
+    - Content is long-form narrative (paragraphs, articles)
+  default: page (unless content/intent clearly suggests presentation)
+
 LANGUAGE: Copilot responds in Vietnamese
 INPUT: Structured Markdown from bien-soan or user text
-OUTPUT: Single .html file with all CSS inline
-LIBRARY: jinja2
+OUTPUT: Single .html file (self-contained)
+LIBRARIES: jinja2 (page mode), scripts/gen_reveal.py (presentation mode)
 ```
 
 ---
@@ -280,6 +293,183 @@ SAVE_AND_VERIFY:
 
 ---
 
+## Presentation Mode (reveal.js) — US-4.2.1
+
+When mode is "presentation", generate a reveal.js slide deck instead of a static page.
+
+### Content → Slides Mapping
+
+```yaml
+SLIDE_MAPPING:
+  H1_heading: Title slide (centered, large text)
+  H2_heading: Section divider slide
+  H3_heading: Content slide title
+  bullet_list: Slide content (each bullet = one line)
+  numbered_list: Slide content with ordered items
+  paragraph: Slide content (split long paragraphs across slides)
+  table: Data slide (styled table)
+  image: Image slide (centered, responsive)
+  blockquote: Quote slide (styled blockquote)
+  code_block: Code slide (syntax highlighted)
+
+SLIDE_RULES:
+  - Each H2 creates a new horizontal section
+  - Each H3 within H2 creates a new vertical slide within that section
+  - Max ~6 bullet points per slide (split if more)
+  - Max ~50 words per slide (move overflow to next slide)
+  - Title slide is always first (from H1 or document title)
+  - Closing slide auto-generated with "Cảm ơn!" / "Thank you!"
+```
+
+### Script Execution
+
+```yaml
+PRESENTATION_WORKFLOW:
+  1. Copilot prepares content as JSON:
+     {
+       "title": "Presentation Title",
+       "subtitle": "Optional subtitle",
+       "author": "Author name",
+       "date": "2026-04-16",
+       "style": "corporate",
+       "slides": [
+         {
+           "type": "title",
+           "title": "Main Title",
+           "subtitle": "Subtitle text"
+         },
+         {
+           "type": "section",
+           "title": "Section Name"
+         },
+         {
+           "type": "content",
+           "title": "Slide Title",
+           "bullets": ["Point 1", "Point 2", "Point 3"]
+         },
+         {
+           "type": "image",
+           "title": "Image Slide",
+           "image_path": "path/to/image.png",
+           "caption": "Image caption"
+         },
+         {
+           "type": "quote",
+           "text": "Quote text here",
+           "author": "Quote author"
+         },
+         {
+           "type": "code",
+           "title": "Code Example",
+           "language": "python",
+           "code": "print('hello')"
+         },
+         {
+           "type": "table",
+           "title": "Data Table",
+           "headers": ["Col1", "Col2"],
+           "rows": [["a", "b"], ["c", "d"]]
+         },
+         {
+           "type": "closing",
+           "title": "Cảm ơn!",
+           "subtitle": "Questions?"
+         }
+       ]
+     }
+     
+  2. Save JSON to tmp file
+  3. Run: python3 .github/skills/tao-html/scripts/gen_reveal.py --input data.json --output output.html --style corporate
+  4. Verify output exists and contains reveal.js structure
+  5. Report file path + size
+```
+
+### reveal.js CDN Configuration
+
+```yaml
+REVEALJS_CDN:
+  version: "5.1.0"
+  base_url: "https://cdn.jsdelivr.net/npm/reveal.js@5.1.0"
+  css: "{base_url}/dist/reveal.css"
+  theme: "{base_url}/dist/theme/{theme_name}.css"
+  js: "{base_url}/dist/reveal.js"
+  
+  plugins_included:
+    - RevealNotes (speaker notes)
+    - RevealHighlight (code syntax highlighting)
+    
+  keyboard_navigation:
+    arrows: Navigate slides
+    space: Next slide
+    escape: Overview mode
+    f: Fullscreen
+    s: Speaker notes view
+    
+  output_structure: |
+    Single .html file containing:
+    - CDN links to reveal.js CSS + JS
+    - Inline custom CSS for the selected style
+    - All slide content in <section> tags
+    - Initialization script at bottom
+```
+
+### Presentation Styles
+
+```yaml
+PRESENTATION_STYLES:
+  corporate:
+    reveal_theme: white
+    custom_css:
+      background: "#ffffff"
+      heading_color: "#1a365d"
+      text_color: "#2d3748"
+      accent_color: "#3182ce"
+      font_heading: "'Segoe UI', Arial, sans-serif"
+      font_body: "'Segoe UI', Arial, sans-serif"
+      
+  academic:
+    reveal_theme: simple
+    custom_css:
+      background: "#fafafa"
+      heading_color: "#1a202c"
+      text_color: "#1a202c"
+      accent_color: "#744210"
+      font_heading: "Georgia, serif"
+      font_body: "Georgia, serif"
+      
+  minimal:
+    reveal_theme: white
+    custom_css:
+      background: "#ffffff"
+      heading_color: "#111827"
+      text_color: "#374151"
+      accent_color: "#059669"
+      font_heading: "'Inter', Arial, sans-serif"
+      font_body: "'Inter', Arial, sans-serif"
+      
+  dark-modern:
+    reveal_theme: night
+    custom_css:
+      background: "#0f172a"
+      heading_color: "#6366f1"
+      text_color: "#f1f5f9"
+      accent_color: "#22d3ee"
+      font_heading: "'Inter', sans-serif"
+      font_body: "'Inter', sans-serif"
+      
+  creative:
+    reveal_theme: moon
+    custom_css:
+      background: "#fffbeb"
+      heading_color: "#8b5cf6"
+      text_color: "#1e1b4b"
+      accent_color: "#f59e0b"
+      font_heading: "'Poppins', sans-serif"
+      font_body: "'Open Sans', sans-serif"
+```
+
+---
+
 ## Error Handling
 
 ```yaml
@@ -306,7 +496,7 @@ ERRORS:
 ## What This Skill Does NOT Do
 
 - Does NOT create multi-page websites (single HTML file only)
-- Does NOT include JavaScript interactivity
 - Does NOT host or deploy the HTML file
-- Does NOT synthesize content — that is bien-soan job
+- Does NOT synthesize content — that is bien-soan's job
 - Does NOT install dependencies — redirects to /cai-dat
+- Presentation mode uses CDN for reveal.js — requires internet on first load
