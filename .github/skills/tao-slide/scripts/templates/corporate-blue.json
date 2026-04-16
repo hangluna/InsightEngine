@@ -1,0 +1,23 @@
+{
+  "name": "corporate-blue",
+  "category": "light",
+  "colors": {
+    "primary": "1A365D",
+    "secondary": "3182CE",
+    "accent": "63B3ED",
+    "background": "FFFFFF",
+    "text": "2D3748",
+    "muted": "718096"
+  },
+  "fonts": {
+    "heading": "Arial Black",
+    "body": "Arial"
+  },
+  "spacing": {
+    "margin_x": 0.6,
+    "margin_y": 0.5,
+    "title_font_size": 32,
+    "body_font_size": 16,
+    "line_spacing": 1.5
+  }
+}

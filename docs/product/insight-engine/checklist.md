@@ -252,8 +252,8 @@
 
 ### Epic 4.3: Script Architecture cho Skills
 
-- [ ] **US-4.3.1** — tao-slide scripts/ directory
-  - Status: IN_PROGRESS
+- [x] **US-4.3.1** — tao-slide scripts/ directory
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-4.3.1
   - Blocked By: ~~US-4.1.3~~ ✅
@@ -547,8 +547,8 @@ Wave 13 (parallel): US-4.3.3, US-4.5.2
 
 ### Epic 4.3: Script Architecture cho Skills
 
-- [ ] **US-4.3.1** — scripts/ cho tao-slide
-  - Trạng thái: IN_PROGRESS
+- [x] **US-4.3.1** — scripts/ cho tao-slide
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-4.3.1
   - Bị chặn bởi: ~~US-4.1.3~~ ✅
