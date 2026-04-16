@@ -480,6 +480,62 @@ PIPELINE_MODE:
 
 ---
 
+## Speaker Notes Generation (US-4.5.2)
+
+When output target is a reveal.js presentation (tao-html presentation mode), bien-soan
+generates speaker notes alongside slide content.
+
+```yaml
+SPEAKER_NOTES:
+  trigger:
+    - Pipeline output is "presentation" or "html-presentation"
+    - User asks for "ghi chú thuyết trình", "speaker notes", "presenter notes"
+    
+  generation_rules:
+    per_slide_notes:
+      - Title slide: Opening remarks, greeting, audience engagement prompt
+      - Content slides: Expansion of each bullet point with details not shown on slide
+      - Data/table slides: Key insights to highlight, comparison points
+      - Quote slides: Context about the quote, why it matters
+      - Closing slide: Summary of key takeaways, Q&A preparation
+      
+    notes_style:
+      - Conversational tone (as if speaking to audience)
+      - 2-4 sentences per slide (enough to guide, not script)
+      - Include transition phrases between slides
+      - Vietnamese by default (match presentation language)
+      
+    notes_format:
+      - Add "notes" key to each slide JSON object
+      - Plain text (no HTML tags — gen_reveal.py handles escaping)
+      - Example: {"type": "content", "title": "...", "bullets": [...], "notes": "Giải thích chi tiết..."}
+
+  output_json_example: |
+    {
+      "slides": [
+        {
+          "type": "title",
+          "title": "Báo cáo Q1",
+          "subtitle": "Kết quả kinh doanh",
+          "notes": "Chào mọi người. Hôm nay tôi sẽ trình bày kết quả kinh doanh Q1. Lưu ý 3 điểm chính..."
+        },
+        {
+          "type": "content",
+          "title": "Doanh thu",
+          "bullets": ["Tăng 15%", "Vượt target 5%"],
+          "notes": "Doanh thu tăng 15% so với cùng kỳ năm trước. Đặc biệt, segment B2B tăng mạnh nhất."
+        }
+      ]
+    }
+
+  pipeline_integration:
+    - tong-hop passes "include_notes: true" to bien-soan when output is presentation
+    - bien-soan generates notes during synthesis (not as separate step)
+    - Notes are part of the slide JSON passed to tao-html/gen_reveal.py
+```
+
+---
+
 ## What This Skill Does NOT Do
 
 - Does NOT read files — that's thu-thap's job

@@ -286,7 +286,8 @@ def render_slide(slide: dict, fragments: bool = True) -> str:
 
 
 def generate_html(data: dict, style_name: str, global_background: Optional[str] = None,
-                   transition: Optional[str] = None, fragments: bool = True) -> str:
+                   transition: Optional[str] = None, fragments: bool = True,
+                   show_notes_in_print: bool = False) -> str:
     """Generate complete reveal.js HTML from slide data and style.
 
     Args:
@@ -298,6 +299,7 @@ def generate_html(data: dict, style_name: str, global_background: Optional[str] 
             - image URL: "https://example.com/bg.jpg"
         transition: Transition type (none, slide, fade, convex, concave, zoom).
                     Falls back to style default, then 'slide'.
+        show_notes_in_print: If True, speaker notes are visible in print/PDF output.
         fragments: Enable fragment animations for bullet points (default: True).
     """
     style = STYLES.get(style_name, STYLES["corporate"])
@@ -399,6 +401,9 @@ def generate_html(data: dict, style_name: str, global_background: Optional[str] 
       }}
     """
 
+    # showNotes: controls whether speaker notes appear in print/PDF
+    show_notes_cfg = "true" if show_notes_in_print else "false"
+
     html = f"""<!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -410,6 +415,59 @@ def generate_html(data: dict, style_name: str, global_background: Optional[str] 
   <link rel="stylesheet" href="{REVEALJS_CDN}/dist/theme/{style['reveal_theme']}.css">
   <link rel="stylesheet" href="{REVEALJS_CDN}/plugin/highlight/monokai.css">
   <style>{custom_css}{global_bg_css}
+
+      /* ── Print / PDF export styles (US-4.5.2) ─────────────── */
+      @media print {{
+        .reveal .slides section {{
+          page-break-after: always;
+          page-break-inside: avoid;
+          min-height: 100vh;
+          box-sizing: border-box;
+          padding: 2em;
+        }}
+        .reveal .slides section .fragment {{
+          opacity: 1 !important;
+          visibility: visible !important;
+        }}
+        .reveal .slide-number,
+        .reveal .controls,
+        .reveal .progress {{
+          display: none !important;
+        }}
+        .reveal {{
+          overflow: visible !important;
+        }}
+        .reveal .slides {{
+          position: static !important;
+          width: 100% !important;
+          height: auto !important;
+          overflow: visible !important;
+          transform: none !important;
+        }}
+        .reveal .slides section {{
+          position: relative !important;
+          width: 100% !important;
+          height: auto !important;
+          transform: none !important;
+          left: 0 !important;
+          top: 0 !important;
+        }}
+        aside.notes {{
+          display: block !important;
+          margin-top: 1.5em;
+          padding: 0.8em 1em;
+          border-top: 2px solid {style['accent_color']};
+          font-size: 0.75em;
+          color: {style.get('text_color', '#333')};
+          font-style: italic;
+          background: {style.get('blockquote_bg', 'rgba(0,0,0,0.03)')};
+        }}
+        aside.notes::before {{
+          content: "Speaker Notes: ";
+          font-weight: bold;
+          font-style: normal;
+        }}
+      }}
   </style>
 </head>
 <body>
@@ -425,6 +483,7 @@ def generate_html(data: dict, style_name: str, global_background: Optional[str] 
     Reveal.initialize({{
       hash: true,
       slideNumber: true,
+      showNotes: {show_notes_cfg},
       transition: '{effective_transition}',
       backgroundColor: '{bg_color}',{parallax_cfg}
       plugins: [RevealNotes, RevealHighlight]
@@ -447,6 +506,8 @@ def main():
                         help="Slide transition type (overrides style default)")
     parser.add_argument("--no-fragments", action="store_true",
                         help="Disable fragment animations (bullets appear all at once)")
+    parser.add_argument("--print-notes", action="store_true",
+                        help="Include speaker notes in print/PDF output")
     args = parser.parse_args()
 
     input_path = Path(args.input)
@@ -459,7 +520,8 @@ def main():
 
     html = generate_html(data, args.style, args.background,
                          transition=args.transition,
-                         fragments=not args.no_fragments)
+                         fragments=not args.no_fragments,
+                         show_notes_in_print=args.print_notes)
 
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)

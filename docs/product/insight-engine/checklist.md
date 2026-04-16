@@ -296,8 +296,8 @@
   - Blocked By: ~~US-4.2.1~~ ✅, ~~US-4.2.3~~ ✅
   - Refs: slides.com/templates, deckdeckgo.com
 
-- [ ] **US-4.5.2** — Presenter notes and PDF export
-  - Status: IN_PROGRESS
+- [x] **US-4.5.2** — Presenter notes and PDF export
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-4.5.2
   - Blocked By: ~~US-4.5.1~~ ✅
@@ -596,8 +596,8 @@ Wave 13 (parallel): US-4.3.3, US-4.5.2
   - Bị chặn bởi: ~~US-4.2.1~~ ✅, ~~US-4.2.3~~ ✅
   - Tham khảo: slides.com/templates, deckdeckgo.com
 
-- [ ] **US-4.5.2** — Presenter notes và PDF export
-  - Trạng thái: IN_PROGRESS
+- [x] **US-4.5.2** — Presenter notes và PDF export
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-4.5.2
   - Bị chặn bởi: ~~US-4.5.1~~ ✅
