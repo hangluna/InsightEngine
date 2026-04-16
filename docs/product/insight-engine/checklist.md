@@ -186,7 +186,9 @@
 ### Epic 3.3: Template Library mở rộng
 
 - [ ] **US-3.3.1** — Additional template styles (dark/modern, creative)
-  - Status: PLANNED
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-3.3.1
   - Blocked By: ~~US-1.3.1~~ ✅, ~~US-1.4.1~~ ✅, ~~US-2.4.1~~ ✅
 
 ### Epic 3.4: Cải thiện UX Pipeline
@@ -364,7 +366,9 @@
 ### Epic 3.3: Template Library mở rộng
 
 - [ ] **US-3.3.1** — Thêm style dark/modern và creative
-  - Trạng thái: PLANNED
+  - Trạng thái: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-3.3.1
   - Bị chặn bởi: ~~US-1.3.1~~ ✅, ~~US-1.4.1~~ ✅, ~~US-2.4.1~~ ✅
 
 ### Epic 3.4: Cải thiện UX Pipeline
