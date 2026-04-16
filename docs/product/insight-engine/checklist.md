@@ -174,7 +174,9 @@
 ### Epic 3.2: Xử lý tài liệu lớn
 
 - [ ] **US-3.2.1** — Large document chunking strategy
-  - Status: PLANNED
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-3.2.1
   - Blocked By: ~~US-1.2.1~~ ✅
 
 ### Epic 3.3: Template Library mở rộng
@@ -346,7 +348,9 @@
 ### Epic 3.2: Xử lý tài liệu lớn
 
 - [ ] **US-3.2.1** — Chunking strategy cho tài liệu lớn
-  - Trạng thái: PLANNED
+  - Trạng thái: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-3.2.1
   - Bị chặn bởi: ~~US-1.2.1~~ ✅
 
 ### Epic 3.3: Template Library mở rộng
