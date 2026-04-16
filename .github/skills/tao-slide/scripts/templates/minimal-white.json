@@ -1,0 +1,23 @@
+{
+  "name": "minimal-white",
+  "category": "light",
+  "colors": {
+    "primary": "111827",
+    "secondary": "059669",
+    "accent": "10B981",
+    "background": "FFFFFF",
+    "text": "374151",
+    "muted": "9CA3AF"
+  },
+  "fonts": {
+    "heading": "Helvetica Neue",
+    "body": "Helvetica Neue"
+  },
+  "spacing": {
+    "margin_x": 0.8,
+    "margin_y": 0.6,
+    "title_font_size": 28,
+    "body_font_size": 15,
+    "line_spacing": 1.6
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "dark-gradient",
+  "category": "dark",
+  "colors": {
+    "primary": "6366F1",
+    "secondary": "22D3EE",
+    "accent": "A78BFA",
+    "background": "0F172A",
+    "text": "F1F5F9",
+    "muted": "94A3B8"
+  },
+  "fonts": {
+    "heading": "Inter",
+    "body": "Inter"
+  },
+  "spacing": {
+    "margin_x": 0.6,
+    "margin_y": 0.5,
+    "title_font_size": 32,
+    "body_font_size": 16,
+    "line_spacing": 1.5
+  }
+}
