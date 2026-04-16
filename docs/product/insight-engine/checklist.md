@@ -106,7 +106,9 @@
 ### Epic 1.4: Xuất PowerPoint (`tao-slide`)
 
 - [ ] **US-1.4.1** — PowerPoint output with 3 template styles
-  - Status: PLANNED
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-1.4.1
   - Blocked By: ~~US-1.2.1~~ ✅, ~~US-1.1.1~~ ✅
 
 ---
@@ -264,7 +266,9 @@
 ### Epic 1.4: Xuất PowerPoint (`tao-slide`)
 
 - [ ] **US-1.4.1** — Xuất PowerPoint với 3 template style
-  - Trạng thái: PLANNED
+  - Trạng thái: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-1.4.1
   - Bị chặn bởi: ~~US-1.2.1~~ ✅, ~~US-1.1.1~~ ✅
 
 ---
