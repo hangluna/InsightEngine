@@ -216,8 +216,8 @@
   - Blocked By: ~~US-1.4.1~~ ✅, ~~US-3.3.1~~ ✅
   - Refs: slidemembers.com, aippt.com, canva.com
 
-- [ ] **US-4.1.2** — Template preview and selection
-  - Status: IN_PROGRESS
+- [x] **US-4.1.2** — Template preview and selection
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-4.1.2
   - Blocked By: ~~US-4.1.1~~ ✅
@@ -514,8 +514,8 @@ Wave 13 (parallel): US-4.3.3, US-4.5.2
   - Bị chặn bởi: ~~US-1.4.1~~ ✅, ~~US-3.3.1~~ ✅
   - Tham khảo: slidemembers.com, aippt.com, canva.com
 
-- [ ] **US-4.1.2** — Preview và chọn template
-  - Trạng thái: IN_PROGRESS
+- [x] **US-4.1.2** — Preview và chọn template
+  - Trạng thái: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-4.1.2
   - Bị chặn bởi: ~~US-4.1.1~~ ✅
