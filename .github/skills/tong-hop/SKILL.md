@@ -96,6 +96,31 @@ python3 scripts/save_state.py archive
      - Specific URLs or files provided
    ```
    When deep research is detected, the execution plan must reflect this (see Step 3).
+8. **Detect content depth** — how rich should the output be?
+   ```yaml
+   CONTENT_DEPTH_SIGNALS:
+     standard:
+       # User wants something quick or explicitly short
+       - "tóm tắt", "tóm lược", "ngắn gọn", "brief", "quick", "overview"
+       - "just the key points", "chỉ cần ý chính"
+       - Output format is email or memo (inherently short)
+     
+     enriched:
+       # DEFAULT — most requests fall here
+       # Any request that doesn't explicitly ask for brevity
+       - "tổng hợp", "làm báo cáo", "tạo tài liệu", "viết về"
+       - "search rồi tạo file", "tạo slide", "tạo word"
+       - Most web search + output requests
+     
+     comprehensive:
+       # User wants maximum depth
+       - "chi tiết", "đầy đủ", "comprehensive", "chuyên sâu", "thật kỹ"
+       - research_depth was "deep" (user invested in deep search → expects rich output)
+       - User specifies a long document type (whitepaper, research report, thesis)
+       - "phân tích sâu", "deep analysis", "viết thật chi tiết"
+   ```
+   Pass `content_depth` to bien-soan. Default is `enriched` — not `standard`. This is
+   important because most users expect substantive output even when they don't say "chi tiết".
 
 ---
 
@@ -191,6 +216,9 @@ For chained outputs and intermediate files, see `references/output-chaining.md`.
 3. **bien-soan** (`.github/skills/bien-soan/SKILL.md`)
    - Input: Markdown from thu-thap
    - Options: `enrich: true` (default) | `include_notes: true` (if output = presentation)
+   - **content_depth**: pass the detected depth level (standard | enriched | comprehensive)
+     - If `research_depth: deep` was used → auto-upgrade to `comprehensive`
+     - Default: `enriched` (produces 3000-8000 words — substantially richer than old default)
    - Output: structured Markdown content
    - Report: "✅ Biên soạn hoàn tất — {sections} phần, {total_words} từ"
    - Save state: `python3 scripts/save_state.py update --step bien-soan`

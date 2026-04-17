@@ -31,11 +31,27 @@ All responses to the user are in Vietnamese. Always confirm before installing.
 
 ## Execution Steps
 
-### Step 1: Check current state
+### Step 1: Pull latest code from git
+
+Before checking or installing anything, pull the latest version of the repo. Skills,
+scripts, and requirements.txt may have been updated — installing against an outdated
+codebase leads to missing dependencies or stale scripts.
+
+```bash
+git -C /Users/trucle/Desktop/project/InsightEngine pull
+```
+
+Report the result:
+- If up to date: "✅ Code đã là phiên bản mới nhất."
+- If updated: "🔄 Đã cập nhật code. Đang kiểm tra dependencies..."
+- If git pull fails (no internet, merge conflict, etc.): warn and continue anyway —
+  dependency check and install should still proceed with current local code.
+
+### Step 2: Check current state
 Run `python3 scripts/check_deps.py` and parse the output to identify which packages are
 missing vs already installed.
 
-### Step 2: Report findings
+### Step 3: Report findings
 Show the user what's installed and what's needed:
 ```
 📋 Kết quả kiểm tra môi trường InsightEngine:
@@ -43,7 +59,7 @@ Show the user what's installed and what's needed:
 - ❌ Cần cài: [list missing]
 ```
 
-### Step 3: Install Python packages
+### Step 4: Install Python packages
 Install only the packages that `check_deps.py` reported as missing. Use the pinned versions
 from `requirements.txt` when available to ensure reproducible builds:
 ```bash
@@ -57,17 +73,17 @@ pip3 install --user <missing-packages>
 Core packages: `markitdown[all]`, `python-docx`, `openpyxl`, `pandas`, `reportlab`, `pypdf`,
 `pdfplumber`, `matplotlib`, `seaborn`, `jinja2`, `httpx`, `beautifulsoup4`
 
-### Step 4: Install Node.js packages
+### Step 5: Install Node.js packages
 If pptxgenjs is missing: `npm install -g pptxgenjs`
 
-### Step 5: Create utility scripts
+### Step 6: Create utility scripts
 If `scripts/recalc.py` doesn't exist, create it (needed by tao-excel for formula recalculation).
 
-### Step 6: Verify
+### Step 7: Verify
 Run `python3 scripts/check_deps.py` again to confirm everything is installed. Expected:
 exit code 0, all items show ✅.
 
-### Step 7: Final report
+### Step 8: Final report
 ```
 ✅ Cài đặt hoàn tất! InsightEngine sẵn sàng sử dụng.
 Gõ /tong-hop để bắt đầu tổng hợp nội dung.

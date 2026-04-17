@@ -42,6 +42,20 @@ All responses to the user are in Vietnamese.
 3. Determine style (user-specified, pipeline-inferred, or ask user: corporate / academic / minimal)
 4. Determine output path (default: `./<title>.docx`)
 
+### Thin Content Guard
+
+Before generating the document, check if the input content is substantive enough for the
+requested output. A 10-page Word report with only 500 words of content will look embarrassingly
+empty. If content seems thin:
+
+- **< 500 words** for a multi-section report: warn the user and suggest going back to bien-soan
+  with `content_depth: enriched` or `comprehensive`. The document will look sparse.
+- **Sections with only 1-2 sentences**: these will appear as nearly-empty pages. Either:
+  - Merge short sections together under a shared heading
+  - Flag to the user: "Phần '{section}' chỉ có 2 câu — bạn muốn bổ sung thêm?"
+- **When called from pipeline**: report back to tong-hop that content is thin rather than
+  generating a sparse document. Better to fix content than to wrap thin content in fancy formatting.
+
 ---
 
 ## Step 2: Use CLI Script (Recommended)

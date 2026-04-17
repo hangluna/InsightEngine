@@ -69,6 +69,20 @@ Full color/font specs: `references/template-styles.md`
 3. Determine style (user-specified, pipeline-inferred, or ask)
 4. Determine output path (default: `./<title>.pptx`)
 
+### Thin Content Guard
+
+A presentation with only bullet-point titles and no substance looks amateurish. Before
+building slides, check content depth:
+
+- **< 300 words** for a multi-section presentation: this will produce slides with mostly
+  empty space. Flag to pipeline/user for content enrichment first.
+- **Sections with only 1 bullet**: expand — a single bullet per slide wastes the audience's
+  time. Either merge with adjacent sections or flag for enrichment.
+- **All sections are surface-level** (no data, no examples, no specifics): warn that the
+  presentation will feel generic. Suggest going back to bien-soan with deeper content.
+- When in pipeline mode, signal back to tong-hop: "Content quá mỏng cho presentation —
+  cần biên soạn ở mức enriched/comprehensive trước khi tạo slide."
+
 ---
 
 ## Step 2: Plan Slide Structure
