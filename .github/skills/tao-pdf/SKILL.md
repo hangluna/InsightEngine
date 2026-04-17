@@ -8,6 +8,13 @@ description: |
   được" (read-only document implies PDF) — even without saying "/tao-pdf" or ".pdf".
 argument-hint: "[content from bien-soan or direct text] [output path]"
 version: 1.1
+compatibility:
+  requires:
+    - Python >= 3.10
+    - reportlab >= 4.1.0
+    - pypdf >= 4.0.0
+  tools:
+    - run_in_terminal
 ---
 
 # Tạo PDF — PDF Document Output Skill
@@ -117,6 +124,22 @@ Common issues and recovery strategies:
   too wide, split into multiple tables or switch to landscape orientation.
 - **Memory error**: very large documents (100+ pages with images) may exhaust memory. Process
   in chunks using pypdf to merge partial PDFs.
+
+---
+
+## Examples
+
+**Example 1 — Multi-section report:**
+Input: Synthesized content, 8 sections, 3000 words, 2 tables
+Output: corporate PDF, 12 pages, TOC bookmarks, page numbers, Vietnamese fonts, 85 KB
+
+**Example 2 — Simple one-page summary:**
+Input: Short executive summary, 300 words
+Output: Minimal PDF, 1 page, Canvas API, clean layout, 15 KB
+
+**Example 3 — Report with embedded charts:**
+Input: Content + 3 chart PNGs from tao-hinh
+Output: PDF with inline images, captions, proper page breaks, 250 KB
 
 ---
 

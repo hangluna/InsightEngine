@@ -10,6 +10,11 @@ description: |
   "merge content" — even if they don't say "/bien-soan" explicitly.
 argument-hint: "[content from thu-thap or direct text] [mode: standard|comprehensive]"
 version: 1.1
+compatibility:
+  requires:
+    - Python >= 3.10
+  tools:
+    - run_in_terminal (for deduplicate.py)
 ---
 
 # Biên Soạn — Content Synthesis Skill
@@ -144,6 +149,36 @@ Before delivering, verify:
 3. All tables have headers
 4. Consistent language throughout (don't mix Vietnamese and English mid-paragraph)
 5. Source attribution present for key claims and data points
+
+---
+
+## Duplicate Detection Script
+
+Before synthesizing, run the dedup script to identify overlapping paragraphs across sources:
+
+```bash
+python3 .github/skills/bien-soan/scripts/deduplicate.py --input collected.md --threshold 0.75
+```
+
+This helps identify which paragraphs need merging vs which are unique content. The script
+reports paragraph pairs with Jaccard similarity above the threshold, so you can prioritize
+merging those sections. For a JSON report: add `--output dedup_report.json`.
+
+---
+
+## Examples
+
+**Example 1 — Standard synthesis:**
+Input: 3 sources about marketing strategy (~8,000 words total, 40% overlap)
+Output: Unified document (~3,000 words), 5 sections, conflicts noted with attribution
+
+**Example 2 — Comprehensive mode:**
+Input: Brief meeting notes (~500 words) about product roadmap
+Output: Comprehensive document (~2,500 words) with expanded sections, context, and analysis
+
+**Example 3 — Translation:**
+Input: Vietnamese technical document (~2,000 words)
+Output: English translation preserving structure, headings, and formatting
 
 ---
 

@@ -12,6 +12,15 @@ description: |
   "tạo biểu đồ", "vẽ chart", or "/tao-hinh", even without naming a specific skill.
 argument-hint: "[mode: chart|image] [chart type: bar|line|pie|radar|scatter] [image type: character|background|landscape|slide-bg|slide-frame]"
 version: 1.1
+compatibility:
+  requires:
+    - Python >= 3.10
+    - matplotlib >= 3.8.0, seaborn >= 0.13.0 (charts)
+  optional:
+    - torch >= 2.2.0, diffusers >= 0.27.0 (AI image generation)
+    - Apple Silicon (MPS) or CUDA GPU recommended for image mode
+  tools:
+    - run_in_terminal
 ---
 
 # Tạo Hình — Charts & AI Images
@@ -149,6 +158,22 @@ charts:  "{name}_{chart_type}_{YYYYMMDD}.png"
 images:  "{name}_{image_type}_{YYYYMMDD}.png"
 directory: output/ by default, or user-specified path
 ```
+
+---
+
+## Examples
+
+**Example 1 — Bar chart from Excel data:**
+Input: sales_data.xlsx with columns [Month, Revenue, Costs], bar chart requested
+Output: bar chart PNG (1600×960px, dpi=160), labeled axes, professional palette, 85 KB
+
+**Example 2 — Radar chart for comparison:**
+Input: Inline data comparing 3 products across 5 criteria
+Output: radar chart PNG, legend, gridlines, 70 KB
+
+**Example 3 — AI slide background:**
+Input: Prompt "abstract technology pattern, blue gradient, clean"
+Output: 1280×720 PNG (slide-bg), generated via SD-Turbo on MPS, ~3 seconds, 180 KB
 
 ---
 

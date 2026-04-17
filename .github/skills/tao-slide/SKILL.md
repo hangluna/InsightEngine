@@ -9,6 +9,12 @@ description: |
   PowerPoint", or "cho tôi file pptx" — even without saying "/tao-slide".
 argument-hint: "[content] [template: corporate-blue|corporate-red|academic-serif|minimal-white|minimal-gray|dark-gradient|dark-neon|creative-gradient|creative-warm|tech-modern]"
 version: 1.1
+compatibility:
+  requires:
+    - Node.js >= 18
+    - pptxgenjs (npm install -g pptxgenjs)
+  tools:
+    - run_in_terminal
 ---
 
 # Tạo Slide — PowerPoint Output Skill
@@ -127,6 +133,22 @@ Bạn muốn điều chỉnh gì không?
    ✅ File PowerPoint đã tạo:
    📄 {output_path}  |  📏 {file_size}  |  🎨 {style}  |  📊 {slide_count} slides
    ```
+
+---
+
+## Examples
+
+**Example 1 — Business presentation:**
+Input: Quarterly report content, 6 sections, with data tables
+Output: corporate-blue .pptx, 20 slides (title + 6 sections + closing), speaker notes, 180 KB
+
+**Example 2 — Tech conference deck:**
+Input: Product launch content with code samples and screenshots
+Output: dark-gradient .pptx, 15 slides, code slides with syntax, image slides, 250 KB
+
+**Example 3 — Academic lecture:**
+Input: Research findings, 8 sections, bullet-heavy content (needs splitting)
+Output: academic-serif .pptx, 25 slides (long sections split across 2-3 slides), 150 KB
 
 ---
 

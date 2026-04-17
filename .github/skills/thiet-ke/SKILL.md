@@ -11,7 +11,16 @@ description: |
   "tạo infographic", "tạo hình bìa báo cáo" — even without saying "/thiet-ke".
   Do NOT use for data charts (use tao-hinh) or AI-generated illustrations (use tao-hinh image mode).
 argument-hint: "[type: poster|cover|certificate|infographic|invitation|banner|artistic] [style hints]"
-version: 1.0
+version: 1.1
+compatibility:
+  requires:
+    - Python >= 3.10
+    - reportlab >= 4.1.0
+    - Pillow (for PNG output)
+  assets:
+    - canvas-fonts/ (80+ TTF files with OFL licenses)
+  tools:
+    - run_in_terminal
 license: Apache-2.0 (see LICENSE.txt). Fonts under SIL OFL (see canvas-fonts/*.txt).
 ---
 
@@ -27,6 +36,38 @@ of it as the difference between a bar chart and a poster — one visualizes data
 communicates through design.
 
 All responses to the user are in Vietnamese.
+
+---
+
+## Bundled Template Scripts
+
+For common design types, use the bundled scripts as a starting point. They handle font
+registration, layout structure, and color palettes — you only need to customize content:
+
+```yaml
+SCRIPTS:
+  gen_poster.py:
+    purpose: Event poster (A3/A4)
+    styles: modern | classic | bold
+    usage: python3 .github/skills/thiet-ke/scripts/gen_poster.py --title "Event" --style modern --output poster.pdf
+    input: --title, --subtitle, --body, --footer, or --input data.json
+
+  gen_certificate.py:
+    purpose: Certificate / bằng khen (A4 landscape)
+    styles: formal | modern | elegant
+    usage: python3 .github/skills/thiet-ke/scripts/gen_certificate.py --name "Nguyễn Văn A" --title "Chứng Nhận" --output cert.pdf
+    input: --name, --title, --course, --date, --issuer, or --input data.json
+
+  gen_cover.py:
+    purpose: Report cover page (A4)
+    styles: corporate | academic | creative
+    usage: python3 .github/skills/thiet-ke/scripts/gen_cover.py --title "Annual Report" --author "Team" --output cover.pdf
+    input: --title, --subtitle, --author, --date, or --input data.json
+```
+
+For designs that don't fit these templates (infographics, invitations, custom artistic
+compositions), write a custom script following Steps 1-4 below. The templates serve as
+code references for font registration, color handling, and layout patterns.
 
 ---
 
@@ -170,6 +211,26 @@ elements; instead make existing ones work better together.
 When the user requests multiple pages (e.g., a full booklet or card set), create each page
 as a variation on the same design philosophy — same palette and typography family but distinct
 compositions. Bundle them in a single PDF. Each page should feel like part of a cohesive series.
+
+---
+
+## Examples
+
+**Example 1 — Report cover page:**
+Input: "Thiết kế bìa báo cáo 'Annual Report 2026' cho Team Analytics"
+Output: `gen_cover.py --title "Annual Report 2026" --author "Team Analytics" --style corporate` → cover.pdf (A4, 25 KB)
+
+**Example 2 — Event poster:**
+Input: "Tạo poster cho workshop AI, ngày 15/5, phong cách modern"
+Output: `gen_poster.py --title "AI Workshop" --subtitle "May 15, 2026" --style modern` → poster.pdf (A3, 35 KB)
+
+**Example 3 — Certificate:**
+Input: "Làm bằng khen cho Nguyễn Văn A hoàn thành khóa Data Science"
+Output: `gen_certificate.py --name "Nguyễn Văn A" --course "Data Science" --style formal` → cert.pdf (A4 landscape, 20 KB)
+
+**Example 4 — Custom infographic (no template):**
+Input: "Tạo infographic layout cho 5 bước quy trình tuyển dụng"
+Output: Custom script `tmp/gen_design.py` → infographic.pdf (A4, 45 KB), follows Steps 1-4
 
 ---
 

@@ -10,6 +10,15 @@ description: |
   skill. Also triggers on resume requests: "tiếp tục", "resume", "tiếp tục từ", "/resume".
 argument-hint: "[content request in Vietnamese or English]"
 version: 1.1
+compatibility:
+  requires:
+    - Python >= 3.10
+    - All sub-skill dependencies (see cai-dat)
+  tools:
+    - run_in_terminal
+    - read_file
+    - fetch_webpage (for thu-thap)
+    - vscode-websearchforcopilot_webSearch (for thu-thap)
 ---
 
 # Tổng Hợp — InsightEngine Pipeline Orchestrator
@@ -212,6 +221,22 @@ After every completed pipeline run:
 2. Show how to open the output file(s)
 
 See `references/session-summary.md` for full format and view suggestion specs.
+
+---
+
+## Examples
+
+**Example 1:**
+Input: "Tổng hợp 3 file PDF trong thư mục input/ thành báo cáo Word kiểu corporate"
+Output: Pipeline thu-thap (đọc 3 PDF) → bien-soan (merge + synthesize) → tao-word (corporate .docx) → file output/bao-cao.docx (15 trang, 45 KB)
+
+**Example 2:**
+Input: "Search Google về AI trends 2026, rồi làm slide thuyết trình dark-modern"
+Output: Pipeline thu-thap (web search + fetch top 5 URLs) → bien-soan (synthesize) → tao-slide (dark-gradient .pptx) → file output/ai-trends-2026.pptx (18 slides)
+
+**Example 3:**
+Input: "Đọc file Excel sales_data.xlsx, tạo biểu đồ bar chart rồi nhúng vào Word report"
+Output: Pipeline thu-thap (đọc xlsx) → bien-soan → tao-hinh (bar chart PNG) → tao-word (embed chart) → 2 files output
 
 ---
 

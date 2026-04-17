@@ -8,6 +8,13 @@ description: |
   "không chạy được", "cài lại đi", or "setup môi trường" — even without saying "/cai-dat".
 argument-hint: "[none]"
 version: 1.1
+compatibility:
+  requires:
+    - Python >= 3.10
+    - pip3
+  optional:
+    - Node.js >= 18 (for pptxgenjs)
+    - npm (for pptxgenjs)
 ---
 
 # Cài đặt — InsightEngine Setup Skill
@@ -102,6 +109,29 @@ to mark them dirty, then saves. Full recalc happens when the user opens the file
 Excel/LibreOffice.
 
 Created during `/cai-dat` setup or the first time tao-excel runs.
+
+---
+
+## Troubleshooting
+
+For detailed troubleshooting of common installation errors (permissions, version conflicts,
+font issues, Apple Silicon problems), see `references/troubleshooting.md`.
+
+---
+
+## Examples
+
+**Example 1 — Fresh install:**
+Input: User runs /cai-dat for the first time
+Output: check_deps.py → 12 missing packages → pip install → npm install pptxgenjs → all ✅
+
+**Example 2 — Partial install:**
+Input: User gets "ModuleNotFoundError: No module named 'reportlab'"
+Output: check_deps.py → 2 missing (reportlab, pypdf) → pip install only those 2 → ✅
+
+**Example 3 — Optional AI packages:**
+Input: User says "tôi muốn tạo ảnh AI" but torch not installed
+Output: Confirm with user → pip install torch diffusers transformers accelerate (~2GB) → ✅
 
 ---
 

@@ -10,6 +10,14 @@ description: |
   "xuất HTML", or "tạo cái gì đó mở được bằng Chrome" — even without saying "/tao-html".
 argument-hint: "[content] [style: corporate|academic|minimal|dark-modern|creative|warm-earth|dark-neon|dark-elegant] [mode: page|presentation]"
 version: 1.1
+compatibility:
+  requires:
+    - Python >= 3.10
+    - jinja2 >= 3.1.0 (page mode)
+  optional:
+    - Internet connection (presentation mode uses reveal.js CDN)
+  tools:
+    - run_in_terminal
 ---
 
 # Tạo HTML — Static HTML Page & Presentation Output Skill
@@ -147,6 +155,22 @@ visual impairments. These practices don't add much effort but significantly impr
    pages, ensure links and interactive elements are reachable via Tab key.
 5. **Language attribute**: set `<html lang="vi">` for Vietnamese content, `lang="en"` for
    English. This helps screen readers pronounce text correctly.
+
+---
+
+## Examples
+
+**Example 1 — Static report page:**
+Input: Synthesized content, 5 sections, corporate style
+Output: Self-contained .html, inline CSS, no JS, works offline, portable, 25 KB
+
+**Example 2 — Browser presentation:**
+Input: Slide content, 12 sections, dark-neon style
+Output: reveal.js .html, 18 slides, fragment animations, keyboard navigation, 35 KB
+
+**Example 3 — Academic page with charts:**
+Input: Research content + base64 chart images from tao-hinh
+Output: academic .html, embedded charts, semantic headings, print-friendly, 80 KB
 
 ---
 

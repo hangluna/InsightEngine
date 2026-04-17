@@ -10,6 +10,15 @@ description: |
   without saying "/thu-thap".
 argument-hint: "[file paths or URLs]"
 version: 1.1
+compatibility:
+  requires:
+    - Python >= 3.10
+    - markitdown[all]
+    - httpx, beautifulsoup4 (URL fallback)
+  tools:
+    - run_in_terminal
+    - fetch_webpage (primary URL reader)
+    - vscode-websearchforcopilot_webSearch (web search)
 ---
 
 # Thu Thập — Content Gathering Skill
@@ -112,6 +121,41 @@ For web search workflow, see `references/web-search-enrichment.md`.
    - Thành công: {success_count}, Lỗi: {error_count}
    - Tổng nội dung: {total_chars} ký tự (~{total_words} từ)
    ```
+
+---
+
+## CLI Script (Recommended for batch sources)
+
+```yaml
+SCRIPT: scripts/gather.py
+USAGE: |
+  python3 scripts/gather.py --files doc.pdf report.docx --output collected.md
+  python3 scripts/gather.py --urls "https://example.com" --output collected.md
+  python3 scripts/gather.py --sources sources.json --output collected.md
+JSON_FORMAT: |
+  {"files": ["a.pdf", "b.docx"], "urls": ["https://example.com"]}
+OUTPUT: Combined Markdown file with source headers
+```
+
+Use gather.py when processing multiple files or URLs in batch. For single files, direct
+markitdown or fetch_webpage is simpler. The script handles markitdown-first-fallback-second
+logic, URL rate limiting, and structured output automatically.
+
+---
+
+## Examples
+
+**Example 1:**
+Input: "Đọc 2 file: input/report.pdf và input/data.xlsx"
+Output: Combined Markdown (~5,000 ký tự) with source headers, tables preserved from Excel
+
+**Example 2:**
+Input: "Tìm kiếm về 'machine learning trends 2026' rồi lấy nội dung top 3 kết quả"
+Output: Web search → fetch 3 URLs → Combined Markdown (~15,000 ký tự) with source attribution
+
+**Example 3:**
+Input: URL "https://example.com/blog/ai-report" dropped into chat
+Output: Fetched page content → cleaned Markdown (~3,000 ký tự), nav/footer removed
 
 ---
 

@@ -9,6 +9,12 @@ description: |
   saying "/tao-word" or ".docx".
 argument-hint: "[content from bien-soan or direct text] [style: corporate|academic|minimal]"
 version: 1.1
+compatibility:
+  requires:
+    - Python >= 3.10
+    - python-docx >= 1.1.0
+  tools:
+    - run_in_terminal
 ---
 
 # Tạo Word — Word Document Output Skill
@@ -113,6 +119,22 @@ and looks professional for formal reports.
    ✅ File Word đã tạo:
    📄 {output_path}  |  📏 {file_size}  |  🎨 {style}  |  📊 {N} phần
    ```
+
+---
+
+## Examples
+
+**Example 1 — Corporate report:**
+Input: Synthesized Markdown with 5 sections, 3 tables, 2000 words
+Output: corporate .docx, 10 pages, TOC, blue headers, formatted tables, 35 KB
+
+**Example 2 — Academic paper:**
+Input: Research content with citations, 4000 words, 8 sections
+Output: academic .docx, Times New Roman, 18 pages, TOC, proper heading hierarchy, 45 KB
+
+**Example 3 — Minimal memo:**
+Input: Short summary, 500 words, 2 sections
+Output: minimal .docx, clean layout, 4 pages, no TOC (< 3 headings), 12 KB
 
 ---
 

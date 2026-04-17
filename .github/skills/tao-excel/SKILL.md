@@ -10,6 +10,13 @@ description: |
   without saying "/tao-excel" or ".xlsx".
 argument-hint: "[data from bien-soan or direct input] [output path]"
 version: 1.1
+compatibility:
+  requires:
+    - Python >= 3.10
+    - openpyxl >= 3.1.0
+    - pandas >= 2.2.0
+  tools:
+    - run_in_terminal
 ---
 
 # Tạo Excel — Excel Spreadsheet Output Skill
@@ -210,6 +217,22 @@ ERRORS:
     detect: scripts/recalc.py not found
     action: Create recalc.py with standard content
 ```
+
+---
+
+## Examples
+
+**Example 1 — Sales report with formulas:**
+Input: Monthly sales data, 12 rows × 5 columns, need SUM and AVERAGE
+Output: corporate .xlsx, 1 sheet, freeze panes, SUM/AVERAGE formulas, blue inputs, 18 KB
+
+**Example 2 — Multi-sheet comparison:**
+Input: Product data from 3 sources, need cross-sheet VLOOKUP
+Output: .xlsx with 3 data sheets + 1 summary sheet, VLOOKUP formulas, color-coded, 25 KB
+
+**Example 3 — Budget template:**
+Input: Department budget categories, need percentage and IF formulas
+Output: .xlsx with conditional formulas, percentage format, auto-filter, 15 KB
 
 ---
 
