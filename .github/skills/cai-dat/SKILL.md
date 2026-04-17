@@ -7,14 +7,15 @@ description: |
   isn't working — even casual requests like "bị lỗi import", "thư viện chưa cài", "lần đầu chạy",
   "không chạy được", "cài lại đi", or "setup môi trường" — even without saying "/cai-dat".
 argument-hint: "[none]"
-version: 1.1
+version: 1.2
 compatibility:
   requires:
     - Python >= 3.10
     - pip3
   optional:
-    - Node.js >= 18 (for pptxgenjs)
+    - Node.js >= 18 (for pptxgenjs quick mode)
     - npm (for pptxgenjs)
+    - Playwright Chromium (for bot-protected URL fetching)
 ---
 
 # Cài đặt — InsightEngine Setup Skill
@@ -71,19 +72,29 @@ pip3 install --user <missing-packages>
 ```
 
 Core packages: `markitdown[all]`, `python-docx`, `openpyxl`, `pandas`, `reportlab`, `pypdf`,
-`pdfplumber`, `matplotlib`, `seaborn`, `jinja2`, `httpx`, `beautifulsoup4`
+`pdfplumber`, `matplotlib`, `seaborn`, `jinja2`, `httpx`, `beautifulsoup4`, `playwright`
 
-### Step 5: Install Node.js packages
+### Step 5: Install Playwright browser
+After installing the playwright Python package, install the Chromium browser binary:
+```bash
+python3 -m playwright install chromium
+```
+This is needed by thu-thap's Tier 3 stealth fetch mode for bot-protected websites.
+The browser binary is ~150 MB and cached at `~/.cache/ms-playwright/`.
+If this step fails (e.g., no disk space), warn but continue — Tier 1 and Tier 2 URL
+fetching still work without Playwright.
+
+### Step 6: Install Node.js packages
 If pptxgenjs is missing: `npm install -g pptxgenjs`
 
-### Step 6: Create utility scripts
+### Step 7: Create utility scripts
 If `scripts/recalc.py` doesn't exist, create it (needed by tao-excel for formula recalculation).
 
-### Step 7: Verify
+### Step 8: Verify
 Run `python3 scripts/check_deps.py` again to confirm everything is installed. Expected:
 exit code 0, all items show ✅.
 
-### Step 8: Final report
+### Step 9: Final report
 ```
 ✅ Cài đặt hoàn tất! InsightEngine sẵn sàng sử dụng.
 Gõ /tong-hop để bắt đầu tổng hợp nội dung.

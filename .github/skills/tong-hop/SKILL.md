@@ -13,7 +13,7 @@ description: |
   file này", "search rồi tạo file", or simply describes what they need without naming a specific
   skill. Also triggers on resume requests: "tiếp tục", "resume", "tiếp tục từ", "/resume".
 argument-hint: "[content request in Vietnamese or English]"
-version: 1.1
+version: 1.2
 compatibility:
   requires:
     - Python >= 3.10
@@ -94,6 +94,9 @@ python3 scripts/save_state.py archive
    - AI-generated illustration, background, character → **tao-hinh** (image mode)
    - Keywords that signal thiet-ke: "poster", "bìa", "cover", "certificate", "bằng khen",
      "thiệp", "invitation", "banner", "infographic", "thiết kế", "design"
+   - **Dual visual routing**: A single request can need BOTH thiet-ke AND tao-hinh.
+     Example: "tạo báo cáo Word với bìa đẹp và biểu đồ" → thiet-ke (cover) + tao-hinh
+     (charts) + tao-word (content). Detect both signals and route accordingly in Step 4.
 7. **Detect research complexity** — classify as standard or deep research:
    ```yaml
    DEEP_RESEARCH_SIGNALS:
@@ -276,6 +279,7 @@ ROUTING:
   search_and_out:   thu-thap (web search) → bien-soan → tao-<format>
   design_output:    thu-thap → bien-soan → thiet-ke (poster/cover/certificate/banner)
   design_chained:   thu-thap → bien-soan → thiet-ke (cover) + tao-<format> (content)
+  dual_visual:      thu-thap → bien-soan → thiet-ke (cover/design) + tao-hinh (charts) + tao-<format>
 ```
 
 After user approves plan, initialize session state:
@@ -358,6 +362,12 @@ THU_THAP_QUALITY_CRITERIA:
     method: Scan for numeric data, proper nouns, dates in collected content
     fail_if: Content is mostly generic descriptions without specifics
     fail_action: "Nội dung thu thập quá chung chung, thiếu số liệu cụ thể. Tìm nguồn có data."
+
+  url_fetch_escalation:
+    # If a URL source returned empty/garbled content from Tier 1 (fetch_webpage)
+    # or Tier 2 (httpx), thu-thap v1.2 automatically escalates to Tier 3 (Playwright stealth).
+    # tong-hop should NOT retry thu-thap for URL fetch failures — thu-thap handles escalation internally.
+    # Only retry if the source itself has no relevant content (topic mismatch).
 ```
 
 ### 4.2: Analysis loop (ALWAYS — not just deep research)

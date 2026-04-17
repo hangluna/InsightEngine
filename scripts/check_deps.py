@@ -65,6 +65,7 @@ PIP_PACKAGES = {
     "jinja2": "jinja2",
     "httpx": "httpx",
     "beautifulsoup4": "bs4",
+    "playwright": "playwright",
 }
 
 NODE_PACKAGES = ["pptxgenjs"]
