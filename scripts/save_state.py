@@ -7,8 +7,10 @@ Usage:
   python3 scripts/save_state.py init   --request "..." --plan '{"input_sources":...}' [--version 1.0]
   python3 scripts/save_state.py update --step <name> --output-file <path> [--notes "..."]
   python3 scripts/save_state.py complete
+  python3 scripts/save_state.py check            # AC1/AC2: check for in-progress state
+  python3 scripts/save_state.py resume-plan      # AC3: print pending steps to resume
   python3 scripts/save_state.py read
-  python3 scripts/save_state.py archive
+  python3 scripts/save_state.py archive          # AC4: archive with timestamp
 
 All operations are atomic: write to .session-state.json.tmp → rename to .session-state.json
 """
@@ -130,6 +132,47 @@ def cmd_read(args: argparse.Namespace) -> None:
     print(json.dumps(state, ensure_ascii=False, indent=2))
 
 
+def cmd_check(args: argparse.Namespace) -> None:
+    """Check if a previous in-progress state exists and print a summary."""
+    if not STATE_FILE.exists():
+        print("NO_STATE")
+        return
+
+    with open(STATE_FILE, encoding="utf-8") as f:
+        state = json.load(f)
+
+    if state.get("status") == "completed":
+        print("COMPLETED")
+        return
+
+    # In-progress state found — print human-readable Vietnamese summary
+    session_id = state.get("session_id", "")[:8]
+    created = state.get("created_at", "")[:19].replace("T", " ")
+    request = state.get("request", "(không rõ)")
+    completed = [s["step"] for s in state.get("completed_steps", [])]
+    pending = state.get("pending_steps", [])
+    outputs = state.get("output_files", [])
+
+    print("IN_PROGRESS")
+    print("---SUMMARY---")
+    print(f"Phiên: {session_id} | Bắt đầu: {created}")
+    print(f"Yêu cầu: {request[:120]}")
+    print(f"Đã hoàn thành: {', '.join(completed) if completed else 'chưa có'}")
+    print(f"Còn lại: {', '.join(pending) if pending else 'không có'}")
+    if outputs:
+        print(f"File đầu ra: {', '.join(outputs)}")
+
+
+def cmd_resume_plan(args: argparse.Namespace) -> None:
+    """Print the pending steps for pipeline resume."""
+    state = _load()
+    pending = state.get("pending_steps", [])
+    if not pending:
+        print("ALL_DONE")
+    else:
+        print(json.dumps(pending, ensure_ascii=False))
+
+
 def cmd_archive(args: argparse.Namespace) -> None:
     """Archive current state file with timestamp suffix."""
     if not STATE_FILE.exists():
@@ -171,6 +214,12 @@ def main() -> None:
     # archive
     sub.add_parser("archive", help="Archive current state file with timestamp")
 
+    # check
+    sub.add_parser("check", help="Check for in-progress state and print Vietnamese summary")
+
+    # resume-plan
+    sub.add_parser("resume-plan", help="Print pending steps for pipeline resume")
+
     args = parser.parse_args()
     dispatch = {
         "init": cmd_init,
@@ -178,6 +227,8 @@ def main() -> None:
         "complete": cmd_complete,
         "read": cmd_read,
         "archive": cmd_archive,
+        "check": cmd_check,
+        "resume-plan": cmd_resume_plan,
     }
     dispatch[args.command](args)
 
