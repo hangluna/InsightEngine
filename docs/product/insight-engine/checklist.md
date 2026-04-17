@@ -634,8 +634,8 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
   - Branch: feature/insight-engine-us-5.2.1
   - Blocked By: None
 
-- [ ] **US-5.2.2** — Pipeline resume from saved state
-  - Status: PLANNED
+- [x] **US-5.2.2** — Pipeline resume from saved state
+  - Status: DONE ✅
   - Assignee: copilot
   - Branch: feature/insight-engine-us-5.2.2
   - Blocked By: ~~US-5.2.1~~ ✅

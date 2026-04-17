@@ -28,6 +28,35 @@ Use this skill when user:
 - Says "tóm tắt từ nhiều nguồn", "synthesize content", "create report"
 - Uses command `/tong-hop`
 - Describes a content task involving sources or output formats
+- Says **"tiếp tục"**, **"resume"**, **"tiếp tục từ"**, **"/resume"** → run Step 0 resume check
+
+---
+
+## Step 0: Resume Check (run on every startup)
+
+```bash
+python3 scripts/save_state.py check
+```
+
+| Output | Action |
+|--------|--------|
+| `NO_STATE` or `COMPLETED` | Skip to Step 1 (normal start) |
+| `IN_PROGRESS` + summary | Show summary to user in Vietnamese (see below), ask "⚡ Tiếp tục hay bắt đầu lại?" |
+
+**If user says tiếp tục / resume / "1" / "tiếp":**
+```bash
+python3 scripts/save_state.py resume-plan
+# Returns JSON list of pending steps
+# Skip completed steps — execute ONLY pending steps (from Step 4)
+```
+
+**If user says bắt đầu lại / fresh / "2" / "mới":**
+```bash
+python3 scripts/save_state.py archive
+# Then proceed from Step 1 as normal
+```
+
+**If no state file OR trigger was NOT a resume keyword:** skip to Step 1 silently.
 
 ---
 
