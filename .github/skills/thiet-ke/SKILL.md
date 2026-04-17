@@ -91,6 +91,47 @@ code references for font registration, color handling, and layout patterns.
 Before drawing, establish the visual direction. This is not a template — it is an aesthetic
 framework that guides every decision (colors, fonts, spacing, shapes).
 
+### Purpose & Audience Analysis (do this first)
+
+Design serves a purpose — and the purpose shapes every visual decision. Before choosing
+aesthetics, analyze what the design needs to accomplish:
+
+**1. Communication goal:**
+- What is the single most important message? (This becomes the visual focal point)
+- What emotion should it evoke? (Authority, excitement, warmth, urgency, celebration)
+- What action should the viewer take? (Attend event, feel recognized, read report)
+
+**2. Audience:**
+- Corporate executives → clean, restrained, serif fonts, muted palette
+- Young/creative audience → bold colors, modern sans-serif, dynamic composition
+- Academic/formal → traditional layout, serif typography, structured grid
+- General public → high contrast, large text, immediately clear message
+
+**3. Context of use:**
+- Will it be printed? → CMYK-safe colors, high DPI, check readability at print size
+- Digital display? → RGB is fine, consider screen sizes
+- Large format (poster)? → Test readability at 3m distance — title should be readable
+- Small format (card/badge)? → Simplify, fewer elements, larger relative text
+
+**4. Content hierarchy:**
+Rank every piece of text by importance (1 = most important):
+- Rank 1: Main title or name → largest, most prominent
+- Rank 2: Key supporting info (date, subtitle) → medium, clear
+- Rank 3: Details (organization, location, fine print) → smallest, but still readable
+- Don't give everything equal visual weight — that creates visual noise, not design
+
+Report the analysis:
+```
+🎨 Phân tích thiết kế:
+- Mục tiêu: {communication_goal}
+- Cảm xúc: {target_emotion}
+- Đối tượng: {audience_type}
+- Sử dụng: {usage_context}
+- Focal point: {main_message}
+```
+
+### Aesthetic Direction
+
 **Name the aesthetic** (1–2 words): e.g., "Concrete Poetry", "Chromatic Silence", "Metabolist Dreams"
 
 **Articulate the philosophy** (3–4 paragraphs) covering:

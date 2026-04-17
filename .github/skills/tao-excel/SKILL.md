@@ -91,13 +91,64 @@ Before generating, understand what the spreadsheet needs:
 Data can come from: Markdown tables (bien-soan output), CSV/TSV files, user-described
 structure, or numbers extracted from synthesized text.
 
-Present the plan to user (interactive mode):
+### Data Intelligence — Think Before You Build
+
+Don't just dump data into cells. Analyze the data to make the spreadsheet genuinely useful.
+A well-designed spreadsheet anticipates what questions the user will ask and provides the
+formulas and formatting to answer them immediately.
+
+**1. Suggest derived columns the user didn't ask for (but will want):**
+
+| Data pattern | Derived column suggestion | Formula example |
+|---|---|---|
+| Revenue + Cost columns | Profit, Profit Margin % | `=Revenue-Cost`, `=Profit/Revenue` |
+| Monthly data over time | YoY Change %, MoM Change % | `=(B3-B2)/B2` |
+| Categories with values | Rank, % of Total | `=RANK(B2,B$2:B$20)`, `=B2/SUM(B$2:B$20)` |
+| Dates + Status | Days elapsed, Overdue flag | `=TODAY()-A2`, `=IF(D2>deadline,"Quá hạn","OK")` |
+| Scores/ratings | Average, Min, Max, Std Dev | Summary row with aggregate formulas |
+| Multiple items with prices | Subtotal, Tax, Grand Total | `=SUMPRODUCT(qty,price)` |
+
+When suggesting, explain briefly: "Tôi đã thêm cột Profit Margin (%) vì khi có Revenue và Cost,
+đây là chỉ số phân tích quan trọng nhất."
+
+**2. Smart conditional formatting suggestions:**
+
+Conditional formatting transforms a wall of numbers into actionable intelligence:
+- **Data bars**: for columns where relative magnitude matters (revenue, scores)
+- **Color scales** (green→red): for performance metrics (high=good=green, low=bad=red)
+- **Icon sets**: for status indicators (✓/⚠/✗)
+- **Top/Bottom N**: highlight top 3 and bottom 3 values in key columns
+- **Threshold rules**: if there's a target/budget, color cells that exceed or fall short
+
+Apply the most relevant 2-3 rules — don't over-format. The goal is to make the most
+important patterns jump out visually.
+
+**3. Dashboard/summary sheet (when data is complex):**
+
+If the spreadsheet has 50+ rows or multiple data dimensions, add a Summary sheet as the
+first sheet. This sheet should contain:
+- Key metrics as large, prominent cells (total revenue, average score, etc.)
+- A mini-table with top/bottom performers
+- Formula references to detailed data sheets (so it auto-updates)
+
+Think of it as an executive dashboard — someone should be able to open the file, see the
+Summary sheet, and understand the key story without scrolling through data.
+
+**4. Flag potential chart candidates:**
+
+After analyzing the data, note which data would benefit from visualization. Report to the
+pipeline (or user): "Dữ liệu này phù hợp để tạo biểu đồ {type} — bạn muốn tạo biểu đồ
+không?" This helps tong-hop decide whether to chain tao-hinh.
+
+Present the enhanced plan to user (interactive mode):
 ```
 📊 Kế hoạch tạo Excel:
-- Số sheet: {N}
+- Số sheet: {N} (bao gồm {summary_if_applicable})
 - Sheet 1: {name} — {rows} hàng × {cols} cột
 - Công thức: {formula_count} ô tính toán
-- Định dạng: {format_description}
+- Cột bổ sung đề xuất: {derived_columns}
+- Conditional formatting: {formatting_rules}
+- Đề xuất biểu đồ: {chart_recommendation or "Không cần"}
 
 Bạn muốn điều chỉnh gì không?
 ```

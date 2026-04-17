@@ -68,6 +68,77 @@ IMAGE mode: User wants an AI-generated illustration
 2. Parse headers vs data rows; handle Vietnamese column names (UTF-8)
 3. If column mapping ambiguous → ask user which columns for X/Y
 
+### Step 2.5: Data Story Analysis
+
+Before generating a chart, analyze the data to understand what story it tells. A chart that
+just displays numbers is a table with extra steps — a good chart reveals insights. This step
+is what makes the difference between "here's a bar chart of your data" and "here's a chart
+that highlights the 3x revenue growth in Q4."
+
+**1. Identify the data story type:**
+
+| Story type | Signal in data | Best chart | Why |
+|---|---|---|---|
+| Trend over time | Sequential dates/months/years in X | Line chart | Shows direction and pace of change |
+| Comparison | Categories with single metric | Horizontal bar | Easy to compare lengths |
+| Composition | Parts of a whole (percentages/shares) | Pie (≤5 items) or stacked bar (>5) | Shows proportions |
+| Distribution | Many data points, continuous variable | Histogram or box plot | Shows spread and outliers |
+| Relationship | Two continuous variables | Scatter plot | Shows correlation |
+| Ranking | Categories sorted by value | Horizontal bar (sorted) | Clear visual ranking |
+| Multi-dimension | Multiple metrics per category | Radar chart (≤7 axes) | Shows profile/shape |
+
+Don't just default to what the user says — if they say "bar chart" but the data is clearly
+a time series with 24 monthly data points, suggest a line chart instead (but still offer the
+bar chart if they prefer). Explain why: "Dữ liệu theo thời gian thường hiển thị tốt hơn bằng
+biểu đồ đường vì nó thể hiện xu hướng rõ ràng hơn."
+
+**2. Identify key insights to annotate:**
+
+Read the actual data values and find:
+- **Max/min**: the highest and lowest values — annotate them on the chart
+- **Trends**: is the data going up, down, or flat? Add a trend line if useful
+- **Outliers**: values that are significantly different from the rest — highlight with color
+- **Crossover points**: where two series intersect (e.g., costs exceed revenue) — mark it
+- **Thresholds**: if there's a meaningful boundary (e.g., 100% target), add a reference line
+
+**3. Smart defaults based on data:**
+
+```yaml
+SMART_DEFAULTS:
+  time_series_data:
+    chart: line
+    add: trend_line, annotate_max_min, x_date_format
+  
+  few_categories_one_metric:  # ≤ 7 categories
+    chart: horizontal_bar (sorted descending)
+    add: value_labels_on_bars, highlight_top_1
+  
+  many_categories_one_metric:  # > 7 categories
+    chart: horizontal_bar (top 10 + "Others")
+    add: value_labels, note about truncation
+  
+  parts_of_whole:
+    chart: pie (≤5) or stacked_bar (>5)
+    add: percentage_labels, explode_largest_slice
+  
+  two_numeric_columns:
+    chart: scatter
+    add: correlation_coefficient_in_subtitle, trend_line
+  
+  multi_series_categories:
+    chart: grouped_bar or radar (if ≤7 axes)
+    add: legend, consistent_colors_per_series
+```
+
+Report the analysis:
+```
+📊 Phân tích dữ liệu:
+- Loại câu chuyện: {story_type}
+- Đề xuất biểu đồ: {recommended_chart} (lý do: {why})
+- Insights chính: {key_insights}
+- Annotations: {planned_annotations}
+```
+
 ### Step 3: Configure & Generate
 
 - Infer chart type from data shape when not specified (time series → line, categories → bar)

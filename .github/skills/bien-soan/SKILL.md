@@ -56,7 +56,24 @@ standard synthesis unless tong-hop specifies otherwise.
 2. Cross-source: identify overlapping content, flag contradictions
 3. If combined input > 50,000 words → switch to chunking mode (see `references/extra-modes.md`)
 4. If thin sections detected → trigger enrichment callback (see `references/extra-modes.md`)
-5. Report:
+5. **Deep research gap check** — when input comes from thu-thap's Deep Research mode
+   (content has dimension headers and coverage assessment):
+   - Review each dimension's coverage assessment
+   - Identify dimensions marked as ⚠️ (weak coverage)
+   - Check if the user's original request requires data that isn't present
+   - For each critical gap, generate a specific follow-up search query
+   - Report gaps back to tong-hop pipeline for supplementary thu-thap round:
+     ```
+     📊 Phân tích nội dung thu thập:
+     - ✅ Đủ dữ liệu: {covered_dimensions}
+     - ⚠️ Thiếu dữ liệu quan trọng:
+       - {gap_1}: cần tìm thêm "{suggested_query_1}"
+       - {gap_2}: cần tìm thêm "{suggested_query_2}"
+     → Đề xuất: tìm kiếm bổ sung trước khi tổng hợp
+     ```
+   - If gaps are non-critical (nice-to-have, not essential), proceed without supplementary
+     search and note the gaps in the output
+6. Report:
    ```
    📊 Phân tích nguồn:
    - {N} nguồn, ~{total_words} từ

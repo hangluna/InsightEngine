@@ -23,13 +23,19 @@ compatibility:
 
 # Thu Thập — Content Gathering Skill
 
-**References:** `references/code-patterns.md` | `references/web-search-enrichment.md`
+**References:** `references/code-patterns.md` | `references/web-search-enrichment.md` | `references/deep-research.md`
 
 This skill reads content from any source — local files, URLs, or web search — and returns
 clean Markdown text. It runs in two contexts: standalone (user asks to read something) or as
 the first step in the tong-hop pipeline. The key design choice is "markitdown first, fallback
 second" — markitdown handles most formats well, and format-specific readers only kick in when
 markitdown produces garbled or empty output.
+
+**Two search modes:**
+- **Standard**: single-query search for simple requests (default)
+- **Deep Research**: multi-round iterative search for complex research requests — decomposes
+  the query into dimensions, searches broadly, analyzes gaps, then searches deeper.
+  See `references/deep-research.md` for the full protocol.
 
 All responses to the user are in Vietnamese.
 
@@ -56,7 +62,117 @@ WEB_SEARCH:
 
 ---
 
-## Step 1: Identify Sources
+## Step 1: Detect Research Depth
+
+Before doing anything, classify the request's **research complexity**:
+
+```yaml
+COMPLEXITY_SIGNALS:
+  deep_research:
+    # ANY of these signals → use deep research mode
+    - Multiple information dimensions: user asks for several categories of info
+      ("models + benchmarks + classification + timelines")
+    - Temporal range: "từ 2024 đến nay", "over the past 3 years", "trends over time"
+    - Comparison/classification: "classify", "compare", "phân loại", "so sánh"
+    - Exhaustive intent: "tất cả", "comprehensive", "đầy đủ", "chi tiết", "toàn bộ"
+    - Data aggregation: "tổng hợp điểm benchmark", "list all", "collect all data points"
+    - Multi-step reasoning: answer requires connecting info from different sources
+    - Explicit: tong-hop passes research_depth: deep
+
+  standard_search:
+    # Simple requests → single-query search (existing Step 3 workflow)
+    - Single topic, single question
+    - User asks for a quick overview, not exhaustive data
+    - File reading only (no web search needed)
+    - User provides specific URLs to fetch
+
+RESULT:
+  deep → follow Deep Research Protocol below (replaces Steps 3-4 for web search)
+  standard → follow standard Steps 1-4 as before
+```
+
+---
+
+## Deep Research Protocol (when research_depth = deep)
+
+When a request is classified as deep research, **replace the standard web search flow**
+(Step 3 single query) with this multi-round protocol. File reading and URL fetching still
+follow the standard steps.
+
+Full spec: `references/deep-research.md`
+
+### DR-1: Query Decomposition
+
+1. Read the full request and identify every distinct information dimension
+2. For each dimension, generate 1-2 specific search queries
+3. Use English queries for technical topics (better results)
+4. Include year/date qualifiers, entity names, specific terms
+5. Report:
+   ```
+   🔬 Phân tích yêu cầu nghiên cứu:
+   Tôi đã chia thành {N} hướng tìm kiếm:
+   1. {dimension_1} → query: "{query_1}"
+   2. {dimension_2} → query: "{query_2}"
+   ...
+   ```
+
+### DR-2: Round 1 — Broad Search
+
+1. Execute `vscode-websearchforcopilot_webSearch` for ALL dimensions
+2. For each dimension, select 2-3 most relevant URLs (prefer authoritative sources)
+3. Fetch via `fetch_webpage`, tag content with dimension and source
+4. Report: "🔍 Vòng 1: {M} nguồn đã thu thập — đang phân tích gaps..."
+
+### DR-3: Gap Analysis (THE CRITICAL STEP)
+
+After Round 1, **read and analyze** what you've collected:
+
+1. For each dimension: is the content adequate? (< 500 chars relevant content = gap)
+2. Are there missing specifics? (mentions benchmarks exist but no actual numbers = gap)
+3. Temporal coverage complete? (asked for 2024-2026 but only have 2024 data = gap)
+4. Emerging topics? (results reveal important related info user didn't ask about)
+5. Entity coverage? (found 20 models but benchmark data for only 5 = gap)
+
+Generate follow-up queries for each gap (more specific than Round 1).
+
+Report:
+```
+📊 Phân tích gaps:
+- ✅ Đủ dữ liệu: {covered_dimensions}
+- ⚠️ Cần bổ sung: {gap_list_with_reasons}
+Đang tìm kiếm bổ sung...
+```
+
+### DR-4: Round 2+ — Targeted Deep Dives
+
+1. Search for gaps with specific, targeted queries
+2. Fewer URLs per query (1-2, targeting exactly what's missing)
+3. After Round 2, do another gap analysis
+4. If critical gaps remain and haven't hit limits → Round 3
+
+**Depth limits (hard stops):**
+- Maximum **3 rounds** (Round 1 broad + Round 2 targeted + Round 3 final)
+- Maximum **15 total URL fetches** across all rounds
+- Stop early if next round would add < 10% new content
+- Report honestly if some dimensions couldn't be fully covered
+
+### DR-5: Consolidate
+
+Combine all content with dimension headers and coverage assessment:
+```markdown
+## Research Summary
+### Dimensions Covered
+1. {dim_1}: {coverage} — {N} sources
+2. {dim_2}: {coverage} — {M} sources
+### Gaps Remaining
+- {honest_assessment_of_unfilled_gaps}
+---
+{combined_content_organized_by_dimension}
+```
+
+---
+
+## Step 2: Identify Sources
 
 1. Extract file paths from user request (absolute or relative)
 2. Extract URLs (http:// or https://)
@@ -72,7 +188,7 @@ WEB_SEARCH:
 
 ---
 
-## Step 2: Read Local Files
+## Step 3: Read Local Files
 
 For each file:
 1. Check file size first — skip files larger than 50 MB with a warning (large files exhaust
@@ -84,7 +200,7 @@ For each file:
 
 ---
 
-## Step 3: Fetch URL Content
+## Step 4: Fetch URL Content (Standard Mode)
 
 For each URL:
 1. Use `fetch_webpage` tool with `query: "main content"` — set a 30-second mental timeout:
@@ -102,7 +218,7 @@ For web search workflow, see `references/web-search-enrichment.md`.
 
 ---
 
-## Step 4: Combine & Return
+## Step 5: Combine & Return
 
 1. Structure each source as:
    ```

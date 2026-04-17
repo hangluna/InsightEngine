@@ -68,6 +68,39 @@ OUTPUT: Prints "✅ Saved: <path> (<size> KB, <N> sections, style: <style>)"
 
 ## Step 3: Parse Content
 
+Before converting Markdown to Word elements, analyze the content to make layout decisions
+that improve readability. A Word document is not just a formatted text dump — it's a
+reading experience. The same content can feel amateur or professional depending on how
+it's laid out.
+
+### Content Layout Intelligence
+
+**1. Identify content types and choose optimal treatment:**
+
+| Content pattern | Mechanical approach | Intelligent approach |
+|---|---|---|
+| Key finding or conclusion | Regular paragraph | **Callout box** — shaded background, slight indent, draws attention |
+| Long list (10+ items) | One huge bullet list | **Split into categories** or use a table with 2-3 columns |
+| Comparison of 2-3 options | Separate paragraphs | **Side-by-side table** with headers |
+| Step-by-step process | Numbered list | **Numbered list + bold first phrase** per step for scannability |
+| Statistics/key numbers | Inline in paragraph | **Pull out as bold highlight** or dedicated "Key Metrics" box |
+| Dense technical content | Wall of text | **Break with subheadings** every 300-400 words |
+
+**2. Page break intelligence:**
+- Add page breaks before major H2 sections (chapter-like breaks) if document > 5 pages
+- Never let a heading appear as the last line on a page (widow heading)
+- Keep short sections (< 1/3 page) together with their content — don't let them float alone
+- Tables that won't fit on the current page → start on next page
+
+**3. Visual rhythm:**
+- Alternate between text-heavy and visual elements (tables, charts, bullet lists)
+- If the document has 5+ pages of continuous paragraphs, suggest breaking up with a summary
+  table, callout box, or visual element
+- White space matters — don't cram content. Adequate paragraph spacing (6pt before, 6pt after)
+  gives the document room to breathe
+
+### Map to Word Elements
+
 Map Markdown to Word elements:
 - H1 → Document title; H2 → Heading 1; H3 → Heading 2; H4 → Heading 3
 - Paragraphs → Normal; Bullet lists → Bullet style; Numbered lists → List Number

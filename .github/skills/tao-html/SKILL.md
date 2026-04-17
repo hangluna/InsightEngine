@@ -59,6 +59,40 @@ Full color/font specs: `references/presentation-styles.md`
 
 ### Step 2: Parse Content & Generate HTML
 
+Before converting, analyze the content to make UX-aware decisions. HTML has more layout
+flexibility than Word or PDF — use that advantage to create a reading experience, not just
+a formatted text dump.
+
+**Content-Aware Layout Decisions:**
+
+1. **Navigation needs**: if the document has 5+ sections, add a sticky table of contents
+   sidebar (or top nav) so readers can jump between sections. For shorter documents, skip
+   the nav — it would be overhead.
+
+2. **Content type → HTML treatment:**
+   | Content pattern | Standard HTML | Intelligent HTML |
+   |---|---|---|
+   | Key finding | `<p>` | `<aside class="callout">` with accent border |
+   | Comparison data | `<table>` | Responsive table + highlight best/worst cells |
+   | Statistics | Inline text | `<div class="metric-card">` with large number + label |
+   | Step-by-step | `<ol>` | Timeline layout with visual step indicators |
+   | Long content (5000+ words) | Continuous scroll | Add "back to top" button + progress bar |
+   | Code snippets | `<pre>` | Syntax-highlighted `<pre>` with copy button |
+
+3. **Responsive intelligence**: the HTML file might be viewed on a phone, tablet, or
+   desktop. Use responsive breakpoints:
+   - Tables with 5+ columns → horizontally scrollable on mobile (`overflow-x: auto`)
+   - Two-column layouts → stack to single column on narrow screens
+   - Large images → `max-width: 100%` with aspect ratio preserved
+
+4. **Reading comfort**: optimize for sustained reading:
+   - Line length: 60-80 characters per line (use `max-width: 70ch` on text containers)
+   - Font size: 16-18px body text (not the default 14px which is too small for reading)
+   - Line height: 1.6-1.8 for body text
+   - Adequate paragraph spacing
+
+**Convert Markdown → HTML elements:**
+
 1. Convert Markdown → HTML elements:
    - Headings → `<h1>/<h2>/<h3>`; Paragraphs → `<p>`; Bold/italic → `<strong>/<em>`
    - Code blocks → `<pre><code>`; Tables → `<table>`; Lists → `<ul>/<ol><li>`

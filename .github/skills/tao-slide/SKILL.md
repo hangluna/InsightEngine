@@ -73,10 +73,97 @@ Full color/font specs: `references/template-styles.md`
 
 ## Step 2: Plan Slide Structure
 
-Map content to slide types:
+Before mapping content mechanically to slides, analyze the content to make intelligent
+presentation decisions. A good presentation tells a story — it doesn't just dump information
+onto slides. This analysis step is what separates a "slide deck" from a "presentation."
+
+### Narrative Analysis
+
+Read the synthesized content and identify the **narrative arc**:
+
+```yaml
+NARRATIVE_PATTERNS:
+  problem_solution:
+    structure: "Situation → Problem → Analysis → Solution → Results"
+    slide_design: "Open with compelling problem statement, build tension, resolve"
+    best_for: "Business proposals, project pitches, case studies"
+  
+  timeline_journey:
+    structure: "Past → Present → Future (or chronological events)"
+    slide_design: "Visual timeline flow, milestone highlights"
+    best_for: "Progress reports, history overviews, roadmaps"
+  
+  comparison:
+    structure: "Option A vs Option B (or multi-option)"
+    slide_design: "Side-by-side layouts, comparison tables, pros/cons"
+    best_for: "Decision reports, market analysis, product comparisons"
+  
+  deep_dive:
+    structure: "Overview → Detail 1 → Detail 2 → ... → Synthesis"
+    slide_design: "Start broad, zoom in per topic, end with big picture"
+    best_for: "Research presentations, technical deep-dives, training"
+  
+  data_story:
+    structure: "Key Insight → Supporting Data → Implications → Action"
+    slide_design: "Lead with the conclusion, then show evidence"
+    best_for: "Analytics reports, quarterly reviews, KPI dashboards"
+```
+
+### Audience & Density Calibration
+
+Think about who will see this presentation — it changes everything about slide density:
+- **Executive audience**: fewer slides, more white space, 1 key takeaway per slide, big
+  numbers and conclusions up front, skip methodology details
+- **Technical audience**: can handle denser slides, include methodology and data tables,
+  more content per slide is acceptable
+- **General/mixed audience**: balance — use progressive disclosure (simple slide → detail
+  slide for those who want to dig in)
+
+Default to the content context when the user doesn't specify audience. A quarterly business
+report implies executive; a research paper implies technical; a workshop implies general.
+
+### Content-to-Slide Intelligence
+
+For each piece of content, decide the optimal slide treatment:
+
+| Content type | Bad (mechanical) | Good (intelligent) |
+|---|---|---|
+| 10 bullet points | 1 slide with 10 bullets | 2-3 slides, grouped by theme |
+| Raw data table | Full table on one slide | Key insight as headline + simplified table |
+| Long paragraph | Text dump slide | Extract 1 key message + supporting visual |
+| Statistics/numbers | Buried in text | "Big number" highlight slide |
+| Process/steps | Numbered list | Step-by-step with visual flow |
+| Before/after | Two separate slides | Side-by-side comparison slide |
+
+### Engagement Techniques
+
+Weave these into the structure naturally (not forced):
+- **Opening hook**: start with a question, surprising stat, or bold statement — not a
+  table of contents (TOC slides are rarely engaging)
+- **Data highlights**: when you have a striking number, give it its own "big number" slide
+  (e.g., huge "47%" centered with a one-line explanation)
+- **Breathing slides**: between dense sections, add a section divider or visual-only slide
+  so the audience can reset
+- **Strong close**: end with a clear call-to-action or key takeaway, not just "Thank you"
+
+Report the analysis:
+```
+🎯 Phân tích nội dung:
+- Narrative: {pattern} (ví dụ: problem → solution)
+- Đối tượng: {audience_type}
+- Mật độ: {density_recommendation}
+- Kỹ thuật: {engagement_notes}
+- Đề xuất: {N} slides (thay vì {M} nếu làm cơ học)
+```
+
+### Map to Slides
+
+### Map to Slides
+
+Map content to slide types using the narrative analysis above:
 - H1 → title slide; H2 → section divider; H3 → content slide title
 - Bullet lists → content bullets (max 6/slide); Tables → table slide; Images → image slide
-- Key data points → highlight/callout slide; Auto-add closing slide "Cảm ơn!"
+- Key data points → highlight/callout slide; Auto-add closing slide with call-to-action
 
 **Content overflow**: when a section has more than 6 bullet points, split across multiple
 slides (e.g., "Key Findings (1/2)" and "Key Findings (2/2)"). Long paragraphs should be

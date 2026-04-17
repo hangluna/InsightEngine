@@ -79,6 +79,23 @@ python3 scripts/save_state.py archive
    - AI-generated illustration, background, character → **tao-hinh** (image mode)
    - Keywords that signal thiet-ke: "poster", "bìa", "cover", "certificate", "bằng khen",
      "thiệp", "invitation", "banner", "infographic", "thiết kế", "design"
+7. **Detect research complexity** — classify as standard or deep research:
+   ```yaml
+   DEEP_RESEARCH_SIGNALS:
+     # If ANY of these are true → set research_depth: deep for thu-thap
+     - Request has 3+ distinct information dimensions (e.g., "models + benchmarks + timeline + classification")
+     - Request spans a temporal range ("từ 2024 đến nay", "qua các năm")
+     - Request asks for comparison, classification, or taxonomy ("phân loại", "so sánh", "classify")
+     - Request demands exhaustive data ("tất cả", "toàn bộ", "comprehensive", "đầy đủ")
+     - Request requires data aggregation ("tổng hợp điểm", "benchmark scores", "collect all")
+     - Request involves multi-step reasoning (connecting info from multiple domains)
+   
+   STANDARD_SEARCH:
+     - Single topic, single question ("tìm kiếm về X")
+     - Quick overview request
+     - Specific URLs or files provided
+   ```
+   When deep research is detected, the execution plan must reflect this (see Step 3).
 
 ---
 
@@ -108,6 +125,28 @@ PLAN_FORMAT: |
 
   Bạn đồng ý với kế hoạch này không?
 
+DEEP_RESEARCH_PLAN_FORMAT: |
+  📋 Kế hoạch thực hiện:
+
+  **Loại yêu cầu:** 🔬 Nghiên cứu chuyên sâu (Deep Research)
+  **Hướng tìm kiếm:** {N} hướng nghiên cứu (sẽ tìm kiếm nhiều vòng)
+  **Đầu ra:** [format + style]
+
+  **Các hướng nghiên cứu:**
+  1. {dimension_1}
+  2. {dimension_2}
+  ...
+
+  **Các bước:**
+  1. 🔬 Phân tách yêu cầu thành {N} hướng nghiên cứu
+  2. 🔍 Vòng 1: Tìm kiếm rộng ({N} queries)
+  3. 📊 Phân tích gaps và tìm kiếm bổ sung (2-3 vòng)
+  4. 📝 Biên soạn và tổng hợp kết quả
+  5. 📄 Xuất {format} kiểu {style}
+  ⏱️ Ước tính: ~{total_time} (nghiên cứu sâu cần thêm thời gian)
+
+  Bạn đồng ý với kế hoạch này không?
+
 ROUTING:
   single_output:    thu-thap → bien-soan → tao-<format>
   translation_only: thu-thap → bien-soan (translation mode)
@@ -133,29 +172,41 @@ For chained outputs and intermediate files, see `references/output-chaining.md`.
 
 1. **thu-thap** (`references/../../thu-thap/SKILL.md`)
    - Input: sources from user request
-   - Output: combined Markdown text
+   - **If research_depth = deep**: pass this flag so thu-thap uses the Deep Research Protocol
+     (query decomposition → multi-round search → gap analysis → targeted deep dives).
+     Thu-thap will return content organized by research dimensions with coverage assessment.
+   - **If research_depth = standard**: single-query search as usual
+   - Output: combined Markdown text (with dimension headers if deep research)
    - Report: "✅ Thu thập hoàn tất — {N} nguồn, {total_chars} ký tự"
    - Save state: `python3 scripts/save_state.py update --step thu-thap`
 
-2. **bien-soan** (`.github/skills/bien-soan/SKILL.md`)
+2. **Analysis loop (deep research only)** — after thu-thap returns, bien-soan analyzes
+   the gathered content. If bien-soan identifies critical information gaps that make the
+   synthesis incomplete or inaccurate:
+   - bien-soan reports the gaps with specific follow-up queries
+   - tong-hop routes back to thu-thap for targeted supplementary search
+   - Maximum 1 supplementary round (to avoid infinite loops)
+   - This loop ensures the final synthesis is based on comprehensive data
+
+3. **bien-soan** (`.github/skills/bien-soan/SKILL.md`)
    - Input: Markdown from thu-thap
    - Options: `enrich: true` (default) | `include_notes: true` (if output = presentation)
    - Output: structured Markdown content
    - Report: "✅ Biên soạn hoàn tất — {sections} phần, {total_words} từ"
    - Save state: `python3 scripts/save_state.py update --step bien-soan`
 
-3. **tao-\<format\>** (skill determined by output_format)
+4. **tao-\<format\>** (skill determined by output_format)
    - Mapping: word → tao-word | excel → tao-excel | slides → tao-slide | pdf → tao-pdf | html → tao-html
    - Input: synthesized content from bien-soan
    - Output: final file
    - Report: "✅ Xuất file hoàn tất — {path} ({size})"
    - Save state: `python3 scripts/save_state.py update --step tao-<format> --output-file "<path>"`
 
-4. **tao-hinh** (conditional — if charts requested OR output is slides with data)
+5. **tao-hinh** (conditional — if charts requested OR output is slides with data)
    - Report: "✅ Tạo {N} biểu đồ hoàn tất"
    - Save state: `python3 scripts/save_state.py update --step tao-hinh --output-file "<chart_path>"`
 
-5. **thiet-ke** (conditional — if visual design requested: poster, cover, certificate, etc.)
+6. **thiet-ke** (conditional — if visual design requested: poster, cover, certificate, etc.)
    - Input: content from bien-soan (titles, key phrases) + user design intent
    - Output: PNG or PDF visual composition
    - Route here instead of tao-hinh when the user wants a **designed composition** with

@@ -72,6 +72,33 @@ OUTPUT: Prints "✅ Saved: <path> (<size> KB, <N> sections, style: <style>)"
 2. Check for: tables, images to embed, need for table of contents (3+ headings), page orientation
 3. Register Vietnamese font from system (see `references/pdf-script-details.md`)
 
+### Content Intelligence for PDF
+
+PDF is often the final delivery format — the user sends it to a boss, prints it, or attaches
+it to an email. Unlike Word, the recipient can't easily edit it, so the layout must be right
+the first time. Analyze the content before building:
+
+**1. Layout decisions based on content:**
+- Wide tables (6+ columns) → switch to landscape orientation for that page, or reduce font
+  size to 8pt. Don't let tables overflow and get silently clipped
+- Heavy data content (multiple tables, charts) → use 2-column layout for narrative text
+  between data elements to avoid the "wall of tables" problem
+- Short document (< 2 pages) with formal purpose → Canvas API with careful positioning
+  gives a more polished result than Platypus flow layout
+
+**2. Visual hierarchy emphasis:**
+- Identify the 2-3 most important findings/conclusions in the content
+- Render them with visual emphasis: slightly larger font, colored left border bar, or
+  shaded background box — so they stand out when someone skims the PDF
+- Section titles should have consistent visual treatment (color, size, spacing) that creates
+  a clear hierarchy when scrolling through the document
+
+**3. Print-awareness:**
+- PDFs are frequently printed. Ensure adequate margins (≥ 20mm all sides)
+- Avoid light gray text or very thin lines that disappear on lower-quality printers
+- Images and charts at ≥ 150 dpi for print quality
+- If the document will be bound (reports, theses), add extra inner margin (gutter: 10mm)
+
 ---
 
 ## Step 4: Convert Content & Build
