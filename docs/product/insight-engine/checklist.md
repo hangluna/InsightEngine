@@ -628,8 +628,8 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
 
 ### Epic 5.2: Session State Persistence
 
-- [ ] **US-5.2.1** — Session state save after each pipeline step
-  - Status: PLANNED
+- [x] **US-5.2.1** — Session state save after each pipeline step
+  - Status: DONE ✅
   - Assignee: copilot
   - Branch: feature/insight-engine-us-5.2.1
   - Blocked By: None
@@ -638,7 +638,7 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
   - Status: PLANNED
   - Assignee: copilot
   - Branch: feature/insight-engine-us-5.2.2
-  - Blocked By: US-5.2.1
+  - Blocked By: ~~US-5.2.1~~ ✅
 
 ---
 

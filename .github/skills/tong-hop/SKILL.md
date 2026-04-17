@@ -11,6 +11,7 @@ argument-hint: "[content request in Vietnamese or English]"
 # Tổng Hợp — InsightEngine Pipeline Orchestrator
 
 **References:** `references/pipeline-ux.md` | `references/session-summary.md` | `references/output-chaining.md`
+**State:** `tmp/.session-state.json` (written after each step via `scripts/save_state.py`)
 
 ```yaml
 MODE: Interactive — presents plan, gets approval, then executes
@@ -73,6 +74,13 @@ ROUTING:
   search_and_out:   thu-thap (web search) → bien-soan → tao-<format>
 ```
 
+After user approves plan, initialize session state:
+```bash
+python3 scripts/save_state.py init \
+  --request "<original user request>" \
+  --plan '{"input_sources":[...],"processing_type":"...","output_format":"...","style":"..."}'
+```
+
 ---
 
 ## Step 4: Execute Sub-Skills
@@ -84,21 +92,25 @@ For chained outputs and intermediate files, see `references/output-chaining.md`.
    - Input: sources from user request
    - Output: combined Markdown text
    - Report: "✅ Thu thập hoàn tất — {N} nguồn, {total_chars} ký tự"
+   - Save state: `python3 scripts/save_state.py update --step thu-thap`
 
 2. **bien-soan** (`.github/skills/bien-soan/SKILL.md`)
    - Input: Markdown from thu-thap
    - Options: `enrich: true` (default) | `include_notes: true` (if output = presentation)
    - Output: structured Markdown content
    - Report: "✅ Biên soạn hoàn tất — {sections} phần, {total_words} từ"
+   - Save state: `python3 scripts/save_state.py update --step bien-soan`
 
 3. **tao-\<format\>** (skill determined by output_format)
    - Mapping: word → tao-word | excel → tao-excel | slides → tao-slide | pdf → tao-pdf | html → tao-html
    - Input: synthesized content from bien-soan
    - Output: final file
    - Report: "✅ Xuất file hoàn tất — {path} ({size})"
+   - Save state: `python3 scripts/save_state.py update --step tao-<format> --output-file "<path>"`
 
 4. **tao-hinh** (conditional — if charts requested OR output is slides with data)
    - Report: "✅ Tạo {N} biểu đồ hoàn tất"
+   - Save state: `python3 scripts/save_state.py update --step tao-hinh --output-file "<chart_path>"`
 
 ---
 
@@ -118,6 +130,11 @@ FINAL_REPORT:
     3. ✅ Xuất {format}: {file_path}
 
     💡 Bạn muốn chỉnh sửa gì không?
+```
+
+After reporting, mark pipeline complete:
+```bash
+python3 scripts/save_state.py complete
 ```
 
 ---
