@@ -718,17 +718,17 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
 
 ### Epic 6.6: Advisory Agent & Conditional Skill Creation
 
-- [ ] **US-6.6.1** — Advisory agent — multi-perspective single-call
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
+- [x] **US-6.6.1** — Advisory agent — multi-perspective single-call
+  - Status: DONE
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-6.6.1
   - Blocked By: ~~US-6.2.1~~ ✅
 
 - [ ] **US-6.6.2** — Conditional skill-forge runtime
   - Status: PLANNED
   - Assignee: —
   - Branch: —
-  - Blocked By: US-6.6.1
+  - Blocked By: ~~US-6.6.1~~ ✅
 
 - [ ] **US-6.6.3** — Public skill clone with security check
   - Status: PLANNED
