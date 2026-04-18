@@ -317,24 +317,34 @@ size sanity (docx ≥15KB, pptx ≥50KB, pdf ≥20KB, html ≥5KB).
 ### 4.6: thiet-ke (conditional — visual design: poster, cover, certificate, banner)
 - Input: content + user design intent | Output: PNG/PDF | Save state after completion
 
-### 4.7: Output Audit — kiem-tra (ALWAYS RUN)
+### 4.7: Output Audit — kiem-tra (ALWAYS RUN — INTELLIGENCE-DRIVEN)
 
-After ALL output files generated, run kiem-tra to verify against user's original request.
+```
+╔════════════════════════════════════════════════════════════════════╗
+║  🔍 INTELLIGENCE AUDIT: READ output, OPEN URLs, COMPARE content  ║
+║  Do NOT just run scripts. FETCH URLs with fetch_webpage.          ║
+║  COMPARE reported data against what pages actually say.           ║
+╚════════════════════════════════════════════════════════════════════╝
+```
+
+After ALL output files generated:
+1. **READ** actual output content (not just file metadata)
+2. **OPEN** URLs from output using `fetch_webpage` — verify they are real item pages
+3. **COMPARE** output fields (title, salary, company) against actual page content
+4. **REASON** about whether output genuinely matches user's request
+5. For research: verify 5 key claims against sources
+
 Inputs: `original_request`, `required_fields`, `expanded_analysis`, `output_files`.
-Checks: requirement coverage, URL quality (data_collection), specificity (5-claim sample).
-On failure: report → propose fix → re-run (max 1 cycle). On pass: proceed to final report.
+On failure: report with evidence → specific re-fetch instructions → max 1 fix cycle.
 
 ---
 
 ## Error Recovery
 
 1. **Retry once** — transient errors often resolve on retry
-2. **Partial delivery** — if retry fails, save completed work, offer to user
-3. **Skip non-critical** — tao-hinh is optional; deliver main doc without charts if it fails
-4. **Save state before each step** — enables resume from last completed step
-5. **Report clearly** — tell user what failed, what error, what options (retry/skip/fix)
-
-Sub-skills skip their own pre-flight checks when called from pipeline (tong-hop already ran check_deps.py).
+2. **Partial delivery** — save completed work if retry fails
+3. **Skip non-critical** — tao-hinh optional; deliver main doc without charts
+4. **Save state** before each step for resume | **Report clearly** — what failed, options
 
 ---
 
@@ -386,7 +396,6 @@ See `references/session-summary.md` for full format and view suggestion specs.
 
 ## What This Skill Does NOT Do
 
-- Does NOT generate content itself — delegates to sub-skills
-- Does NOT install dependencies — redirects to /cai-dat
-- Does NOT process files directly — uses thu-thap
-- Does NOT skip the execution plan — always shows plan first
+- Does NOT generate content — delegates to sub-skills
+- Does NOT install deps — redirects to /cai-dat
+- Does NOT skip execution plan — always shows plan first

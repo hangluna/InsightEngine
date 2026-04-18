@@ -1,317 +1,207 @@
 ---
 name: kiem-tra
 description: |
-  Audit any InsightEngine output against the user's original requirements. Compares generated
-  files (Excel, Word, Slide, PDF, HTML) against what the user actually asked for — checking
-  requirement coverage, data completeness, URL quality, field accuracy, and content specificity.
-  Works both as an automatic post-production step in the tong-hop pipeline AND as a standalone
-  skill the user can invoke to verify any output.
-  Always use this skill when: the user says "kiểm tra đầu ra", "audit output", "so sánh với
-  yêu cầu", "check xem đã đúng chưa", "verify output", "output có đúng không", or when the
-  tong-hop pipeline reaches Step 4.7. Also use when the user is unhappy with output quality
-  and wants a structured analysis of what went wrong — "sai ở đâu", "thiếu gì", "tại sao
-  không đúng", "what's missing", "why is this wrong". Do NOT use for general content quality
-  reviews (depth, writing style) — those are handled by bien-soan's self-review loop.
-  This skill specifically checks: did the output match what the user requested?
+  Intelligence-driven audit: Copilot READS output content, OPENS URLs to verify, COMPARES
+  data against actual web pages, and REASONS about quality — not just script-based rule checks.
+  The key difference: this skill makes Copilot act as a human reviewer who actually clicks
+  links, reads pages, and judges whether the output is truthful and complete.
+  Works as tong-hop Step 4.7 (automatic) or standalone when user says "kiểm tra", "audit",
+  "check xem đúng chưa", "sai ở đâu", "thiếu gì", "verify output".
 argument-hint: "[original request] [output file or content to audit]"
-version: 1.1
+version: 2.0
 compatibility:
   tools:
     - read_file
-    - run_in_terminal (for file inspection)
+    - fetch_webpage (CRITICAL — for URL verification)
+    - run_in_terminal
 ---
 
-# Kiểm Tra — Output Audit Skill
+# Kiểm Tra — Intelligence-Driven Output Audit
 
 **References:** `references/audit-rubric.md`
 
-This skill answers one question: **"Does the output actually match what the user asked for?"**
+## Core Principle: READ → VERIFY → REASON (not script → rules → report)
 
-Quality gates in the pipeline check content depth, formatting, and file size — but they don't
-check whether the output addresses the user's specific requirements. A beautifully formatted
-20-page report is worthless if it doesn't answer the user's actual question. This skill closes
-that gap.
+```
+❌ OLD WAY: Run validate_urls.py → check URL patterns → report pass/fail
+✅ NEW WAY: Open each URL with fetch_webpage → read the page → judge:
+            "Is this actually a job posting? Does it match the data in our output?"
+```
 
-Two modes of operation:
-1. **Pipeline mode**: Called automatically by tong-hop at Step 4.7 after all output files
-   are generated. Receives structured inputs (original request, required fields, output content).
-2. **Standalone mode**: User invokes directly to audit any existing output. The skill reads
-   the output file(s) and asks the user for their original requirements.
-
-All responses to the user are in Vietnamese.
+**You are a human reviewer, not a script runner.** For every audit check:
+1. **READ** the actual output content (not just metadata)
+2. **VERIFY** claims by going to the source (fetch URLs, re-search topics)
+3. **REASON** about whether the output genuinely serves the user's need
+4. **COMPARE** output data against what the source page actually says
 
 ---
 
 ## Step 1: Gather Audit Inputs
 
-### Pipeline mode (called from tong-hop):
-Inputs are already structured:
-- `original_request`: User's full original prompt
-- `required_fields`: Structured field list (from Step 1 of tong-hop, if data_collection)
-- `expanded_analysis`: Dimensions or collection plan from Step 1.5
-- `output_files`: Generated file paths
-- `output_content`: The actual content in the output
+### Pipeline mode (from tong-hop Step 4.7):
+Inputs already available: `original_request`, `required_fields`, `expanded_analysis`,
+`output_files`, `output_content`.
 
-### Standalone mode (user invokes directly):
-1. Ask user: "Bạn muốn kiểm tra file nào?" → get output file path(s)
-2. Ask user: "Yêu cầu ban đầu của bạn là gì?" → get original request
-3. Read the output file(s) using appropriate tool (read_file, markitdown)
-4. Extract the content for analysis
+### Standalone mode:
+1. Ask: "Bạn muốn kiểm tra file nào?" → get file path
+2. Ask: "Yêu cầu ban đầu là gì?" → get original request
+3. Read the output file with read_file or markitdown
 
 ---
 
 ## Step 2: Requirement Extraction
 
-Parse the user's original request into a structured requirement checklist. Every distinct
-thing the user asked for becomes a checkable item.
-
-```yaml
-REQUIREMENT_PARSING:
-  method: |
-    Read the original request sentence by sentence. For each sentence or clause:
-    1. Is there a deliverable? (file, document, list, analysis)
-    2. Is there a data requirement? (specific fields, items, information)
-    3. Is there a quality requirement? (detailed, comprehensive, specific URLs)
-    4. Is there a scope requirement? (location, time range, quantity)
-    5. Is there a format requirement? (Excel, slides, charts)
-  
-  output_format:
-    requirements:
-      - id: R1
-        text: "Tìm tất cả job fresher JS ở HCM"
-        type: data_collection
-        checkable_criteria:
-          - "Jobs are specifically for fresher/< 1 year experience"
-          - "Jobs are in HCM or remote"
-          - "Jobs involve JavaScript/Node.js/React"
-          - "Multiple jobs found (not just 1-2)"
-      
-      - id: R2
-        text: "URL cụ thể của job"
-        type: field_quality
-        checkable_criteria:
-          - "Each job has a URL"
-          - "URL points to the specific job posting (not a search page)"
-          - "URL is accessible/valid format"
-      
-      - id: R3
-        text: "Review công ty"
-        type: supplementary_data
-        checkable_criteria:
-          - "Company review information is present"
-          - "Review source is identified (Glassdoor, ITViec reviews, etc.)"
-          - "Review link is provided"
-```
+Parse user's original request into checkable items:
+- Each distinct deliverable, data field, scope constraint, format requirement → one checklist item
+- Label each: R1, R2, R3...
+- For data_collection: each required field + "direct URLs to item pages" is always an implicit requirement
 
 ---
 
-## Step 3: Execute Audit Checks
+## Step 3: Intelligence-Driven Audit
 
-Run all applicable checks based on the request type and requirements:
+### 3.1: Requirement Coverage (READ output, REASON about each requirement)
 
-### 3.1: Requirement Coverage Audit
+For each requirement Rn:
+1. **Read** the output content — find where this requirement is addressed
+2. **Quote** the exact output text that addresses it (or note absence)
+3. **Reason**: does the quoted content actually satisfy what the user wanted?
+   - Not just "is the word mentioned" but "is the user's need met?"
+4. Grade: ✅ PASS | ⚠️ PARTIAL | ❌ FAIL
 
-For each requirement in the checklist:
+### 3.2: URL Verification (OPEN URLs — THE MOST CRITICAL CHECK)
 
-```yaml
-COVERAGE_CHECK:
-  for_each_requirement:
-    1. Search the output content for evidence that this requirement is addressed
-    2. Grade:
-       ✅ PASS: Requirement is fully addressed with specific data
-       ⚠️ PARTIAL: Requirement is mentioned but incomplete or vague
-       ❌ FAIL: Requirement is missing or not addressed
-    3. Provide evidence: quote the relevant part of the output (or note its absence)
-  
-  example:
-    R1: "Tìm tất cả job fresher JS ở HCM"
-    grade: ⚠️ PARTIAL
-    evidence: "Found 8 jobs but only 3 are specifically fresher-level. Others require 2-3 years."
-    fix_suggestion: "Filter more strictly for fresher/entry-level positions"
+```
+╔══════════════════════════════════════════════════════════════════════╗
+║  🔗 YOU MUST ACTUALLY OPEN URLs WITH fetch_webpage AND READ THEM   ║
+║  Do NOT just check URL patterns. Do NOT just run a script.         ║
+║  OPEN the URL. READ the page. JUDGE the content.                   ║
+╚══════════════════════════════════════════════════════════════════════╝
 ```
 
-### 3.2: URL Quality Audit (for data_collection requests)
+**For data_collection/mixed outputs — verify ALL URLs (or sample 5-10 if >15):**
 
-**Automated validation available:** `python3 scripts/validate_urls.py`
+For each URL in the output:
+1. **OPEN** the URL using `fetch_webpage`
+2. **READ** the page content returned
+3. **JUDGE** — answer these questions:
+   - Is this an individual item page (job posting, product detail) or a search/listing page?
+   - Does the page title/content match the item title in our output?
+   - Does the salary/price on the page match what we reported?
+   - Does the company/brand match?
+   - Is the page still live (not 404, not redirected to homepage)?
+4. **COMPARE** — for each field in our output, check against the actual page:
+   ```
+   Our output says: "FPT Software, Senior React Dev, 15-25 triệu"
+   Page actually says: "FPT Software, Senior React Developer, Lương: Thương lượng"
+   → ⚠️ Salary mismatch: we reported 15-25M but page says "Thương lượng"
+   ```
+5. **VERDICT** per URL:
+   - ✅ VERIFIED: Page is real item, data matches output
+   - ⚠️ MISMATCH: Page is real item but some fields don't match
+   - ❌ WRONG: Page is search/listing, or 404, or completely different item
+   - ❌ FABRICATED: URL returns no relevant content / domain doesn't exist
 
-```bash
-# Validate URLs from command line
-python3 scripts/validate_urls.py --urls "url1" "url2" "url3"
+**Report format for URL verification:**
+```
+🔗 Kiểm tra URL (đã mở và đọc {N} URLs):
 
-# Validate URLs from Excel output
-python3 scripts/validate_urls.py --excel output/jobs.xlsx --column "URL"
-
-# Get JSON output for programmatic use
-python3 scripts/validate_urls.py --urls "url1" "url2" --json
+| # | URL | Loại trang | Khớp dữ liệu? | Chi tiết |
+|---|-----|-----------|---------------|----------|
+| 1 | itviec.com/it-jobs/react-dev-fpt-123 | ✅ Job posting | ✅ Khớp | Title, company đúng |
+| 2 | topcv.vn/viec-lam/js-dev-456 | ✅ Job posting | ⚠️ Sai lương | Output: 15M, thực tế: Thương lượng |
+| 3 | google.com/search?q=jobs | ❌ Search page | ❌ | Không phải job posting |
 ```
 
-The script classifies each URL as:
-- ✅ DIRECT: Individual item page (has item ID/slug)
-- ❌ SEARCH: Search results page (?q=, /search?)
-- ❌ LISTING: Platform listing page without specific item
-- ❓ AMBIGUOUS: Can't determine from URL pattern alone
+### 3.3: Content Cross-Verification (for research reports)
 
-Threshold: ≤30% bad URLs to pass. If the script isn't available, use manual URL pattern analysis:
+**For research outputs — verify key claims against sources:**
 
-```yaml
-URL_AUDIT:
-    1. CHECK URL PATTERN:
-       - Search indicators: ?q=, /search?, /results?, /find?, /tag/, /category/
-       - Platform listing pages: /jobs, /viec-lam (without specific job ID)
-       - Direct item indicators: /jobs/12345, /viec-lam/abc-xyz-123, /job/detail/
-    
-    2. CLASSIFY:
-       ✅ DIRECT: URL points to a specific item page (has item ID or slug)
-       ⚠️ AMBIGUOUS: Can't determine from URL pattern alone
-       ❌ SEARCH/LISTING: URL is clearly a search or listing page
-    
-    3. VERIFY (for ambiguous URLs):
-       - Use fetch_webpage to check if the page has a single item vs a list
-       - Only verify a sample (3-5 URLs) to save time
-    
-    result_format:
-      total_urls: 25
-      direct: 18 (72%)
-      ambiguous: 4 (16%)
-      search_listing: 3 (12%)
-      verdict: "⚠️ 3 URLs là search links — cần thay thế bằng direct job links"
+Sample 5 key claims/data points from the output. For each:
+1. **IDENTIFY** the claim and its implied source
+2. **SEARCH** or **FETCH** to verify — use web search or fetch the cited URL
+3. **COMPARE** what the output says vs what the source actually says
+4. Grade: ✅ VERIFIED | ⚠️ UNVERIFIABLE | ❌ WRONG
+
+```
+Claim: "GPT-4o đạt 86.5% trên MMLU benchmark (OpenAI, 2024)"
+Action: Search "GPT-4o MMLU benchmark score"
+Source says: "GPT-4o: 88.7% on MMLU" (OpenAI blog)
+→ ⚠️ Score slightly off (86.5 vs 88.7) — minor factual error
 ```
 
-### 3.3: Field Completeness Audit (for data_collection requests)
+### 3.4: Field Completeness (data_collection — READ actual values, not just structure)
 
-```yaml
-FIELD_AUDIT:
-  for_each_required_field:
-    1. Check: is this field present in the output structure?
-    2. Check: what % of items have a value for this field?
-    3. Check: are the values meaningful (not all "N/A" or empty)?
-  
-  result_format:
-    fields:
-      - field: "job_title"
-        present: true
-        fill_rate: "100%"
-        quality: "✅ All have meaningful values"
-      - field: "salary"
-        present: true
-        fill_rate: "60%"
-        quality: "⚠️ 40% are 'Thương lượng' — acceptable but noted"
-      - field: "direct_url"
-        present: true
-        fill_rate: "100%"
-        quality: "❌ 12% are search links, not direct job URLs"
-```
-
-### 3.4: Specificity Audit (for all requests)
-
-```yaml
-SPECIFICITY_AUDIT:
-  method: |
-    Sample 5 key claims or data points from the output.
-    For each, classify:
-    ✅ SPECIFIC: Contains verifiable data (numbers, names, dates, URLs)
-    ⚠️ SEMI-SPECIFIC: References real things but lacks precision
-    ❌ VAGUE: Generic statement that could apply to anything
-  
-  example:
-    sample_1:
-      claim: "Nhiều công ty IT đang tuyển fresher JavaScript ở HCM"
-      grade: ❌ VAGUE
-      reason: "No company names, no job counts, no specific data"
-      better: "ITViec có 45 job fresher JS tại HCM (tính đến 04/2026), TopCV có 28 job"
-    
-    sample_2:
-      claim: "FPT Software tuyển Junior React Developer, lương 8-15 triệu, yêu cầu < 1 năm"
-      grade: ✅ SPECIFIC
-      reason: "Named company, specific position, salary range, experience requirement"
-```
+Don't just check "does the column exist" — READ the actual cell values:
+1. How many items have real, meaningful values vs "N/A", "Không rõ", empty?
+2. Are the values plausible? (salary "1 tỷ/tháng" for fresher job = suspicious)
+3. Are fields copy-pasted across rows? (all items have identical descriptions = AI fabrication)
 
 ---
 
-## Step 4: Generate Audit Report
+## Step 4: Audit Report
 
-```yaml
-AUDIT_REPORT_FORMAT: |
-  📋 **Báo cáo Kiểm Tra Đầu Ra**
-
-  **Yêu cầu gốc:** {original_request_summary}
-  **File kiểm tra:** {output_file_paths}
-
-  ---
-
-  ### 1. Phủ sóng yêu cầu ({met}/{total})
-  | # | Yêu cầu | Kết quả | Ghi chú |
-  |---|---------|---------|---------|
-  | R1 | {requirement_1} | ✅/⚠️/❌ | {evidence} |
-  | R2 | {requirement_2} | ✅/⚠️/❌ | {evidence} |
-  ...
-
-  {if data_collection:}
-  ### 2. Chất lượng URLs ({direct_pct}% trực tiếp)
-  - ✅ Direct links: {N}
-  - ❌ Search/listing links: {M}
-  - Cần fix: {specific_urls_to_fix}
-
-  ### 3. Đầy đủ dữ liệu
-  | Field | Có? | Fill rate | Chất lượng |
-  |-------|-----|-----------|-----------|
-  | {field_1} | ✅ | {pct}% | {quality} |
-  ...
-  {end if}
-
-  ### {N}. Độ cụ thể ({specific_pct}% cụ thể)
-  - Mẫu kiểm tra: {samples_checked} claims
-  - Cụ thể: {specific_count} | Mơ hồ: {vague_count}
-
-  ---
-
-  ### Tổng kết
-  **Đánh giá chung:** {overall_grade: PASS / PARTIAL / FAIL}
-  
-  {if PARTIAL or FAIL:}
-  **Cần cải thiện:**
-  1. {improvement_1}
-  2. {improvement_2}
-  ...
-  
-  **Đề xuất:** {remediation_suggestion}
-  {end if}
-
-OVERALL_GRADE:
-  PASS: All requirements ✅, URLs valid, fields complete
-  PARTIAL: Some ⚠️ but no ❌, minor gaps acceptable
-  FAIL: Any ❌ requirement, or >30% URLs are search links, or critical fields missing
 ```
+📋 **Báo cáo Kiểm Tra (Intelligence-Driven)**
+
+**Yêu cầu gốc:** {summary}
+**File kiểm tra:** {paths}
+**Phương pháp:** Copilot đã đọc output, mở {N} URLs, so sánh nội dung thực tế
+
+---
+### 1. Phủ sóng yêu cầu ({met}/{total})
+| # | Yêu cầu | Kết quả | Bằng chứng |
+|---|---------|---------|------------|
+| R1 | ... | ✅/⚠️/❌ | {quote from output or "không tìm thấy"} |
+
+### 2. Xác thực URL ({verified}/{total} URLs đã mở và đọc)
+| # | URL | Trang thực tế | Khớp dữ liệu? | Chi tiết |
+|---|-----|-------------|---------------|----------|
+{table}
+**Phát hiện:** {N} URLs là trang tìm kiếm, {M} URLs có dữ liệu sai
+
+### 3. Xác thực nội dung ({verified}/{sampled} claims kiểm chứng được)
+{claim verification results}
+
+### 4. Đầy đủ dữ liệu
+{field analysis with actual value quality, not just fill rate}
+
+---
+### Tổng kết
+**Đánh giá:** {PASS / PARTIAL / FAIL}
+**Phương pháp xác thực:** Đã mở {N} URLs, so sánh {M} claims, đọc {K} trang thực tế
+
+{if PARTIAL or FAIL:}
+**Vấn đề cụ thể:**
+1. {issue + evidence}
+2. {issue + evidence}
+
+**Đề xuất sửa:**
+1. {specific fix with instructions}
+{end if}
+```
+
+**Grading:**
+- **PASS**: All requirements met, ≥80% URLs verified as real items with matching data
+- **PARTIAL**: Requirements mostly met, some URL/data mismatches but output is usable
+- **FAIL**: Key requirements missed, OR >30% URLs are fake/wrong, OR major data fabrication
 
 ---
 
-## Step 5: Remediation (if audit fails)
+## Step 5: Remediation
 
-When called from the tong-hop pipeline:
+**Pipeline mode:** Report failures → generate specific re-fetch instructions → orchestrator re-runs.
+**Standalone:** Present report → ask user "Bạn muốn tôi sửa không?" → execute fixes if yes.
 
-```yaml
-REMEDIATION:
-  if_audit_fails:
-    1. Report specific failures to the orchestrator
-    2. Generate targeted fix instructions:
-       - For URL issues: "Re-fetch these {N} items from platform pages, not search results"
-       - For missing fields: "Need to fetch {field} from individual item pages"
-       - For missing requirements: "Requirement R{N} not addressed — need additional search for {topic}"
-    3. Orchestrator re-runs the relevant step with fix instructions
-    4. Re-audit after fix (maximum 1 fix cycle from pipeline)
-  
-  if_standalone:
-    1. Present full audit report to user
-    2. Ask: "Bạn muốn tôi sửa những vấn đề này không?"
-    3. If yes: generate fix plan and execute
-    4. If no: save report for reference
-```
+Fix instructions must be specific:
+- ❌ "Fix the URLs" → too vague
+- ✅ "Re-fetch items #3, #7, #12 from itviec.com — current URLs are search pages. Need: specific job page URL, verify salary matches"
 
 ---
 
 ## What This Skill Does NOT Do
 
-- Does NOT evaluate writing quality or content depth (bien-soan handles that)
-- Does NOT check formatting/layout (tao-<format> quality gates handle that)
-- Does NOT generate content — only audits existing output
-- Does NOT run automatically outside the tong-hop pipeline (unless user invokes)
+- Does NOT evaluate writing style or content depth (bien-soan handles that)
+- Does NOT check formatting/layout (tao-format quality gates handle that)
+- Does NOT run validate_urls.py as primary method — script is supplementary only
+- Does NOT generate content — only audits and verifies existing output
