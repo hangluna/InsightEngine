@@ -289,3 +289,79 @@ RUNTIME_AGENT_CREATION:
     ## Budget
     max {N} calls per pipeline run
 ```
+
+---
+
+## Runtime Skill Creation & Upgrade
+
+When a capability gap identifies the need for a new skill, or an existing skill needs
+a new mode/feature, dieu-phoi can create or upgrade skills at runtime.
+
+```yaml
+RUNTIME_SKILL_MANAGEMENT:
+  trigger: Gap evaluation identifies missing or insufficient skill
+
+  create_new_skill:
+    protocol:
+      1. DETECT that no existing skill covers the requirement
+      
+      2. PROPOSE to user (Vietnamese):
+         "🛠️ Cần skill mới: {skill_name}
+          Mục đích: {purpose}
+          Trigger: {trigger_examples}
+          
+          Tôi sẽ tạo .github/skills/{skill-name}/SKILL.md
+          Bạn đồng ý không? (y/n)"
+         
+      3. IF user approves:
+         a. Create .github/skills/{skill-name}/ directory
+         b. Write SKILL.md following InsightEngine skill standard:
+            - Title, version, description
+            - Trigger keywords (bilingual: Vietnamese + English)
+            - Workflow steps
+            - Input/output specifications
+            - Integration with existing pipeline
+         c. Register in copilot-instructions.md SKILLS section
+         d. Log in session state (created_skills[])
+         e. Confirm: "✅ Skill {name} đã tạo. Sẽ sử dụng ngay trong pipeline..."
+         
+      4. IF user declines:
+         → Skip, use closest available skill
+         → Log for future cai-tien session
+    
+    constraints:
+      - ALWAYS ask user before creating
+      - Max 2 new skills per pipeline run
+      - Must follow InsightEngine naming: Vietnamese, lowercase, hyphenated
+      - Must include bilingual triggers
+
+  upgrade_existing_skill:
+    protocol:
+      1. DETECT that skill exists but lacks needed capability
+         e.g., thu-thap exists but doesn't handle a specific file format
+         
+      2. PROPOSE upgrade (Vietnamese):
+         "📦 Skill '{skill_name}' cần nâng cấp:
+          Hiện tại: {current_capability}
+          Cần thêm: {needed_capability}
+          
+          Tôi sẽ thêm {feature} vào SKILL.md
+          Bạn đồng ý không? (y/n)"
+         
+      3. IF user approves:
+         a. Read current SKILL.md
+         b. Add new mode/capability section
+         c. Update triggers if needed
+         d. Log upgrade in session state
+         e. Confirm and continue
+         
+      4. IF user declines:
+         → Proceed with existing capability
+         → Log recommendation
+
+    constraints:
+      - Never remove existing capabilities
+      - Max 3 upgrades per pipeline run
+      - Preserve backward compatibility
+      - Must test upgrade doesn't break existing triggers
+```
