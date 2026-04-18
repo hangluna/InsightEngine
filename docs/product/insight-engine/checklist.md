@@ -824,8 +824,8 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
 
 ### Epic 8.4: Agent Integration Protocol
 
-- [ ] **US-8.4.1** — Standardized agent calling protocol
-  - Status: IN_PROGRESS
+- [x] **US-8.4.1** — Standardized agent calling protocol
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-8.4.1
   - Blocked By: ~~US-8.1.1~~ ✅, ~~US-8.2.1~~ ✅, ~~US-8.3.1~~ ✅
