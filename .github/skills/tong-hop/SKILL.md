@@ -172,32 +172,9 @@ python3 scripts/save_state.py archive
      - Specific URLs or files provided
    ```
    When deep research is detected, the execution plan must reflect this (see Step 3).
-10. **Detect content depth** — how rich should the output be?
-   ```yaml
-   CONTENT_DEPTH_SIGNALS:
-     standard:
-       # ONLY when user EXPLICITLY asks for brevity — never assume this
-       - "tóm tắt", "tóm lược", "ngắn gọn", "brief", "quick", "overview"
-       - "just the key points", "chỉ cần ý chính"
-       - Output format is email or memo (inherently short)
-     
-     comprehensive:
-       # DEFAULT — this is the new normal for ALL requests
-       # The single biggest user complaint is thin output. Users who invest time
-       # in a pipeline request deserve rich, expert-level content by default.
-       # Any request that doesn't explicitly ask for brevity gets comprehensive.
-       - "tổng hợp", "làm báo cáo", "tạo tài liệu", "viết về"
-       - "search rồi tạo file", "tạo slide", "tạo word"
-       - Most web search + output requests
-       - research_depth was "deep" (auto-upgrade)
-       - User specifies a long document type (whitepaper, research report, thesis)
-       - "chi tiết", "đầy đủ", "comprehensive", "chuyên sâu", "thật kỹ"
-       - "phân tích sâu", "deep analysis", "viết thật chi tiết"
-   ```
-   Pass `content_depth` to bien-soan. **Default is `comprehensive`** — not `standard` or
-   `enriched`. The most common complaint is thin, shallow output. Users who go through a
-   multi-step pipeline expect expert-level, substantive content — not a surface-level summary.
-   Only downgrade to `standard` when user explicitly asks for brevity.
+10. **Detect content depth** — default is `comprehensive` (5000-15000 words, expert-level).
+   Only use `standard` when user explicitly asks for brevity ("tóm tắt", "ngắn gọn", "brief").
+   Pass `content_depth` to bien-soan.
 
 ---
 
@@ -308,11 +285,32 @@ ROUTING:
 
 After user approves, save state: `python3 scripts/save_state.py save '<json>'`
 
+### Step 3.5: Print Pipeline Step Trace (MANDATORY)
+
+**Immediately after user approves the plan**, print the numbered step list. This trace MUST
+be visible throughout execution — update each step as it completes.
+
+```
+📋 Pipeline steps:
+  1. ⬜ Phân tích yêu cầu (Step 1.5)
+  2. ⬜ Thu thập dữ liệu
+  3. ⬜ Biên soạn nội dung
+  4. ⬜ Xuất file {format}
+  5. ⬜ Kiểm tra đầu ra
+```
+
+Adapt steps to match the actual routing plan (add/remove steps for chained output, charts, etc.).
+
+**After each step completes, print the UPDATED trace:**
+- Completed: `✅ {step_name} — {one-line summary}` (e.g., "✅ Thu thập — 12 nguồn, 25K ký tự")
+- Skipped: `⏭️ {step_name} — {reason}` (e.g., "⏭️ Biểu đồ — không có dữ liệu số")
+- Failed: `❌ {step_name} — {error}` (e.g., "❌ Thu thập URL — timeout sau 3 lần thử")
+
 ---
 
 ## Step 4: Execute Sub-Skills (with Auto Quality Review Loop)
 
-Show progress before and after each step (format: see `references/pipeline-ux.md`).
+**Update the step trace (Step 3.5) after EVERY sub-skill completes.**
 For chained outputs and intermediate files, see `references/output-chaining.md`.
 
 **CRITICAL: Every step now has an automatic quality review.** After each sub-skill completes,
