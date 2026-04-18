@@ -3,7 +3,7 @@
 > **Product:** InsightEngine  
 > **Product Slug:** insight-engine  
 > **Created:** 2026-04-16  
-> **Total User Stories:** 65 (21 Phase 0-3 DONE + 15 Phase 4 DONE + 4 Phase 5 DONE + 14 Phase 6 DONE + 5 Phase 7 DONE + 6 Phase 8 PLANNED)  
+> **Total User Stories:** 65 (21 Phase 0-3 DONE + 15 Phase 4 DONE + 4 Phase 5 DONE + 14 Phase 6 DONE + 5 Phase 7 DONE + 6 Phase 8 DONE)  
 > **Purpose:** Single source of execution state — track progress, enforce dependencies, enable safe parallel work
 
 ---
@@ -830,8 +830,8 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
   - Branch: feature/insight-engine-us-8.4.1
   - Blocked By: ~~US-8.1.1~~ ✅, ~~US-8.2.1~~ ✅, ~~US-8.3.1~~ ✅
 
-- [ ] **US-8.4.2** — tong-hop migration to shared agents
-  - Status: IN_PROGRESS
+- [x] **US-8.4.2** — tong-hop migration to shared agents
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-8.4.2
   - Blocked By: ~~US-8.4.1~~ ✅
