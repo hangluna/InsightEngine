@@ -772,8 +772,8 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
   - Branch: feature/insight-engine-us-7.2.1
   - Blocked By: None
 
-- [ ] **US-7.2.2** — Pre-output URL validation gate
-  - Status: IN_PROGRESS
+- [x] **US-7.2.2** — Pre-output URL validation gate
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-7.2.2
   - Blocked By: ~~US-7.2.1~~ ✅
