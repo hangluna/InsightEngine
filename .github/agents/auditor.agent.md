@@ -156,7 +156,7 @@ ON_FAIL (< 80/100):
 
 ## Caller Examples
 
-### From tao-word
+### From gen-word
 ```yaml
 CALL_AUDITOR:
   when: After generating .docx file
@@ -167,7 +167,7 @@ CALL_AUDITOR:
     required_fields: "{sections/topics user asked for}"
 ```
 
-### From tao-excel
+### From gen-excel
 ```yaml
 CALL_AUDITOR:
   when: After generating .xlsx file
@@ -180,7 +180,7 @@ CALL_AUDITOR:
 
 ---
 
-## Differences from kiem-tra Skill
+## Differences from verify Skill
 
 ```yaml
 AUDITOR_AGENT vs KIEM_TRA_SKILL:
@@ -191,9 +191,9 @@ AUDITOR_AGENT vs KIEM_TRA_SKILL:
     - Budget-controlled (max 5 per pipeline)
     - Used for automated quality gates
 
-  kiem-tra:
+  verify:
     - Full skill with URL verification, web fetching, deep analysis
-    - Called by user or as tong-hop Step 4.7
+    - Called by user or as synthesize Step 4.7
     - Produces detailed Vietnamese audit report
     - Used for final human-facing quality audit
 
@@ -252,7 +252,7 @@ RETRY_LOOP:
   score_tracking_integration:
     - score_history saved to session state after each attempt
     - Available for cross-session resume (pick up retry from where it stopped)
-    - Available for cai-tien retrospective analysis
+    - Available for improve retrospective analysis
 
   budget_impact:
     - Original audit: 1 call

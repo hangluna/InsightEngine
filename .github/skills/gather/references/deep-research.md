@@ -200,8 +200,8 @@ After all rounds, combine content with clear provenance:
 {combined_content_organized_by_dimension}
 ```
 
-This structured output goes to bien-soan for synthesis. The dimension headers and
-coverage assessment help bien-soan understand what content is strong vs weak.
+This structured output goes to compose for synthesis. The dimension headers and
+coverage assessment help compose understand what content is strong vs weak.
 
 ---
 
@@ -250,17 +250,17 @@ từng năm, model nào opensource, phân loại các AI model, tổng hợp đi
 - ✅ All dimensions covered with data
 - ⚠️ Some 2026 models have no benchmark data yet (honestly noted)
 
-**Total:** 21 URLs, ~105,000 chars, organized by 8 dimensions → passed to bien-soan
+**Total:** 21 URLs, ~105,000 chars, organized by 8 dimensions → passed to compose
 
 ---
 
 ## Integration with Pipeline
 
-When tong-hop detects a complex research request, it sets `research_depth: deep` in the
-thu-thap call. Thu-thap then follows this reference instead of the standard single-query
-workflow. The phases above replace Steps 1-4 of the standard thu-thap flow.
+When synthesize detects a complex research request, it sets `research_depth: deep` in the
+gather call. Thu-thap then follows this reference instead of the standard single-query
+workflow. The phases above replace Steps 1-4 of the standard gather flow.
 
-tong-hop should also adjust its execution plan to show the research phases:
+synthesize should also adjust its execution plan to show the research phases:
 ```
 📋 Kế hoạch thực hiện:
 

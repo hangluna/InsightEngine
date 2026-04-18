@@ -3,7 +3,7 @@ name: synthesize
 description: |
   Content synthesis skill for InsightEngine — gathers, merges, and structures multi-source content
   into coherent documents. Called by the orchestrator orchestrator agent or directly via synthesize.
-  Handles the core content pipeline: thu-thap → bien-soan → tao-[format] with auto quality review.
+  Handles the core content pipeline: gather → compose → tao-[format] with auto quality review.
   Default content depth is COMPREHENSIVE (expert-level, rich content).
   Supports session resume via save_state.py and chained outputs (e.g., Excel data → chart → slide).
   NOTE: Orchestration (intent classification, routing) is handled by orchestrator agent.
@@ -13,12 +13,12 @@ version: 2.0
 compatibility:
   requires:
     - Python >= 3.10
-    - All sub-skill dependencies (see cai-dat)
+    - All sub-skill dependencies (see setup)
   tools:
     - run_in_terminal
     - read_file
-    - fetch_webpage (for thu-thap)
-    - vscode-websearchforcopilot_webSearch (for thu-thap)
+    - fetch_webpage (for gather)
+    - vscode-websearchforcopilot_webSearch (for gather)
 ---
 
 # Tổng Hợp — Content Synthesis Skill
@@ -60,11 +60,11 @@ Run `python3 scripts/save_state.py check`.
 4. Detect **style**: corporate | academic | minimal | dark-modern | creative (see `references/pipeline-ux.md`)
 5. Detect if request implies **chained outputs** (see `references/output-chaining.md`)
 6. **Detect REQUEST_TYPE** (details: `references/request-analysis.md`):
-   - **research**: "tổng hợp về", "báo cáo", topic understanding → thu-thap → bien-soan → tao-\<format\>
-   - **data_collection**: "tìm tất cả", "liệt kê", specific fields/entities → thu-thap (platform) → tao-excel
-   - **mixed**: both collection + analysis → thu-thap → tao-excel → bien-soan → tao-\<format\>
+   - **research**: "tổng hợp về", "báo cáo", topic understanding → gather → compose → tao-\<format\>
+   - **data_collection**: "tìm tất cả", "liệt kê", specific fields/entities → gather (platform) → gen-excel
+   - **mixed**: both collection + analysis → gather → gen-excel → compose → tao-\<format\>
 7. **Extract REQUIRED_FIELDS** (data_collection/mixed): scan prompt for fields, auto-add `direct_url` + `source_platform`.
-8. **Visual design routing**: poster/cover/cert/banner → thiet-ke | charts → tao-hinh | both possible.
+8. **Visual design routing**: poster/cover/cert/banner → design | charts → gen-image | both possible.
 9. **Research depth**: deep if 3+ dimensions, temporal range, comparison, exhaustive data; else standard.
 10. **Content depth**: default `comprehensive` (5000-15000 words). Only `standard` if user says "tóm tắt"/"ngắn gọn".
 
@@ -150,13 +150,13 @@ Present the plan in Vietnamese with sources, processing, output format, and step
 
 ```yaml
 ROUTING: # Choose based on Step 1 parse results
-  single_output:    thu-thap → bien-soan → tao-<format>
-  translation_only: thu-thap → bien-soan (translation mode)
-  chained_output:   thu-thap → bien-soan → tao-excel → tao-hinh → tao-slide
-  search_and_out:   thu-thap (web search) → bien-soan → tao-<format>
-  design:           thu-thap → bien-soan → thiet-ke (poster/cover/certificate/banner)
-  data_collection:  thu-thap (platform-specific) → extract → tao-excel → kiem-tra
-  mixed_collection: thu-thap → extract → tao-excel → bien-soan → tao-<format> → kiem-tra
+  single_output:    gather → compose → tao-<format>
+  translation_only: gather → compose (translation mode)
+  chained_output:   gather → compose → gen-excel → gen-image → gen-slide
+  search_and_out:   gather (web search) → compose → tao-<format>
+  design:           gather → compose → design (poster/cover/certificate/banner)
+  data_collection:  gather (platform-specific) → extract → gen-excel → verify
+  mixed_collection: gather → extract → gen-excel → compose → tao-<format> → verify
 ```
 
 After user approves, save state: `python3 scripts/save_state.py save '<json>'`
@@ -208,18 +208,18 @@ if quality is still poor after 2 retries, proceed with a warning to the user.
 
 | Sub-skill | Verify | Minimum | Fail action |
 |-----------|--------|---------|-------------|
-| thu-thap | Read collected content | ≥5K chars (standard), ≥15K (deep) | Re-search with expanded queries |
-| thu-thap (DC) | Open 3 URLs with fetch_webpage | URLs are item pages, not search | Re-fetch from platform |
-| bien-soan | Read synthesized text | ≥300 words/section, ≥3 data points each | Re-synthesize with depth flag |
-| tao-word | `read_file` the .docx (via markitdown) | ≥1000 words, all sections present | Re-generate |
-| tao-excel | Read output rows + open 2 URLs | Data in cells, URLs work, formulas correct | Re-generate + re-fetch bad URLs |
-| tao-slide | Read slide JSON/content | ≥8 slides, each has ≥3 bullet points with data | Re-generate |
-| tao-pdf | Read content | Matches source, Vietnamese renders | Re-generate |
-| tao-html | Read HTML source | All sections, reveal.js works, styles applied | Re-generate |
+| gather | Read collected content | ≥5K chars (standard), ≥15K (deep) | Re-search with expanded queries |
+| gather (DC) | Open 3 URLs with fetch_webpage | URLs are item pages, not search | Re-fetch from platform |
+| compose | Read synthesized text | ≥300 words/section, ≥3 data points each | Re-synthesize with depth flag |
+| gen-word | `read_file` the .docx (via markitdown) | ≥1000 words, all sections present | Re-generate |
+| gen-excel | Read output rows + open 2 URLs | Data in cells, URLs work, formulas correct | Re-generate + re-fetch bad URLs |
+| gen-slide | Read slide JSON/content | ≥8 slides, each has ≥3 bullet points with data | Re-generate |
+| gen-pdf | Read content | Matches source, Vietnamese renders | Re-generate |
+| gen-html | Read HTML source | All sections, reveal.js works, styles applied | Re-generate |
 
 ---
 
-### 4.1: thu-thap (with quality gate)
+### 4.1: gather (with quality gate)
 
 **Execute:**
 - Input: sources from user request + expanded dimensions from Step 1.5
@@ -231,45 +231,45 @@ if quality is still poor after 2 retries, proceed with a warning to the user.
   - Thu-thap must fetch INDIVIDUAL ITEM PAGES, not search result pages
   - Thu-thap must extract structured data fields from each page
   - See `references/data-collection-mode.md` for detailed protocol
-- **If research_depth = deep**: pass this flag so thu-thap uses the Deep Research Protocol
+- **If research_depth = deep**: pass this flag so gather uses the Deep Research Protocol
   (query decomposition → multi-round search → gap analysis → targeted deep dives).
   Thu-thap will return content organized by research dimensions with coverage assessment.
 - **If research_depth = standard**: single-query search as usual
 - Output: combined Markdown text (with dimension headers if deep research)
 - Report: "✅ Thu thập hoàn tất — {N} nguồn, {total_chars} ký tự"
-- Save state: `python3 scripts/save_state.py update --step thu-thap`
+- Save state: `python3 scripts/save_state.py update --step gather`
 
 **⚠️ VERIFY (mandatory):** Read the collected content. For data_collection: open 3 URLs with
 `fetch_webpage` — are they real item pages? Do titles match? If search/listing pages → re-fetch.
 
 ### 4.2: Analysis loop (ALWAYS — not just deep research)
 
-After thu-thap returns, **always** analyze the gathered content quality:
+After gather returns, **always** analyze the gathered content quality:
 - Review each dimension from Step 1.5 analysis against collected data
-- If bien-soan identifies critical information gaps:
+- If compose identifies critical information gaps:
   - Generate specific follow-up queries targeting the gaps
-  - Route back to thu-thap for supplementary search
+  - Route back to gather for supplementary search
   - Maximum 2 supplementary rounds (up from 1)
 - This loop ensures the synthesis is based on substantive data, not thin scraps
 
-### 4.3: bien-soan (with quality gate)
+### 4.3: compose (with quality gate)
 
 **Execute:**
-- Input: Markdown from thu-thap
+- Input: Markdown from gather
 - Options: `enrich: true` (always) | `include_notes: true` (if output = presentation)
 - **content_depth**: pass the detected depth level (standard | comprehensive)
   - Default: `comprehensive` (produces 5000-15000 words — expert-level depth)
   - Only `standard` if user explicitly asked for brevity
 - Output: structured Markdown content
 - Report: "✅ Biên soạn hoàn tất — {sections} phần, {total_words} từ"
-- Save state: `python3 scripts/save_state.py update --step bien-soan`
+- Save state: `python3 scripts/save_state.py update --step compose`
 
 **⚠️ VERIFY (mandatory):** Read the synthesized content. Count words per section. Are there
 specific numbers, names, examples? If any section is < 200 words or purely generic → re-synthesize.
 
 ### 4.3b: Pre-Output URL Validation (data_collection/mixed ONLY — HARD GATE)
 
-**Run BEFORE tao-excel generates the output file, NOT after.**
+**Run BEFORE gen-excel generates the output file, NOT after.**
 
 ```bash
 python3 scripts/validate_urls.py --urls "url1" "url2" ... --json
@@ -277,7 +277,7 @@ python3 scripts/validate_urls.py --urls "url1" "url2" ... --json
 
 ```yaml
 URL_VALIDATION_GATE:
-  1. Extract all collected direct_url values from thu-thap output
+  1. Extract all collected direct_url values from gather output
   2. Run validate_urls.py → classify each as DIRECT/SEARCH/LISTING/AMBIGUOUS
   3. For SEARCH or LISTING URLs:
      a. Auto re-fetch: search for specific item on the same platform
@@ -292,8 +292,8 @@ URL_VALIDATION_GATE:
 ### 4.4: tao-\<format\> (with quality gate)
 
 **Execute:**
-- Mapping: word → tao-word | excel → tao-excel | slides → tao-slide | pdf → tao-pdf | html → tao-html
-- Input: synthesized content from bien-soan
+- Mapping: word → gen-word | excel → gen-excel | slides → gen-slide | pdf → gen-pdf | html → gen-html
+- Input: synthesized content from compose
 - Output: final file
 - Report: "✅ Xuất file hoàn tất — {path} ({size})"
 - Save state: `python3 scripts/save_state.py update --step tao-<format> --output-file "<path>"`
@@ -302,14 +302,14 @@ URL_VALIDATION_GATE:
 data? Open 2 URLs — do pages match? For Word: ≥1000 words? For Slides: ≥8 slides with content?
 For any format: if output is thin/empty/broken → re-generate. Do NOT move on just because script exited 0.
 
-### 4.5: tao-hinh (conditional — if charts requested OR output is slides with data)
+### 4.5: gen-image (conditional — if charts requested OR output is slides with data)
 - Report: "✅ Tạo {N} biểu đồ hoàn tất"
-- Save state: `python3 scripts/save_state.py update --step tao-hinh --output-file "<chart_path>"`
+- Save state: `python3 scripts/save_state.py update --step gen-image --output-file "<chart_path>"`
 
-### 4.6: thiet-ke (conditional — visual design: poster, cover, certificate, banner)
+### 4.6: design (conditional — visual design: poster, cover, certificate, banner)
 - Input: content + user design intent | Output: PNG/PDF | Save state after completion
 
-### 4.7: Output Audit — kiem-tra (ALWAYS RUN — INTELLIGENCE-DRIVEN)
+### 4.7: Output Audit — verify (ALWAYS RUN — INTELLIGENCE-DRIVEN)
 
 ```
 ╔════════════════════════════════════════════════════════════════════╗
@@ -335,7 +335,7 @@ On failure: report with evidence → specific re-fetch instructions → max 1 fi
 
 1. **Retry once** — transient errors often resolve on retry
 2. **Partial delivery** — save completed work if retry fails
-3. **Skip non-critical** — tao-hinh optional; deliver main doc without charts
+3. **Skip non-critical** — gen-image optional; deliver main doc without charts
 4. **Save state** before each step for resume | **Report clearly** — what failed, options
 
 ---
@@ -379,10 +379,10 @@ See `references/session-summary.md` for full format and view suggestion specs.
 
 | # | Input | Flow | Output |
 |---|-------|------|--------|
-| 1 | "Tổng hợp 3 file PDF thành báo cáo Word corporate" | Analysis → thu-thap → bien-soan → tao-word | output/bao-cao.docx (20pp) |
-| 2 | "Search AI trends 2026, slide dark-modern" | Analysis → Expand 5 dims → thu-thap (deep) → bien-soan → tao-slide | output/ai-trends.pptx (22 slides) |
-| 3 | "Excel sales_data.xlsx → chart → Word" | thu-thap → bien-soan → tao-hinh → tao-word | report + charts |
-| 4 | "Tìm jobs fresher JS HCM, Excel + slide phân tích" | type=mixed → thu-thap (platform) → tao-excel → bien-soan → tao-slide → kiem-tra | xlsx + pptx |
+| 1 | "Tổng hợp 3 file PDF thành báo cáo Word corporate" | Analysis → gather → compose → gen-word | output/bao-cao.docx (20pp) |
+| 2 | "Search AI trends 2026, slide dark-modern" | Analysis → Expand 5 dims → gather (deep) → compose → gen-slide | output/ai-trends.pptx (22 slides) |
+| 3 | "Excel sales_data.xlsx → chart → Word" | gather → compose → gen-image → gen-word | report + charts |
+| 4 | "Tìm jobs fresher JS HCM, Excel + slide phân tích" | type=mixed → gather (platform) → gen-excel → compose → gen-slide → verify | xlsx + pptx |
 
 ---
 

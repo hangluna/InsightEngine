@@ -32,14 +32,14 @@ compatibility:
 
 This skill reads content from any source — local files, URLs, or web search — and returns
 clean Markdown text. It runs in two contexts: standalone (user asks to read something) or as
-the first step in the tong-hop pipeline. The key design choice is "markitdown first, fallback
+the first step in the synthesize pipeline. The key design choice is "markitdown first, fallback
 second" — markitdown handles most formats well, and format-specific readers only kick in when
 markitdown produces garbled or empty output.
 
 **Quality-driven gathering:** After collecting content, this skill auto-reviews what was gathered
 against the request dimensions. If the content is too thin, lacks specifics, or doesn't cover
 all requested topics, it automatically expands search queries and does additional fetch rounds
-(max 2 supplementary rounds). The goal is to ensure bien-soan receives enough raw material to
+(max 2 supplementary rounds). The goal is to ensure compose receives enough raw material to
 produce rich, expert-level output — not scraps that force shallow synthesis.
 
 **Three search modes:**
@@ -102,7 +102,7 @@ COMPLEXITY_SIGNALS:
     - Exhaustive intent: "tất cả", "comprehensive", "đầy đủ", "chi tiết", "toàn bộ"
     - Data aggregation: "tổng hợp điểm benchmark", "list all", "collect all data points"
     - Multi-step reasoning: answer requires connecting info from different sources
-    - Explicit: tong-hop passes research_depth: deep
+    - Explicit: synthesize passes research_depth: deep
 
   standard_search:
     # Simple requests → single-query search (existing Step 3 workflow)
@@ -114,7 +114,7 @@ COMPLEXITY_SIGNALS:
   data_collection:
     # User wants SPECIFIC ITEMS collected with structured fields
     # This is NOT research — it's entity discovery + field extraction
-    - tong-hop passes mode: data_collection
+    - synthesize passes mode: data_collection
     - User wants items: jobs, products, courses, apartments, companies
     - User specifies output fields: "tên, lương, URL, kinh nghiệm"
     - Needs platform-specific search, not generic Google
@@ -132,7 +132,7 @@ RESULT:
 
 > **Advanced examples:** `references/data-collection.md`
 
-When tong-hop passes `mode: data_collection`, the workflow changes fundamentally.
+When synthesize passes `mode: data_collection`, the workflow changes fundamentally.
 **Key principle: every item in output MUST have a direct_url to its detail page.**
 A search result URL or listing page URL is NEVER acceptable as a final output URL.
 
@@ -371,7 +371,7 @@ After fetching each URL, **READ the first 200-500 chars** and verify:
 4. **Correct page type**: if you need item detail, verify URL has item ID/slug (not ?q= search)
 5. **Content relevance**: does the text relate to the user's query?
 
-**If bad**: mark as failed, try next tier or alternative URL. Do NOT pass garbage to bien-soan.
+**If bad**: mark as failed, try next tier or alternative URL. Do NOT pass garbage to compose.
 
 ---
 
@@ -402,7 +402,7 @@ GATHERING_QUALITY_CHECK:
       - Target data-rich sources: research papers, industry reports, official statistics
 
   coverage_check:
-    # If dimensions were specified (by tong-hop Step 1.5), are they all covered?
+    # If dimensions were specified (by synthesize Step 1.5), are they all covered?
     method: Map collected content to each requested dimension
     fail_if: Any major dimension has < 500 chars of relevant content
     fail_action: Generate targeted queries for uncovered dimensions
@@ -492,7 +492,7 @@ Output: Fetched page content → cleaned Markdown (~3,000 ký tự), nav/footer 
 
 ## What This Skill Does NOT Do
 
-- Does NOT synthesize or merge content — that's bien-soan
-- Does NOT translate content — that's bien-soan
+- Does NOT synthesize or merge content — that's compose
+- Does NOT translate content — that's compose
 - Does NOT generate output files — that's tao-* skills
 - Does NOT install dependencies — redirects to setup

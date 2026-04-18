@@ -80,7 +80,7 @@ After installing the playwright Python package, install the Chromium browser bin
 ```bash
 python3 -m playwright install chromium
 ```
-This is needed by thu-thap's Tier 3 stealth fetch mode for bot-protected websites.
+This is needed by gather's Tier 3 stealth fetch mode for bot-protected websites.
 The browser binary is ~150 MB and cached at `~/.cache/ms-playwright/`.
 If this step fails (e.g., no disk space), warn but continue — Tier 1 and Tier 2 URL
 fetching still work without Playwright.
@@ -89,7 +89,7 @@ fetching still work without Playwright.
 If pptxgenjs is missing: `npm install -g pptxgenjs`
 
 ### Step 7: Create utility scripts
-If `scripts/recalc.py` doesn't exist, create it (needed by tao-excel for formula recalculation).
+If `scripts/recalc.py` doesn't exist, create it (needed by gen-excel for formula recalculation).
 
 ### Step 8: Verify
 Run `python3 scripts/check_deps.py` again to confirm everything is installed. Expected:
@@ -116,7 +116,7 @@ Do not auto-install Python — it affects the system and requires user judgment.
 
 ## Optional Dependencies (Apple Silicon)
 
-Only suggest these if the user asks for image generation (tao-hinh AI mode), or explicitly
+Only suggest these if the user asks for image generation (gen-image AI mode), or explicitly
 requests optional packages:
 ```bash
 pip3 install --user torch diffusers transformers accelerate
@@ -136,7 +136,7 @@ Method: opens workbook with `data_only=False`, iterates all sheets, touches form
 to mark them dirty, then saves. Full recalc happens when the user opens the file in
 Excel/LibreOffice.
 
-Created during `setup` setup or the first time tao-excel runs.
+Created during `setup` setup or the first time gen-excel runs.
 
 ---
 

@@ -1,4 +1,4 @@
-# Creative Style — tao-slide
+# Creative Style — gen-slide
 
 ## Color Scheme
 

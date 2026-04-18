@@ -19,10 +19,10 @@ AUDIT_TIERS:
     cost: 1 agent call per step
     applied_to: CRITICAL steps only
     critical_steps:
-      - bien-soan (content synthesis — #1 quality complaint area)
-      - tao-word (final document — thin content check)
-      - tao-slide (final presentation — thin content check)
-      - tao-excel (formulas and data integrity)
+      - compose (content synthesis — #1 quality complaint area)
+      - gen-word (final document — thin content check)
+      - gen-slide (final presentation — thin content check)
+      - gen-excel (formulas and data integrity)
     purpose: Deep quality check — depth, specificity, analysis quality
     who: Audit agent reviews output against criteria
     
@@ -43,37 +43,37 @@ Every step does a self-check before returning. No extra agent calls.
 
 ```yaml
 SELF_REVIEW_CHECKS:
-  thu-thap:
+  gather:
     - Content length > 500 chars (not empty/garbled)
     - All requested sources attempted
     - File format correctly read (not raw binary)
     
-  bien-soan:
+  compose:
     - Output length meets depth target (comprehensive > 3000 words)
     - All sections from outline present
     - No placeholder text ("[TODO]", "[INSERT]")
     - No untranslated sections (for translation mode)
     
-  tao-word:
+  gen-word:
     - File created and size > 10KB
     - All major sections present
     - No empty pages
     
-  tao-excel:
+  gen-excel:
     - File created and has data
     - Formulas present (no hardcoded calculations)
     - recalc.py executed
     
-  tao-slide:
+  gen-slide:
     - File created and size > 20KB
     - Slide count matches plan (±2)
     - No empty slides
     
-  tao-pdf:
+  gen-pdf:
     - File created and size > 5KB
     - Content renders correctly
     
-  tao-html:
+  gen-html:
     - File created and valid HTML
     - Styles applied
     
@@ -100,26 +100,26 @@ AGENT_AUDIT_PROTOCOL:
     - Quality criteria (per step type)
     
   audit_criteria:
-    bien-soan:
+    compose:
       - Depth score (0-100): Is content expert-level or surface-level?
       - Specificity score (0-100): Are there specific data, examples, numbers?
       - Analysis score (0-100): Is there original analysis or just regurgitation?
       - Coverage score (0-100): Are all dimensions from request expansion covered?
       - PASS threshold: average ≥ 70
       
-    tao-word:
+    gen-word:
       - Completeness (0-100): All sections present with content?
       - Formatting (0-100): Professional appearance, consistent styles?
       - Thin Content Flag: Any section < 100 words?
       - PASS threshold: completeness ≥ 80, no thin sections
       
-    tao-slide:
+    gen-slide:
       - Content per slide: Each slide has meaningful content?
       - Visual elements: Charts, icons, or images present?
       - Thin Content Flag: Any slide with only a title?
       - PASS threshold: no empty slides, avg content score ≥ 70
       
-    tao-excel:
+    gen-excel:
       - Formula integrity: All formulas resolve? No #REF!, #DIV/0!?
       - Data completeness: Required fields all populated?
       - PASS threshold: 0 formula errors, ≥ 90% field completeness

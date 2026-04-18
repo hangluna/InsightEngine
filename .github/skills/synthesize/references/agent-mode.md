@@ -2,7 +2,7 @@
 
 > **Status: ALWAYS ON.** The AGENT_MODE feature flag has been retired.  
 > All agent calls now use **shared agents** at `.github/skills/shared-agents/`.  
-> Inline agents at `tong-hop/agents/` are ARCHIVED — do not use.  
+> Inline agents at `synthesize/agents/` are ARCHIVED — do not use.  
 > Calling protocol: `.github/skills/shared-agents/agent-protocol.md`
 
 ---
@@ -31,8 +31,8 @@ CALLING_CONVENTION:
   pattern: READ agent .md → BUILD prompt from template → CALL runSubagent → PARSE response
   
 ARCHIVED_INLINE_AGENTS:
-  - tong-hop/agents/strategist.md → ARCHIVED (replaced by shared-agents/strategist.md)
-  - tong-hop/agents/advisory.md → ARCHIVED (replaced by shared-agents/advisory.md)
+  - synthesize/agents/strategist.md → ARCHIVED (replaced by shared-agents/strategist.md)
+  - synthesize/agents/advisory.md → ARCHIVED (replaced by shared-agents/advisory.md)
 ```
 
 ---
@@ -80,7 +80,7 @@ PIPELINE_FLOW:
       Execute steps from strategist's generated workflow.
       Each step:
       1. Read step config from shared context workflow.steps[i]
-      2. Execute the assigned skill (thu-thap, bien-soan, tao-*, etc.)
+      2. Execute the assigned skill (gather, compose, tao-*, etc.)
       3. Apply quality gate:
          - Tier 1 self-review: always (VERIFY-OR-LOOP in SKILL.md)
          - Tier 2 agent audit: critical steps → call shared-agents/auditor.md via runSubagent
@@ -125,12 +125,12 @@ PIPELINE_BUDGET:
 
 ```yaml
 ARCHIVED:
-  tong-hop/agents/strategist.md:
+  synthesize/agents/strategist.md:
     status: ARCHIVED — replaced by shared-agents/strategist.md
     reason: Phase 8 migration to shared Copilot agent architecture
     action: Do NOT read or call this file. Use shared-agents/strategist.md instead.
     
-  tong-hop/agents/advisory.md:
+  synthesize/agents/advisory.md:
     status: ARCHIVED — replaced by shared-agents/advisory.md
     reason: Phase 8 migration to shared Copilot agent architecture
     action: Do NOT read or call this file. Use shared-agents/advisory.md instead.

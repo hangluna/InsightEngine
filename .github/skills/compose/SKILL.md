@@ -11,7 +11,7 @@ description: |
   wants to expand brief notes into a full document, or says things like "gộp lại", "tổng hợp nội
   dung", "dịch sang tiếng Anh/Việt", "viết lại đầy đủ hơn", "biên soạn", "synthesize",
   "merge content" — even if they don't say "compose" explicitly.
-argument-hint: "[content from thu-thap or direct text] [mode: standard|comprehensive]"
+argument-hint: "[content from gather or direct text] [mode: standard|comprehensive]"
 version: 1.1
 compatibility:
   requires:
@@ -57,7 +57,7 @@ Detect mode from user keywords:
 - **summary**: triggered by "tóm tắt", "summarize" — extract key points and condense.
 
 In interactive mode, ask the user which mode they prefer. In pipeline mode, default to
-**comprehensive** unless tong-hop specifies otherwise.
+**comprehensive** unless synthesize specifies otherwise.
 
 ### Content Depth — Why Default Output Is Often Too Thin
 
@@ -93,7 +93,7 @@ informative**. This means:
 
 ### Content Depth Levels
 
-tong-hop passes a `content_depth` parameter based on request analysis:
+synthesize passes a `content_depth` parameter based on request analysis:
 
 ```yaml
 CONTENT_DEPTH:
@@ -135,13 +135,13 @@ the model to default to shallow output.
 2. Cross-source: identify overlapping content, flag contradictions
 3. If combined input > 50,000 words → switch to chunking mode (see `references/extra-modes.md`)
 4. If thin sections detected → trigger enrichment callback (see `references/extra-modes.md`)
-5. **Deep research gap check** — when input comes from thu-thap's Deep Research mode
+5. **Deep research gap check** — when input comes from gather's Deep Research mode
    (content has dimension headers and coverage assessment):
    - Review each dimension's coverage assessment
    - Identify dimensions marked as ⚠️ (weak coverage)
    - Check if the user's original request requires data that isn't present
    - For each critical gap, generate a specific follow-up search query
-   - Report gaps back to tong-hop pipeline for supplementary thu-thap round:
+   - Report gaps back to synthesize pipeline for supplementary gather round:
      ```
      📊 Phân tích nội dung thu thập:
      - ✅ Đủ dữ liệu: {covered_dimensions}
@@ -411,7 +411,7 @@ Output: English translation preserving structure, headings, and formatting
 
 ## What This Skill Does NOT Do
 
-- Does NOT read files — that's thu-thap
+- Does NOT read files — that's gather
 - Does NOT generate output files — that's tao-* skills
 - Does NOT install dependencies — redirects to setup
-- Does NOT search the web — delegates to thu-thap
+- Does NOT search the web — delegates to gather

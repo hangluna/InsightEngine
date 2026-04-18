@@ -10,18 +10,18 @@
 ```yaml
 steps:
   - id: gather
-    skill: thu-thap
+    skill: gather
     instructions: "Read source file(s) or URL(s)."
     quality_gate: none
     
   - id: translate
-    skill: bien-soan
+    skill: compose
     mode: translation
     instructions: "Translate content [source_lang] → [target_lang]. Preserve structure and formatting."
     quality_gate: self_review (check completeness, no untranslated sections)
     
   - id: output
-    skill: tao-word | tao-pdf
+    skill: gen-word | gen-pdf
     instructions: "Generate output in same structure as source."
     quality_gate: none
 
@@ -38,18 +38,18 @@ estimated_agent_calls: 3-4
 ```yaml
 steps:
   - id: gather
-    skill: thu-thap
+    skill: gather
     instructions: "Read all source content. Preserve section structure."
     quality_gate: self_review (check content captured completely)
     
   - id: translate
-    skill: bien-soan
+    skill: compose
     mode: translation
     instructions: "Natural translation preserving tone, technical terms, and formatting. Section by section."
     quality_gate: agent_audit (naturalness, completeness, terminology)
     
   - id: output
-    skill: tao-word | tao-pdf
+    skill: gen-word | gen-pdf
     template: match source format
     instructions: "Generate output matching source document style."
     quality_gate: self_review
@@ -67,18 +67,18 @@ estimated_agent_calls: 5-8
 ```yaml
 steps:
   - id: gather
-    skill: thu-thap
+    skill: gather
     instructions: "Read source. Identify domain-specific terminology."
     quality_gate: self_review
     
   - id: translate
-    skill: bien-soan
+    skill: compose
     mode: translation
     instructions: "Expert translation with domain awareness. Adapt cultural references. Maintain idiomatic quality."
     quality_gate: agent_audit (naturalness + domain accuracy)
     
   - id: output
-    skill: tao-word | tao-pdf
+    skill: gen-word | gen-pdf
     template: match source
     instructions: "Professional output matching or exceeding source quality."
     quality_gate: self_review

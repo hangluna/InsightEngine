@@ -40,7 +40,7 @@ CONFIRMATION_GATES:
 
   triggers:
     image_generation:
-      condition: Step involves tao-hinh image generation (not charts)
+      condition: Step involves gen-image image generation (not charts)
       message: |
         ⚠️ Bước tiếp theo: Tạo hình ảnh minh họa (~30-60 giây)
         Bạn muốn tiếp tục không? (có/bỏ qua)
@@ -100,19 +100,19 @@ STYLE_INFERENCE:
 ```yaml
 TIME_ESTIMATION:
   per_step_estimates:
-    thu-thap:
+    gather:
       file_read: "~5 giây/file"
       url_fetch: "~10 giây/URL"
       web_search: "~15 giây/truy vấn"
-    bien-soan:
+    compose:
       synthesis: "~10 giây/1,000 từ input"
       translation: "~15 giây/1,000 từ"
-    tao-word: "~10 giây"
-    tao-excel: "~10 giây"
-    tao-slide: "~15 giây"
-    tao-pdf: "~10 giây"
-    tao-html: "~5 giây"
-    tao-hinh:
+    gen-word: "~10 giây"
+    gen-excel: "~10 giây"
+    gen-slide: "~15 giây"
+    gen-pdf: "~10 giây"
+    gen-html: "~5 giây"
+    gen-image:
       chart: "~5 giây/biểu đồ"
       image: "~30-60 giây/hình (Apple Silicon)"
 

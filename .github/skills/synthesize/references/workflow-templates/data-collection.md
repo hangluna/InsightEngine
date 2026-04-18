@@ -10,14 +10,14 @@
 ```yaml
 steps:
   - id: search
-    skill: thu-thap
+    skill: gather
     mode: data_collection
     instructions: "Search for [ITEMS] on [PLATFORMS]. Collect up to 15 items."
     required_fields: [name, url, source_platform]
     quality_gate: none
     
   - id: output
-    skill: tao-excel
+    skill: gen-excel
     instructions: "Create Excel with collected items. One row per item."
     quality_gate: self_review (check URL validity)
 
@@ -34,21 +34,21 @@ estimated_agent_calls: 2-4
 ```yaml
 steps:
   - id: search
-    skill: thu-thap
+    skill: gather
     mode: data_collection
     instructions: "Search for [ITEMS] across 3-5 platforms. Collect 20-30 items. Fetch detail pages for each."
     required_fields: [from user request + auto-added: direct_url, source_platform]
     quality_gate: self_review (check field completeness, URL validity)
     
   - id: enrich
-    skill: thu-thap
+    skill: gather
     mode: supplementary
     condition: "if < 15 items found"
     instructions: "Expand to more platforms or broaden filters."
     quality_gate: none
     
   - id: output
-    skill: tao-excel
+    skill: gen-excel
     instructions: "Professional Excel with formatting, filters, and formulas."
     quality_gate: self_review (formula check, completeness)
 
@@ -65,20 +65,20 @@ estimated_agent_calls: 5-8
 ```yaml
 steps:
   - id: search
-    skill: thu-thap
+    skill: gather
     mode: data_collection
     instructions: "Exhaustive search across all relevant platforms. 30-50 items target."
     required_fields: [all from user + comprehensive defaults]
     quality_gate: self_review (coverage + diversity)
     
   - id: verify
-    skill: thu-thap
+    skill: gather
     mode: verification
     instructions: "Verify top 10 URLs are still active and data is current."
     quality_gate: none
     
   - id: output
-    skill: tao-excel
+    skill: gen-excel
     instructions: "Professional Excel with conditional formatting, charts, summary tab."
     quality_gate: agent_audit (data quality)
 

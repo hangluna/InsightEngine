@@ -10,18 +10,18 @@
 ```yaml
 steps:
   - id: gather
-    skill: thu-thap
+    skill: gather
     instructions: "Read all source files/URLs. Keep sources separate for comparison."
     quality_gate: none
     
   - id: compare
-    skill: bien-soan
+    skill: compose
     mode: standard
     instructions: "Create comparison table. List similarities and differences."
     quality_gate: self_review (all sources represented)
     
   - id: output
-    skill: tao-word | tao-excel
+    skill: gen-word | gen-excel
     instructions: "Generate output with comparison table."
     quality_gate: none
 
@@ -38,25 +38,25 @@ estimated_agent_calls: 3-5
 ```yaml
 steps:
   - id: gather
-    skill: thu-thap
+    skill: gather
     instructions: "Gather content from all comparison targets. Ensure consistent data for each."
     quality_gate: self_review (balance check — similar depth per source)
     
   - id: compare
-    skill: bien-soan
+    skill: compose
     mode: comprehensive
     instructions: "Deep comparison across multiple dimensions. Include: feature matrix, pros/cons, scoring, recommendation."
     quality_gate: agent_audit (balance, depth, objectivity)
     
   - id: charts
-    skill: tao-hinh
+    skill: gen-image
     mode: chart
     condition: "if quantitative data available"
     instructions: "Generate comparison charts (radar, bar, grouped)."
     quality_gate: self_review
     
   - id: output
-    skill: tao-word | tao-excel
+    skill: gen-word | gen-excel
     instructions: "Professional report with embedded charts and comparison tables."
     quality_gate: self_review
 
@@ -73,24 +73,24 @@ estimated_agent_calls: 8-14
 ```yaml
 steps:
   - id: gather
-    skill: thu-thap
+    skill: gather
     mode: deep_research
     instructions: "Deep research on each comparison target. Find quantitative data, reviews, benchmarks."
     quality_gate: self_review (data completeness per target)
     
   - id: compare
-    skill: bien-soan
+    skill: compose
     mode: comprehensive
     instructions: "Expert comparison with weighted scoring, SWOT per target, and synthesis recommendation."
     quality_gate: agent_audit
     
   - id: charts
-    skill: tao-hinh
+    skill: gen-image
     instructions: "Comprehensive visualization: radar chart, feature matrix, trend lines."
     quality_gate: self_review
     
   - id: output
-    skill: tao-word | tao-excel
+    skill: gen-word | gen-excel
     instructions: "Consulting-grade comparison report."
     quality_gate: self_review
 

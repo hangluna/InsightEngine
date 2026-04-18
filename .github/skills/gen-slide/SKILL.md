@@ -38,7 +38,7 @@ Two engines — **Pro là mặc định** cho mọi bài thuyết trình mới:
 
 ```
 User request →
-  ├─ Pipeline call từ tong-hop HOẶC bất kỳ yêu cầu tạo slide?
+  ├─ Pipeline call từ synthesize HOẶC bất kỳ yêu cầu tạo slide?
   │   → Pro mode (MẶC ĐỊNH)
   │   Đọc `references/pro-mode.md`
   │
@@ -95,7 +95,7 @@ Full color/font specs: `references/template-styles.md`
 ## Step 1: Pre-flight Check
 
 1. Check pptxgenjs: `node -e "require('pptxgenjs')"` → if fail: "Chạy: npm install -g pptxgenjs"
-2. Confirm content available; if missing: redirect to thu-thap + bien-soan
+2. Confirm content available; if missing: redirect to gather + compose
 3. Determine style (user-specified, pipeline-inferred, or ask)
 4. Determine output path (default: `./<title>.pptx`)
 
@@ -107,13 +107,13 @@ deliver a deck that embarrasses the user.
 
 **Automatic rejection criteria (when called from pipeline):**
 - **< 500 words** for a multi-section presentation: REJECT. Do not generate. Signal back to
-  tong-hop: "❌ Content quá mỏng ({word_count} từ) cho presentation. Cần biên soạn lại
-  ở mức comprehensive." This triggers tong-hop's quality loop to re-run bien-soan.
+  synthesize: "❌ Content quá mỏng ({word_count} từ) cho presentation. Cần biên soạn lại
+  ở mức comprehensive." This triggers synthesize's quality loop to re-run compose.
 - **Sections with only 1 bullet or 1 sentence**: these will produce nearly-empty slides.
   If more than 40% of sections are this thin, REJECT and loop back.
 - **All sections are surface-level** (no data, no examples, no specifics): REJECT. A
   presentation without concrete content wastes the audience's time.
-- **No speaker notes content**: For comprehensive content, bien-soan should provide enough
+- **No speaker notes content**: For comprehensive content, compose should provide enough
   material for both slides AND speaker notes. If content is only enough for slide text,
   it's too thin.
 
@@ -260,7 +260,7 @@ Bạn muốn điều chỉnh gì không?
    }
    ```
 5. Notes field: optional on any slide → written as PowerPoint speaker notes (View → Notes)
-6. Auto-generate notes when tong-hop sets `include_notes: true` (bien-soan provides notes)
+6. Auto-generate notes when synthesize sets `include_notes: true` (compose provides notes)
 
 ---
 
@@ -330,8 +330,8 @@ AUDITOR_GATE:
 
 ## What This Skill Does NOT Do
 
-- Does NOT read input files — that's thu-thap
-- Does NOT synthesize content — that's bien-soan
+- Does NOT read input files — that's gather
+- Does NOT synthesize content — that's compose
 - Does NOT generate Word/PDF/HTML — use respective tao-* skills
 - Does NOT install dependencies — redirects to setup
-- Does NOT generate chart images — that's tao-hinh (receives chart PNGs as input)
+- Does NOT generate chart images — that's gen-image (receives chart PNGs as input)

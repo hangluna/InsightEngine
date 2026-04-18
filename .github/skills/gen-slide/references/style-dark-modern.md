@@ -1,4 +1,4 @@
-# Dark/Modern Style — tao-slide
+# Dark/Modern Style — gen-slide
 
 ## Color Scheme
 

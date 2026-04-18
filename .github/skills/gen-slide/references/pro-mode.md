@@ -26,7 +26,7 @@ editable.
 | Templates | 10 (light/dark) | 20+ (ngành-specific) |
 | Charts | Cơ bản (bar/line/pie) | 50+ types (sankey, treemap, gantt...) |
 | Icons | Không | 6700+ (3 libraries) |
-| Source conversion | Không (cần thu-thap) | Built-in (PDF/DOCX/URL) |
+| Source conversion | Không (cần gather) | Built-in (PDF/DOCX/URL) |
 | Speed | Nhanh | Chậm hơn (multi-step) |
 | Pipeline integration | Tốt | Cần manual orchestration |
 
@@ -46,7 +46,7 @@ Source → Project Init → Template → Strategist (8 Confirmations)
 
 ## Step 1: Source Content
 
-Nếu đã có content từ bien-soan, dùng trực tiếp. Nếu có source docs:
+Nếu đã có content từ compose, dùng trực tiếp. Nếu có source docs:
 
 | Source | Command |
 |--------|---------|
@@ -161,7 +161,7 @@ Pro mode cũng phải kiểm tra content trước khi generate:
 
 ## Pipeline Integration
 
-Khi gọi từ tong-hop pipeline:
+Khi gọi từ synthesize pipeline:
 - Default: **Pro mode** (mặc định cho mọi yêu cầu tạo slide)
 - Chỉ dùng Quick mode khi user nói rõ "slide đơn giản", "quick", "nhanh", "prototype"
 - Narrative Analysis (Step 2 trong Quick mode) vẫn áp dụng cho cả Pro mode's Strategist phase

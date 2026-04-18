@@ -216,8 +216,8 @@ Model (~2GB) downloads automatically on first use to `~/.cache/huggingface/`.
 
 ### Step 5: Embed or Deliver
 
-- For slide-bg/slide-frame: mention which slide template accepts the image (tao-slide Step 3)
-- For character/background used in Word: mention inserting via tao-word Step 3
+- For slide-bg/slide-frame: mention which slide template accepts the image (gen-slide Step 3)
+- For character/background used in Word: mention inserting via gen-word Step 3
 - Save to `output/` by default; `tmp/` for intermediate files
 
 ---

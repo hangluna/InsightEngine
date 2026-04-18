@@ -7,7 +7,7 @@ description: |
   "lưu vào file word", "tạo tài liệu", "làm cái báo cáo word", "export text ra file", or
   "cho tôi file để gửi sếp" where a Word document is clearly the right format, even without
   saying "gen-word" or ".docx".
-argument-hint: "[content from bien-soan or direct text] [style: corporate|academic|minimal]"
+argument-hint: "[content from compose or direct text] [style: corporate|academic|minimal]"
 version: 1.1
 compatibility:
   requires:
@@ -51,8 +51,8 @@ pipeline look incompetent.
 
 **Automatic rejection criteria (when called from pipeline):**
 - **< 1000 words** for a multi-section report: REJECT. Do not generate. Signal back to
-  tong-hop: "❌ Content quá mỏng ({word_count} từ) cho Word document. Cần biên soạn lại
-  ở mức comprehensive." This triggers tong-hop's quality loop to re-run bien-soan.
+  synthesize: "❌ Content quá mỏng ({word_count} từ) cho Word document. Cần biên soạn lại
+  ở mức comprehensive." This triggers synthesize's quality loop to re-run compose.
 - **< 500 words** for any document: REJECT. Same as above.
 - **Sections with only 1-2 sentences**: Flag as thin. If more than 30% of sections are thin,
   REJECT the entire document and loop back.
@@ -128,7 +128,7 @@ Map Markdown to Word elements:
 - Tables → Word tables; Bold/italic → Text runs; Blockquotes → Indented italic
 - Images (if paths provided) → Inline images (max 6" width, preserve aspect ratio)
   - Position images after their associated paragraph, with a caption below if provided
-  - For charts from tao-hinh: embed the PNG at full column width for readability
+  - For charts from gen-image: embed the PNG at full column width for readability
 
 For style specs (fonts, colors, visual elements): `references/word-styles-rules.md`
 For critical rules (tables DXA, lists, images, line breaks): `references/word-styles-rules.md`
@@ -233,7 +233,7 @@ AUDITOR_GATE:
 
 ## What This Skill Does NOT Do
 
-- Does NOT read input files — that's thu-thap
-- Does NOT synthesize content — that's bien-soan
+- Does NOT read input files — that's gather
+- Does NOT synthesize content — that's compose
 - Does NOT generate PDF/HTML/PPT — use respective tao-* skills
 - Does NOT install dependencies — redirects to setup

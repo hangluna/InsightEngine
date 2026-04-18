@@ -81,18 +81,18 @@ VALIDATION:
 
 ## Enforcement in Skills
 
-Each skill MUST follow these rules. The tong-hop orchestrator validates after each step.
+Each skill MUST follow these rules. The synthesize orchestrator validates after each step.
 
 ```yaml
 SKILL_RULES:
-  tao-word:    output → /output/*.docx
-  tao-excel:   output → /output/*.xlsx
-  tao-slide:   output → /output/*.pptx
-  tao-pdf:     output → /output/*.pdf
-  tao-html:    output → /output/*.html
-  tao-hinh:    output → /output/images/*.png
-  thiet-ke:    output → /output/*.png or /output/*.pdf
-  thu-thap:    temp → /tmp/raw_content.md or /tmp/search_results.json
-  bien-soan:   temp → /tmp/synthesized_content.md
-  tong-hop:    state → /tmp/.session-state.json, /tmp/.agent-context.json
+  gen-word:    output → /output/*.docx
+  gen-excel:   output → /output/*.xlsx
+  gen-slide:   output → /output/*.pptx
+  gen-pdf:     output → /output/*.pdf
+  gen-html:    output → /output/*.html
+  gen-image:    output → /output/images/*.png
+  design:    output → /output/*.png or /output/*.pdf
+  gather:    temp → /tmp/raw_content.md or /tmp/search_results.json
+  compose:   temp → /tmp/synthesized_content.md
+  synthesize:    state → /tmp/.session-state.json, /tmp/.agent-context.json
 ```

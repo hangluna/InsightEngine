@@ -27,12 +27,12 @@ Max **1 strategist call** per pipeline run.
 
 | Template | Flow |
 |----------|------|
-| WF-01 Report | thu-thap → bien-soan → tao-word/tao-pdf |
-| WF-02 Presentation | thu-thap → bien-soan → tao-slide/tao-html |
-| WF-03 Data Collection | thu-thap (data mode) → tao-excel |
-| WF-04 Translation | thu-thap → bien-soan (translate) |
-| WF-05 Comparison | thu-thap → bien-soan → tao-word + tao-excel |
-| WF-06 Visual | thu-thap → bien-soan → tao-hinh/thiet-ke → tao-slide |
+| WF-01 Report | gather → compose → gen-word/gen-pdf |
+| WF-02 Presentation | gather → compose → gen-slide/gen-html |
+| WF-03 Data Collection | gather (data mode) → gen-excel |
+| WF-04 Translation | gather → compose (translate) |
+| WF-05 Comparison | gather → compose → gen-word + gen-excel |
+| WF-06 Visual | gather → compose → gen-image/design → gen-slide |
 
 ---
 

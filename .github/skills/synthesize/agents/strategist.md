@@ -109,7 +109,7 @@ GENERATION_STEPS:
         
       standard_model:
         - tier_1 all steps
-        - tier_2 for critical steps (bien-soan, output)
+        - tier_2 for critical steps (compose, output)
         - tier_3 final audit
         - Standard thresholds
         
@@ -151,28 +151,28 @@ STRATEGIST_OUTPUT:
     estimated_agent_calls: 10
     steps:
       - id: "search"
-        skill: "thu-thap"
+        skill: "gather"
         mode: "standard"
         instructions: "Search for [topic] across 3-5 search queries..."
         quality_gate: "self_review"
         max_retries: 2
         
       - id: "synthesize"
-        skill: "bien-soan"
+        skill: "compose"
         mode: "comprehensive"
         instructions: "Synthesize gathered content into expert-level report..."
         quality_gate: "agent_audit"
         max_retries: 2
         
       - id: "output"
-        skill: "tao-word"
+        skill: "gen-word"
         template: "corporate"
         instructions: "Generate Word document with all sections..."
         quality_gate: "self_review"
         max_retries: 1
         
       - id: "final_audit"
-        skill: "kiem-tra"
+        skill: "verify"
         instructions: "Compare output against original request..."
         quality_gate: "final_audit"
         max_retries: 0
@@ -210,10 +210,10 @@ CHAINED_OUTPUTS:
   example:
     request: "Tìm jobs, tạo Excel, rồi tạo slide phân tích"
     workflow:
-      - step: search (thu-thap, data_collection mode)
-      - step: output_excel (tao-excel)
-      - step: analyze (bien-soan, use Excel data)
-      - step: output_slides (tao-slide)
+      - step: search (gather, data_collection mode)
+      - step: output_excel (gen-excel)
+      - step: analyze (compose, use Excel data)
+      - step: output_slides (gen-slide)
       - step: final_audit
 ```
 

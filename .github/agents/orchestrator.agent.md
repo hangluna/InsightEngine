@@ -3,7 +3,7 @@ name: orchestrator
 description: |
   Central orchestrator agent for InsightEngine. Classifies user intent (synthesis, creation,
   research, design, data_collection, mixed, unknown), routes to appropriate skills and agents.
-  Replaces synthesize's orchestration role was here — tong-hop now handles synthesis only.
+  Replaces synthesize's orchestration role was here — synthesize now handles synthesis only.
   Manages pipeline lifecycle: planning → execution → quality gate → delivery.
 tools:
   - read_file
@@ -33,32 +33,32 @@ INTENT_CATEGORIES:
   synthesis:
     description: Merge/combine content from multiple sources into a document
     signals: ["tổng hợp", "gộp", "merge", "báo cáo từ", "compile from"]
-    route: tong-hop skill (primary) → tao-[format]
+    route: synthesize skill (primary) → tao-[format]
 
   creation:
     description: Create original content (not from existing sources)
     signals: ["viết", "tạo nội dung", "soạn", "write", "draft", "compose"]
-    route: bien-soan skill → tao-[format]
+    route: compose skill → tao-[format]
 
   research:
     description: Search and analyze a topic, then produce output
     signals: ["tìm hiểu", "nghiên cứu", "search about", "phân tích"]
-    route: thu-thap → bien-soan → tao-[format]
+    route: gather → compose → tao-[format]
 
   design:
     description: Create visual assets (poster, cover, certificate, banner)
     signals: ["thiết kế", "poster", "bìa", "certificate", "banner", "design"]
-    route: thiet-ke skill
+    route: design skill
 
   data_collection:
     description: Collect structured data from platforms/sources
     signals: ["tìm tất cả", "liệt kê", "danh sách", "list all", "collect"]
-    route: thu-thap (data mode) → tao-excel
+    route: gather (data mode) → gen-excel
 
   mixed:
     description: Combination of data collection + analysis/presentation
     signals: ["tìm và phân tích", "collect then analyze", "data + report"]
-    route: thu-thap → tao-excel → bien-soan → tao-[format]
+    route: gather → gen-excel → compose → tao-[format]
 
   unknown:
     description: Cannot classify — ask user for clarification
@@ -122,7 +122,7 @@ STATE:
       command: "python3 scripts/save_state.py update --step {name} --status failed"
 
   step_states_schema:
-    name: string        # e.g., "thu-thap", "bien-soan", "tao-word"
+    name: string        # e.g., "gather", "compose", "gen-word"
     status: string      # pending | in_progress | completed | failed | skipped
     input_summary: string   # Brief description of input to this step
     output_summary: string  # Brief description of output from this step
@@ -203,7 +203,7 @@ CROSS_SESSION_RESUME:
 
 ---
 
-## Relationship to tong-hop
+## Relationship to synthesize
 
 ```yaml
 SEPARATION:
@@ -214,7 +214,7 @@ SEPARATION:
     - Calls auditor for quality gates
     - Handles session state
 
-  tong-hop (skill):
+  synthesize (skill):
     - Pure content synthesis (gather → merge → structure)
     - Called BY orchestrator as one of many possible workflows
     - No orchestration logic
@@ -284,18 +284,18 @@ GAP_EVALUATION:
        → Log gap for future improvement
        
   available_skills:
-    - thu-thap: gather content (files, URLs, web search, data collection)
-    - bien-soan: synthesize content (standard, comprehensive, translate, summary)
-    - tao-word: generate .docx
-    - tao-excel: generate .xlsx
-    - tao-slide: generate .pptx
-    - tao-pdf: generate .pdf
-    - tao-html: generate .html / reveal.js
-    - tao-hinh: charts + AI images
-    - thiet-ke: visual design (poster, cover, certificate)
-    - cai-dat: environment setup
-    - kiem-tra: output audit
-    - cai-tien: retrospective + improvement
+    - gather: gather content (files, URLs, web search, data collection)
+    - compose: synthesize content (standard, comprehensive, translate, summary)
+    - gen-word: generate .docx
+    - gen-excel: generate .xlsx
+    - gen-slide: generate .pptx
+    - gen-pdf: generate .pdf
+    - gen-html: generate .html / reveal.js
+    - gen-image: charts + AI images
+    - design: visual design (poster, cover, certificate)
+    - setup: environment setup
+    - verify: output audit
+    - improve: retrospective + improvement
     
   available_agents:
     - auditor: quality scoring
@@ -340,7 +340,7 @@ RUNTIME_AGENT_CREATION:
        
     4. IF user declines:
        → Skip, proceed with best available alternative
-       → Log recommendation for future cai-tien session
+       → Log recommendation for future improve session
 
   constraints:
     - ALWAYS ask user before creating
@@ -405,7 +405,7 @@ RUNTIME_SKILL_MANAGEMENT:
          
       4. IF user declines:
          → Skip, use closest available skill
-         → Log for future cai-tien session
+         → Log for future improve session
     
     constraints:
       - ALWAYS ask user before creating
@@ -416,7 +416,7 @@ RUNTIME_SKILL_MANAGEMENT:
   upgrade_existing_skill:
     protocol:
       1. DETECT that skill exists but lacks needed capability
-         e.g., thu-thap exists but doesn't handle a specific file format
+         e.g., gather exists but doesn't handle a specific file format
          
       2. PROPOSE upgrade (Vietnamese):
          "📦 Skill '{skill_name}' cần nâng cấp:

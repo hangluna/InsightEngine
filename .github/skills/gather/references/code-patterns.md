@@ -107,7 +107,7 @@ COPILOT_USE:
   steps:
     1. Run: python3 .github/skills/gather/scripts/extract_content.py <files...>
     2. Read combined Markdown from stdout
-    3. Pass to bien-soan for synthesis
+    3. Pass to compose for synthesis
 ```
 
 ## Error Messages

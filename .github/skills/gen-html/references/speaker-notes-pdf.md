@@ -16,7 +16,7 @@ SPEAKER_NOTES:
     shows: Current slide, next slide, elapsed time, speaker notes
     
   generation:
-    - bien-soan generates notes automatically when output is presentation
+    - compose generates notes automatically when output is presentation
     - Notes contain expanded talking points, transitions, key insights
     - 2-4 sentences per slide, conversational tone
     

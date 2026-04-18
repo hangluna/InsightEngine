@@ -12,7 +12,7 @@ EVIDENCE_TEMPLATE:
   session_info:
     date: ISO-8601
     user_request: "[original prompt]"
-    pipeline_steps_executed: ["thu-thap", "bien-soan", "tao-word"]
+    pipeline_steps_executed: ["gather", "compose", "gen-word"]
     output_files: ["output/report.docx"]
     session_state: "[from tmp/.session-state.json if available]"
 

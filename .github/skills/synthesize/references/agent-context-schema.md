@@ -62,7 +62,7 @@ of their task and writing results at the end.
     "steps": [
       {
         "step_id": "string",
-        "skill": "thu-thap | bien-soan | tao-word | ...",
+        "skill": "gather | compose | gen-word | ...",
         "status": "pending | running | completed | failed | skipped",
         "started_at": "ISO-8601 | null",
         "completed_at": "ISO-8601 | null",
@@ -176,7 +176,7 @@ WRITE_RULES:
 
 ## Initialization
 
-At pipeline start (tong-hop Step 0), create the context file:
+At pipeline start (synthesize Step 0), create the context file:
 
 ```python
 import json, uuid
