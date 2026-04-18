@@ -696,10 +696,10 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
 
 ### Epic 6.4: Agent Strategist
 
-- [ ] **US-6.4.1** — Strategist agent — dynamic workflow generation
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
+- [x] **US-6.4.1** — Strategist agent — dynamic workflow generation
+  - Status: DONE
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-6.4.1
   - Blocked By: ~~US-6.3.2~~ ✅, ~~US-6.3.3~~ ✅, ~~US-6.2.1~~ ✅
 
 ### Epic 6.5: Tiered Audit System
@@ -714,7 +714,7 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
   - Status: PLANNED
   - Assignee: —
   - Branch: —
-  - Blocked By: ~~US-6.5.1~~ ✅, US-6.4.1
+  - Blocked By: ~~US-6.5.1~~ ✅, ~~US-6.4.1~~ ✅
 
 ### Epic 6.6: Advisory Agent & Conditional Skill Creation
 
@@ -742,7 +742,7 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
   - Status: PLANNED
   - Assignee: —
   - Branch: —
-  - Blocked By: US-6.4.1, US-6.5.1, US-6.6.1
+  - Blocked By: ~~US-6.4.1~~ ✅, ~~US-6.5.1~~ ✅, ~~US-6.6.1~~ ✅
 
 ---
 
