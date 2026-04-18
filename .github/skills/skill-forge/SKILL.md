@@ -1,5 +1,6 @@
 ---
 name: skill-forge
+version: 1.0
 description: >
   Advanced skill creation and refinement pipeline. Wraps skill-creator with an automatic
   multi-criteria review loop that grades skills on quality, usefulness, alternatives analysis,

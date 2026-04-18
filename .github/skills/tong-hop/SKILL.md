@@ -13,7 +13,7 @@ description: |
   file này", "search rồi tạo file", or simply describes what they need without naming a specific
   skill. Also triggers on resume requests: "tiếp tục", "resume", "tiếp tục từ", "/resume".
 argument-hint: "[content request in Vietnamese or English]"
-version: 1.3
+version: 1.4
 compatibility:
   requires:
     - Python >= 3.10
@@ -42,39 +42,10 @@ AGENT_MODE: true   # default — see references/agent-mode.md for full spec
 ```
 
 ---
-to a specialized sub-skill (thu-thap → bien-soan → tao-<format>).
 
-**Three key quality mechanisms:**
-1. **Request Deep Analysis (Step 1.5)**: Deeply analyze prompt, expand dimensions, confirm before executing
-2. **Auto Quality Review (Step 4)**: Review after each sub-skill, retry if insufficient (max 2)
-3. **Comprehensive by Default**: 5000-15000 words, expert-level. Only `standard` when user explicitly asks for brevity
+**Quality mechanisms:** (1) Deep Analysis at Step 1.5 with HARD GATE, (2) Auto Quality Review after each sub-skill (max 2 retries), (3) Comprehensive by default (5000-15000 words). All Vietnamese. Shows plan → waits approval → executes.
 
-All responses in Vietnamese. Pipeline presents plan, waits for approval, then executes with quality checks.
-
----
-
-## Strict File Placement Rules (ENFORCED)
-
-**Reference:** `references/file-placement-rules.md`
-
-```yaml
-FILE_RULES:
-  /scripts:  All generated scripts (.py, .js) — NEVER in tmp/ or output/
-  /tmp:      Temporary/intermediate files, session state, agent context
-  /output:   All final deliverables (.docx, .xlsx, .pptx, .pdf, .html, .png)
-  /input:    User-provided source files (read-only)
-
-VALIDATION:
-  when: Pipeline start (Step 0) + after each sub-skill (Step 4 quality loop)
-  on_violation: Log warning → auto-move to correct directory → continue
-  
-SKILL_OUTPUT_MAP:
-  tao-word → /output/*.docx    | tao-excel → /output/*.xlsx
-  tao-slide → /output/*.pptx   | tao-pdf → /output/*.pdf
-  tao-html → /output/*.html    | tao-hinh → /output/images/*.png
-  thiet-ke → /output/*.png     | thu-thap → /tmp/raw_*.md
-  bien-soan → /tmp/synthesized_*.md
-```
+**File rules** (`references/file-placement-rules.md`): scripts→`/scripts`, temp→`/tmp`, output→`/output`, input→`/input`. Validated at pipeline start + after each step.
 
 ---
 
@@ -113,68 +84,14 @@ python3 scripts/save_state.py archive
 3. Determine **output format**: word (default) | excel | slides | pdf | html
 4. Detect **style**: corporate | academic | minimal | dark-modern | creative (see `references/pipeline-ux.md`)
 5. Detect if request implies **chained outputs** (see `references/output-chaining.md`)
-6. **Detect REQUEST_TYPE** — this fundamentally changes how the pipeline operates:
-   ```yaml
-   REQUEST_TYPE_DETECTION:
-     research:
-       # User wants knowledge synthesis — the traditional pipeline flow
-       description: "Gather information about a topic → synthesize into a document"
-       signals:
-         - "tổng hợp về", "làm báo cáo về", "tìm hiểu về", "research about"
-         - Request is about understanding a topic, trend, concept
-         - Output is a document summarizing knowledge
-       pipeline: thu-thap (search) → bien-soan (synthesize) → tao-<format>
-       example: "Tổng hợp về xu hướng AI 2024-2026 thành báo cáo Word"
-
-     data_collection:
-       # User wants SPECIFIC ITEMS collected into structured output
-       description: "Find specific entities (jobs, products, companies, courses) → extract structured fields → tabulate"
-       signals:
-         - "tìm tất cả", "tìm kiếm các", "liệt kê", "list all", "find all"
-         - Request mentions specific fields to extract (tên, lương, URL, địa điểm...)
-         - Output is Excel/table with rows = items, columns = fields
-         - User wants individual item URLs (not search result pages)
-         - Keywords: "job", "việc làm", "sản phẩm", "khóa học", "công ty", "apartment", "giá"
-       pipeline: thu-thap (platform-specific search) → extract fields → tao-excel
-       example: "Tìm tất cả job fresher JS ở HCM, tạo Excel có tên, lương, URL job"
-
-     mixed:
-       # User wants BOTH data collection AND analytical synthesis
-       description: "Collect specific items → tabulate → AND analyze/present insights"
-       signals:
-         - Request has both "tìm tất cả X" AND "tổng hợp/phân tích/thuyết trình"
-         - Multiple output formats (Excel + Slide, Excel + Word)
-         - Analysis on top of collected data (ranking, recommendation, comparison)
-       pipeline: thu-thap (platform search) → extract → tao-excel → bien-soan (analyze) → tao-<format>
-       example: "Tìm jobs, tạo Excel tổng hợp, rồi tạo slide phân tích và xếp hạng"
-
-   ```
-7. **Extract REQUIRED_FIELDS** (for data_collection/mixed): scan user's prompt for specific
-   output fields → create checklist for audit. Always auto-add `direct_url` and `source_platform`.
-8. Detect if request needs **visual design**:
-   - Poster, cover, certificate, invitation, banner, infographic → **thiet-ke**
-   - Data charts → **tao-hinh** (chart) | AI images → **tao-hinh** (image)
-   - **Dual routing**: one request can need BOTH (e.g., cover + charts + doc)
-9. **Detect research complexity** — classify as standard or deep research:
-   ```yaml
-   DEEP_RESEARCH_SIGNALS:
-     # If ANY of these are true → set research_depth: deep for thu-thap
-     - Request has 3+ distinct information dimensions (e.g., "models + benchmarks + timeline + classification")
-     - Request spans a temporal range ("từ 2024 đến nay", "qua các năm")
-     - Request asks for comparison, classification, or taxonomy ("phân loại", "so sánh", "classify")
-     - Request demands exhaustive data ("tất cả", "toàn bộ", "comprehensive", "đầy đủ")
-     - Request requires data aggregation ("tổng hợp điểm", "benchmark scores", "collect all")
-     - Request involves multi-step reasoning (connecting info from multiple domains)
-   
-   STANDARD_SEARCH:
-     - Single topic, single question ("tìm kiếm về X")
-     - Quick overview request
-     - Specific URLs or files provided
-   ```
-   When deep research is detected, the execution plan must reflect this (see Step 3).
-10. **Detect content depth** — default is `comprehensive` (5000-15000 words, expert-level).
-   Only use `standard` when user explicitly asks for brevity ("tóm tắt", "ngắn gọn", "brief").
-   Pass `content_depth` to bien-soan.
+6. **Detect REQUEST_TYPE** (details: `references/request-analysis.md`):
+   - **research**: "tổng hợp về", "báo cáo", topic understanding → thu-thap → bien-soan → tao-\<format\>
+   - **data_collection**: "tìm tất cả", "liệt kê", specific fields/entities → thu-thap (platform) → tao-excel
+   - **mixed**: both collection + analysis → thu-thap → tao-excel → bien-soan → tao-\<format\>
+7. **Extract REQUIRED_FIELDS** (data_collection/mixed): scan prompt for fields, auto-add `direct_url` + `source_platform`.
+8. **Visual design routing**: poster/cover/cert/banner → thiet-ke | charts → tao-hinh | both possible.
+9. **Research depth**: deep if 3+ dimensions, temporal range, comparison, exhaustive data; else standard.
+10. **Content depth**: default `comprehensive` (5000-15000 words). Only `standard` if user says "tóm tắt"/"ngắn gọn".
 
 ---
 
@@ -187,36 +104,11 @@ and present the analysis to the user. DO NOT proceed to Step 2 without completin
 
 ### 1.5.1: Expand Dimensions (by REQUEST_TYPE)
 
-**If `research` request — Expand analytical dimensions:**
+⚠️ **Full protocol with examples: `references/request-analysis.md` — READ IT.**
 
-```yaml
-DIMENSION_EXPANSION:
-  1. CORE_QUESTION: What is the user literally asking for?
-  2. IMPLICIT_SUBTOPICS: What sub-topics must be covered to make this useful?
-     # "AI trends" → current state, key players, breakthroughs, market data, risks, predictions
-  3. CONTEXT_DIMENSIONS: Audience? Decisions supported? Technical level?
-  4. DATA_NEEDS: Numbers, statistics, comparisons, timelines, case studies
-  5. ANALYTICAL_ANGLES: Comparisons, trend analysis, SWOT, recommendations
-  6. SCOPE_BOUNDARIES: What should NOT be included? (to stay focused)
-```
+**If `research`:** Expand 6 dimensions: CORE_QUESTION, IMPLICIT_SUBTOPICS, CONTEXT_DIMENSIONS, DATA_NEEDS, ANALYTICAL_ANGLES, SCOPE_BOUNDARIES.
 
-**If `data_collection` or `mixed` request — Expand collection strategy:**
-
-```yaml
-DATA_COLLECTION_ANALYSIS:
-  1. TARGET_ENTITIES: What specific items? ("fresher JavaScript jobs" not just "jobs")
-  2. SEARCH_PLATFORMS: Where should we look?
-     # MUST identify platform-specific sources. Generic Google returns overview pages, NOT items.
-     # Jobs: ITViec.com, TopCV.vn, LinkedIn Jobs, VietnamWorks, Glassdoor
-     # Products: Shopee, Tiki, Amazon | Courses: Udemy, Coursera
-  3. FILTER_CRITERIA: Location, experience, skills, salary range, etc.
-  4. REQUIRED_FIELDS: Fields from user prompt + auto-add direct_url, source_platform
-     # direct_url = link to SPECIFIC ITEM PAGE, NEVER a search page
-  5. SEARCH_QUERIES: Generate platform-specific queries
-     # BAD:  "fresher javascript developer HCM" (generic Google)
-     # GOOD: site:itviec.com fresher javascript developer ho chi minh
-  6. QUANTITY_EXPECTATION: "tất cả" → 20-50 | "top 10" → 10 | unspecified → 15-30
-```
+**If `data_collection`/`mixed`:** Expand 6 fields: TARGET_ENTITIES, SEARCH_PLATFORMS (platform-specific, NOT generic Google), FILTER_CRITERIA, REQUIRED_FIELDS (+direct_url), SEARCH_QUERIES (site:X.com format), QUANTITY_EXPECTATION.
 
 ### 1.5.2: Present Analysis to User (MANDATORY — HARD GATE)
 
