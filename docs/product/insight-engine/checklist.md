@@ -960,8 +960,10 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
   - Branch: feature/insight-engine-us-10.3.1
   - Blocked By: ~~US-10.1.2~~ ✅, ~~US-10.2.1~~ ✅
 
-- [ ] **US-10.3.2** — Update README for natural language UX
-  - Status: PLANNED
+- [x] **US-10.3.2** — Update README for natural language UX
+  - Status: DONE
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-10.3.2
   - Blocked By: ~~US-10.3.1~~ ✅
 
 ### Epic 10.4: copilot-instructions.md Refresh
