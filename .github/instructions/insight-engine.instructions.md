@@ -75,6 +75,8 @@ applyTo: "**"
   thiet-ke/      # Thiết kế visual (poster, bìa, certificate, banner)
   kiem-tra/      # Audit output vs yêu cầu user (Step 4.7 trong pipeline + standalone)
   cai-tien/      # Session retrospective + continuous improvement
+  skill-creator/ # Tạo, cải thiện, test, benchmark skill
+  skill-forge/   # Auto-review loop nâng cao — grade 6 tiêu chí (A/B/C/D), iterate đến khi all A
 ```
 
 Full stack documentation: `docs/tech-stack/insight-engine/instructions.md`

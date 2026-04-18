@@ -198,6 +198,31 @@ SKILLS:
       - "nâng cấp skill"
       - "lesson learned"
       - "/cai-tien"
+
+  skill-creator:
+    purpose: "Create, improve, test, and benchmark skills for InsightEngine"
+    location: ".github/skills/skill-creator/SKILL.md"
+    triggers:
+      - "create skill"
+      - "turn this into a skill"
+      - "improve skill"
+      - "test skill"
+      - "tạo skill"
+      - "cải thiện skill"
+
+  skill-forge:
+    purpose: "Advanced skill creation with auto-review loop — creates via skill-creator, then grades on 6 criteria (A/B/C/D), analyzes alternatives, and iterates until all A or 10 loops"
+    location: ".github/skills/skill-forge/SKILL.md"
+    triggers:
+      - "tạo skill nâng cao"
+      - "forge a skill"
+      - "create and review skill"
+      - "auto-improve skill"
+      - "skill chất lượng cao"
+      - "nâng cấp skill"
+      - "review skill quality"
+      - "audit skill"
+      - "production-grade skill"
 ```
 
 ---

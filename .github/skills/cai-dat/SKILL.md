@@ -39,7 +39,8 @@ scripts, and requirements.txt may have been updated — installing against an ou
 codebase leads to missing dependencies or stale scripts.
 
 ```bash
-git -C /Users/trucle/Desktop/project/InsightEngine pull
+# Pull from the InsightEngine project root (auto-detected)
+cd "$(git rev-parse --show-toplevel)" && git pull
 ```
 
 Report the result:
