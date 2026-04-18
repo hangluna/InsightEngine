@@ -794,8 +794,8 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
 
 ### Epic 8.1: Shared Auditor Agent
 
-- [ ] **US-8.1.1** — Auditor as standalone Copilot agent
-  - Status: IN_PROGRESS
+- [x] **US-8.1.1** — Auditor as standalone Copilot agent
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-8.1.1
   - Blocked By: None
@@ -804,7 +804,7 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
   - Status: PLANNED
   - Assignee: copilot
   - Branch: feature/insight-engine-us-8.1.2
-  - Blocked By: US-8.1.1
+  - Blocked By: ~~US-8.1.1~~ ✅
 
 ### Epic 8.2: Shared Strategist Agent
 
@@ -828,7 +828,7 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
   - Status: PLANNED
   - Assignee: copilot
   - Branch: feature/insight-engine-us-8.4.1
-  - Blocked By: US-8.1.1, US-8.2.1, US-8.3.1
+  - Blocked By: ~~US-8.1.1~~ ✅, US-8.2.1, US-8.3.1
 
 - [ ] **US-8.4.2** — tong-hop migration to shared agents
   - Status: PLANNED
