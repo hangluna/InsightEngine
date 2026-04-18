@@ -224,22 +224,27 @@ SKILLS:
       - "audit skill"
       - "production-grade skill"
 
-  # Shared Agents (invocable from any skill via runSubagent)
-  shared-agents:
+  # Custom Agents (VS Code standard — .github/agents/*.agent.md)
+  # Agents are peer-level with skills. User-invocable agents can be called directly.
+  agents:
+    dieu-phoi:
+      purpose: "Central orchestrator — classifies intent, routes to skills/agents, manages pipeline"
+      location: ".github/agents/dieu-phoi.agent.md"
+      user-invocable: true
     auditor:
-      purpose: "Quality verification agent — receives output + requirements, returns PASS/FAIL verdict with issues list. Any output skill can invoke after file generation."
-      location: ".github/skills/shared-agents/auditor.md"
-      invocation: "runSubagent with prompt built from auditor.md template"
+      purpose: "Quality verification agent — 100-point weighted scoring, any skill can invoke after generation"
+      location: ".github/agents/auditor.agent.md"
+      user-invocable: true
       budget: "max 5 calls per pipeline run"
     strategist:
-      purpose: "Workflow generation agent — receives user request + model profile, returns optimized step-by-step execution plan with skill assignments and quality gates."
-      location: ".github/skills/shared-agents/strategist.md"
-      invocation: "runSubagent with prompt built from strategist.md template"
+      purpose: "Workflow generation agent — returns execution plan with skill assignments and quality gates"
+      location: ".github/agents/strategist.agent.md"
+      user-invocable: false
       budget: "max 1 call per pipeline run"
     advisory:
-      purpose: "Multi-perspective decision support agent — receives decision question + context, returns analysis from 3-5 perspectives + recommendation. Any skill can invoke when facing ambiguous decisions."
-      location: ".github/skills/shared-agents/advisory.md"
-      invocation: "runSubagent with prompt built from advisory.md template"
+      purpose: "Multi-perspective decision support — analysis from 3-5 perspectives + recommendation"
+      location: ".github/agents/advisory.agent.md"
+      user-invocable: false
       budget: "max 2 calls per pipeline run"
 ```
 

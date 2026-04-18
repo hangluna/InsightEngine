@@ -28,7 +28,7 @@ compatibility:
 # Tổng Hợp — InsightEngine Pipeline Orchestrator
 
 **References:** `references/pipeline-ux.md` | `references/session-summary.md` | `references/output-chaining.md` | `references/auto-escalation.md` | `references/file-placement-rules.md` | `references/agent-context-schema.md` | `references/decision-maps.md` | `references/final-audit-rollback.md` | `references/conditional-skill-forge.md` | `references/public-skill-clone.md` | `references/agent-mode.md` | `references/request-analysis.md`
-**Agents:** `.github/skills/shared-agents/strategist.md` | `.github/skills/shared-agents/advisory.md` | `.github/skills/shared-agents/auditor.md` | `.github/skills/shared-agents/agent-protocol.md`
+**Agents:** `.github/agents/strategist.agent.md` | `.github/agents/advisory.agent.md` | `.github/agents/auditor.agent.md` | `.github/skills/shared-agents/agent-protocol.md`
 **State:** `tmp/.session-state.json` (written after each step via `scripts/save_state.py`)
 
 ---
