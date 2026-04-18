@@ -88,7 +88,75 @@ python3 scripts/save_state.py archive
 3. Determine **output format**: word (default) | excel | slides | pdf | html
 4. Detect **style**: corporate | academic | minimal | dark-modern | creative (see `references/pipeline-ux.md`)
 5. Detect if request implies **chained outputs** (see `references/output-chaining.md`)
-6. Detect if request needs **visual design** (see routing table below):
+6. **Detect REQUEST_TYPE** — this fundamentally changes how the pipeline operates:
+   ```yaml
+   REQUEST_TYPE_DETECTION:
+     research:
+       # User wants knowledge synthesis — the traditional pipeline flow
+       description: "Gather information about a topic → synthesize into a document"
+       signals:
+         - "tổng hợp về", "làm báo cáo về", "tìm hiểu về", "research about"
+         - Request is about understanding a topic, trend, concept
+         - Output is a document summarizing knowledge
+       pipeline: thu-thap (search) → bien-soan (synthesize) → tao-<format>
+       example: "Tổng hợp về xu hướng AI 2024-2026 thành báo cáo Word"
+
+     data_collection:
+       # User wants SPECIFIC ITEMS collected into structured output
+       description: "Find specific entities (jobs, products, companies, courses) → extract structured fields → tabulate"
+       signals:
+         - "tìm tất cả", "tìm kiếm các", "liệt kê", "list all", "find all"
+         - Request mentions specific fields to extract (tên, lương, URL, địa điểm...)
+         - Output is Excel/table with rows = items, columns = fields
+         - User wants individual item URLs (not search result pages)
+         - Keywords: "job", "việc làm", "sản phẩm", "khóa học", "công ty", "apartment", "giá"
+       pipeline: thu-thap (platform-specific search) → extract fields → tao-excel
+       example: "Tìm tất cả job fresher JS ở HCM, tạo Excel có tên, lương, URL job"
+
+     mixed:
+       # User wants BOTH data collection AND analytical synthesis
+       description: "Collect specific items → tabulate → AND analyze/present insights"
+       signals:
+         - Request has both "tìm tất cả X" AND "tổng hợp/phân tích/thuyết trình"
+         - Multiple output formats (Excel + Slide, Excel + Word)
+         - Analysis on top of collected data (ranking, recommendation, comparison)
+       pipeline: thu-thap (platform search) → extract → tao-excel → bien-soan (analyze) → tao-<format>
+       example: "Tìm jobs, tạo Excel tổng hợp, rồi tạo slide phân tích và xếp hạng"
+
+   CRITICAL_DIFFERENCE:
+     # Why this matters — the user's actual complaint:
+     # "research" mode: searches broadly, synthesizes into prose → fine for reports
+     # "data_collection" mode: must find INDIVIDUAL ITEMS with SPECIFIC URLs
+     #   → NOT search result pages, NOT aggregator overview pages
+     #   → Each row in output must link to a real, verifiable item page
+     # "mixed" mode: data_collection FIRST, then research/analysis on collected data
+   ```
+7. **Extract REQUIRED_FIELDS** (for data_collection and mixed requests):
+   ```yaml
+   REQUIRED_FIELDS_EXTRACTION:
+     # When request_type is data_collection or mixed, scan the user's prompt for
+     # specific output fields they expect. This becomes a checklist for output audit.
+     method: |
+       Read the user's prompt and extract every mention of data they want:
+       - Explicit: "tên job, lương, kinh nghiệm, URL" → fields: [name, salary, experience, url]
+       - Implicit: "review công ty" → field: company_review
+       - Inferred: job listing → always include: source_platform, direct_url
+     
+     output:
+       required_fields:
+         - field_name: "job_title"
+           description: "Tên vị trí tuyển dụng"
+           required: true
+         - field_name: "direct_url"
+           description: "URL trực tiếp đến trang job (KHÔNG phải search result)"
+           required: true
+           validation: "Must be a direct link to the job posting page, not a search/listing page"
+         # ... extracted from user's prompt
+     
+     PASS_TO: thu-thap (for targeted extraction), bien-soan (for completeness check),
+              output audit (for final validation)
+   ```
+8. Detect if request needs **visual design** (see routing table below):
    - Poster, cover page, certificate, invitation, banner, infographic layout → **thiet-ke**
    - Data charts (bar, line, pie, radar, scatter) → **tao-hinh** (chart mode)
    - AI-generated illustration, background, character → **tao-hinh** (image mode)
@@ -157,6 +225,10 @@ risks, and opportunities → write analytical report with data tables and recomm
 
 ### 1.5.1: Expand Request Dimensions
 
+**Behavior depends on REQUEST_TYPE detected in Step 1:**
+
+#### For `research` requests — Expand analytical dimensions:
+
 For the user's request, identify ALL implicit dimensions:
 
 ```yaml
@@ -177,9 +249,96 @@ DIMENSION_EXPANSION:
     6. SCOPE_BOUNDARIES: What should NOT be included? (to stay focused)
 ```
 
+#### For `data_collection` or `mixed` requests — Expand collection strategy:
+
+This is fundamentally different from research analysis. The user wants SPECIFIC ITEMS
+collected, not knowledge synthesized. The analysis must focus on:
+
+```yaml
+DATA_COLLECTION_ANALYSIS:
+  for_each_request:
+    1. TARGET_ENTITIES: What specific items does the user want?
+       - "Job listings", "apartments", "products", "courses", "companies"
+       - Be precise: "fresher JavaScript jobs" not just "jobs"
+    
+    2. SEARCH_PLATFORMS: Where should we look for these items?
+       # This is critical — generic Google search returns overview pages, NOT individual items.
+       # Must identify platform-specific sources where individual items live.
+       example_for_jobs:
+         - ITViec.com (IT jobs Vietnam — most relevant)
+         - TopCV.vn (general jobs Vietnam)
+         - LinkedIn Jobs (remote + international)
+         - VietnamWorks.com (established platform)
+         - Glassdoor.com (reviews + jobs)
+         - Indeed.com (broad reach)
+       example_for_products:
+         - Specific e-commerce platforms (Shopee, Tiki, Amazon)
+       example_for_courses:
+         - Udemy, Coursera, specific school websites
+    
+    3. FILTER_CRITERIA: What filters narrow the search?
+       - Location: "HCM", "remote"
+       - Experience: "fresher", "< 1 year"
+       - Skills: "JavaScript", "Node.js", "React"
+       - Salary range, company size, etc.
+    
+    4. REQUIRED_FIELDS: What data must be extracted per item?
+       # Extract from user's prompt + add essential defaults
+       user_explicit: [fields user mentioned directly]
+       auto_added:
+         - direct_url: "ALWAYS — link to the specific item page, never a search page"
+         - source_platform: "Which platform/site this was found on"
+       validation_rules:
+         - direct_url must point to individual item (e.g., itviec.com/jobs/xyz NOT itviec.com/search?q=xyz)
+         - Salary can be "Thương lượng" if not disclosed
+    
+    5. SEARCH_QUERIES: Generate platform-specific search queries
+       # NOT generic Google queries — target specific platforms
+       bad:  "fresher javascript developer ho chi minh"  ← returns Google search results
+       good:
+         - site:itviec.com fresher javascript developer ho chi minh
+         - site:topCV.vn javascript fresher
+         - site:linkedin.com/jobs javascript developer fresher vietnam remote
+       # Also: navigate directly to platform search pages when possible
+    
+    6. SUPPLEMENTARY_RESEARCH: Additional context needed per item?
+       - "review công ty" → need company review data from Glassdoor, ITViec reviews
+       - "so sánh" → need comparison dimensions
+    
+    7. QUANTITY_EXPECTATION: How many items should we aim for?
+       - "tất cả" → as many as feasible (20-50 for job search)
+       - "top 10" → 10 items, ranked
+       - No quantity specified → aim for 15-30 relevant items
+
+  ANALYSIS_PRESENTATION_FORMAT: |
+    🔍 **Phân tích yêu cầu thu thập dữ liệu:**
+
+    **Đối tượng thu thập:** {target_entities}
+    **Tiêu chí lọc:** {filter_criteria}
+    
+    📌 **Các nền tảng sẽ tìm kiếm:**
+    1. {platform_1} — {why_relevant}
+    2. {platform_2} — {why_relevant}
+    ...
+    
+    📊 **Thông tin sẽ thu thập cho mỗi item:**
+    | Field | Mô tả | Bắt buộc |
+    |-------|--------|----------|
+    | {field_1} | {desc} | ✅ |
+    | {field_2} | {desc} | ✅ |
+    | direct_url | Link trực tiếp tới job/item | ✅ |
+    ...
+    
+    🔢 **Mục tiêu:** ~{target_quantity} items
+    
+    {if mixed: "📝 Sau khi thu thập, sẽ phân tích và tạo {analysis_output_format}"}
+    
+    👉 Bạn đồng ý với kế hoạch này không? Có muốn thêm/bớt trường dữ liệu nào?
+```
+
 ### 1.5.2: Present Analysis for User Confirmation
 
-Present the expanded analysis to the user BEFORE creating the execution plan:
+**For `research` requests** — present expanded research dimensions:
 
 ```yaml
 ANALYSIS_FORMAT: |
@@ -280,6 +439,8 @@ ROUTING:
   design_output:    thu-thap → bien-soan → thiet-ke (poster/cover/certificate/banner)
   design_chained:   thu-thap → bien-soan → thiet-ke (cover) + tao-<format> (content)
   dual_visual:      thu-thap → bien-soan → thiet-ke (cover/design) + tao-hinh (charts) + tao-<format>
+  data_collection:  thu-thap (platform-specific) → extract fields → tao-excel → kiem-tra (audit)
+  mixed_collection: thu-thap (platform-specific) → extract → tao-excel → bien-soan (analyze) → tao-<format> → kiem-tra
 ```
 
 After user approves plan, initialize session state:
@@ -303,25 +464,8 @@ if quality is still poor after 2 retries, proceed with a warning to the user.
 
 ### Auto Quality Review Protocol
 
-```yaml
-QUALITY_REVIEW_LOOP:
-  after_each_step:
-    1. Sub-skill produces output
-    2. Orchestrator reviews output against QUALITY_CRITERIA for that step
-    3. IF passes → proceed to next step
-    4. IF fails → generate IMPROVEMENT_INSTRUCTIONS, re-execute step
-    5. Maximum 2 retries per step
-    6. After max retries, proceed with warning: "⚠️ Chất lượng bước {step} chưa
-       đạt mức tối ưu. Tiếp tục với kết quả hiện tại — bạn có thể yêu cầu
-       chỉnh sửa sau."
-
-  REVIEW_MINDSET: |
-    Review like a demanding expert reader, not a lenient validator. Ask:
-    - Would I be proud to submit this to my boss?
-    - Does this teach me something I didn't already know?
-    - Are the claims backed by specific evidence, or are they vague platitudes?
-    - Would a competing tool produce better output from the same inputs?
-```
+After each sub-skill step, review output against quality criteria (see `references/quality-gates.md`
+for full criteria). If quality fails, re-execute with improvement instructions. Max 2 retries.
 
 ---
 
@@ -329,6 +473,14 @@ QUALITY_REVIEW_LOOP:
 
 **Execute:**
 - Input: sources from user request + expanded dimensions from Step 1.5
+- **If request_type = data_collection or mixed**: pass `mode: data_collection` with:
+  - `required_fields`: list of fields to extract per item
+  - `search_platforms`: platform-specific search targets from Step 1.5
+  - `filter_criteria`: filters (location, experience level, etc.)
+  - Thu-thap must search PLATFORM-SPECIFIC (e.g., site:itviec.com) not generic Google
+  - Thu-thap must fetch INDIVIDUAL ITEM PAGES, not search result pages
+  - Thu-thap must extract structured data fields from each page
+  - See `references/data-collection-mode.md` for detailed protocol
 - **If research_depth = deep**: pass this flag so thu-thap uses the Deep Research Protocol
   (query decomposition → multi-round search → gap analysis → targeted deep dives).
   Thu-thap will return content organized by research dimensions with coverage assessment.
@@ -337,38 +489,10 @@ QUALITY_REVIEW_LOOP:
 - Report: "✅ Thu thập hoàn tất — {N} nguồn, {total_chars} ký tự"
 - Save state: `python3 scripts/save_state.py update --step thu-thap`
 
-**Quality Gate — THU-THAP:**
-```yaml
-THU_THAP_QUALITY_CRITERIA:
-  volume_check:
-    # Is there enough raw material to produce rich output?
-    minimum_chars: 5000  # For standard requests
-    minimum_chars_deep: 15000  # For deep research requests
-    fail_action: "Thu thập chưa đủ dữ liệu. Tìm kiếm bổ sung với queries mở rộng."
-
-  coverage_check:
-    # Do the collected sources cover ALL dimensions from Step 1.5?
-    method: Check each expanded dimension from analysis against collected content
-    fail_if: Any major dimension has < 500 chars of relevant content
-    fail_action: "Thiếu dữ liệu về {missing_dimensions}. Tìm kiếm bổ sung."
-
-  diversity_check:
-    # Are sources diverse enough? (not all from one website)
-    minimum_unique_sources: 3  # For web search requests
-    fail_action: "Nguồn dữ liệu quá tập trung. Tìm thêm từ nguồn khác."
-
-  specificity_check:
-    # Does content contain specific data (numbers, names, dates)?
-    method: Scan for numeric data, proper nouns, dates in collected content
-    fail_if: Content is mostly generic descriptions without specifics
-    fail_action: "Nội dung thu thập quá chung chung, thiếu số liệu cụ thể. Tìm nguồn có data."
-
-  url_fetch_escalation:
-    # If a URL source returned empty/garbled content from Tier 1 (fetch_webpage)
-    # or Tier 2 (httpx), thu-thap v1.2 automatically escalates to Tier 3 (Playwright stealth).
-    # tong-hop should NOT retry thu-thap for URL fetch failures — thu-thap handles escalation internally.
-    # Only retry if the source itself has no relevant content (topic mismatch).
-```
+**Quality Gate — THU-THAP:** See `references/quality-gates.md` for full criteria.
+Key checks: volume (≥5K chars standard, ≥15K deep), coverage of all dimensions, source diversity,
+specificity. For data_collection: URL specificity (no search links), field extraction completeness,
+item quantity vs target.
 
 ### 4.2: Analysis loop (ALWAYS — not just deep research)
 
@@ -392,45 +516,9 @@ After thu-thap returns, **always** analyze the gathered content quality:
 - Report: "✅ Biên soạn hoàn tất — {sections} phần, {total_words} từ"
 - Save state: `python3 scripts/save_state.py update --step bien-soan`
 
-**Quality Gate — BIEN-SOAN (MOST CRITICAL):**
-```yaml
-BIEN_SOAN_QUALITY_CRITERIA:
-  depth_check:
-    # Is the content genuinely substantive?
-    method: Read through the synthesized output and evaluate
-    fail_if_any:
-      - Average section length < 300 words (comprehensive) or < 200 words (standard)
-      - More than 30% of sentences are generic (no specific data/examples)
-      - Sections that just restate source content without analysis
-      - Missing analytical paragraphs (what the facts mean, implications)
-    fail_action: |
-      "Nội dung biên soạn chưa đủ sâu. Cần bổ sung:
-      - Thêm số liệu cụ thể và ví dụ cho các phần: {weak_sections}
-      - Thêm phân tích (implications, trends) cho: {sections_without_analysis}
-      - Mở rộng các phần quá ngắn: {short_sections}"
-
-  specificity_check:
-    # Does output contain concrete, verifiable information?
-    method: Count specific data points (numbers, names, dates, examples, case studies)
-    minimum_per_section: 3  # At least 3 specific data points per major section
-    fail_action: "Nội dung quá chung chung. Cần thêm số liệu cụ thể, ví dụ, case study."
-
-  structure_check:
-    # Is the document well-organized?
-    fail_if_any:
-      - No H2/H3 hierarchy (flat structure)
-      - Sections longer than 2000 words without sub-headings
-      - No comparison tables where comparison data exists
-      - No key takeaways at end of major sections
-    fail_action: "Cấu trúc cần cải thiện: {specific_structural_issues}"
-
-  analytical_depth_check:
-    # Does the content go beyond facts to provide genuine insights?
-    method: Check for analysis paragraphs, implications, trend identification, recommendations
-    fail_if: More than half of sections are purely factual with no analysis
-    fail_action: "Thiếu phân tích chuyên sâu. Mỗi phần cần có đoạn phân tích: xu hướng,
-    ý nghĩa, khuyến nghị — không chỉ liệt kê sự kiện."
-```
+**Quality Gate — BIEN-SOAN (MOST CRITICAL):** See `references/quality-gates.md`.
+Key checks: depth (≥300 words/section comprehensive), specificity (≥3 data points/section),
+structure (H2/H3 hierarchy, tables, takeaways), analytical depth (insights, not just facts).
 
 ### 4.4: tao-\<format\> (with quality gate)
 
@@ -441,34 +529,9 @@ BIEN_SOAN_QUALITY_CRITERIA:
 - Report: "✅ Xuất file hoàn tất — {path} ({size})"
 - Save state: `python3 scripts/save_state.py update --step tao-<format> --output-file "<path>"`
 
-**Quality Gate — OUTPUT:**
-```yaml
-OUTPUT_QUALITY_CRITERIA:
-  completeness_check:
-    # Did the output skill include ALL sections from bien-soan?
-    method: Compare section count in input vs output
-    fail_if: Output is missing sections or has significantly truncated content
-    fail_action: "File đầu ra thiếu nội dung. Kiểm tra lại các phần: {missing_sections}"
-
-  formatting_check:
-    # Is the formatting professional?
-    fail_if_any:
-      - Tables with broken layouts
-      - Missing headings or inconsistent hierarchy
-      - Images overflowing margins
-      - Empty pages or sections
-    fail_action: "Lỗi format: {specific_issues}. Tạo lại file."
-
-  size_sanity_check:
-    # Is file size reasonable for the content volume?
-    # A 10-page report shouldn't be 2KB (probably empty)
-    minimum_size_kb:
-      docx: 15
-      pptx: 50
-      pdf: 20
-      html: 5
-    fail_action: "File quá nhỏ — có thể thiếu nội dung. Kiểm tra lại."
-```
+**Quality Gate — OUTPUT:** See `references/quality-gates.md`.
+Key checks: completeness (all sections present), formatting (no broken tables/headings),
+size sanity (docx ≥15KB, pptx ≥50KB, pdf ≥20KB, html ≥5KB).
 
 ### 4.5: tao-hinh (conditional — if charts requested OR output is slides with data)
 - Report: "✅ Tạo {N} biểu đồ hoàn tất"
@@ -482,6 +545,29 @@ OUTPUT_QUALITY_CRITERIA:
   rather than a data chart or AI-generated image
 - Report: "✅ Thiết kế hoàn tất — {path} ({size})"
 - Save state: `python3 scripts/save_state.py update --step thiet-ke --output-file "<path>"`
+
+### 4.7: Output Audit — kiem-tra (ALWAYS RUN)
+
+**This step closes the #1 gap in the previous pipeline: outputs that are well-formatted
+but don't actually match what the user asked for.**
+
+After ALL output files are generated, run the audit sub-skill (kiem-tra) to verify the
+output against the user's original request. Full audit criteria: `references/quality-gates.md`.
+
+**Inputs to kiem-tra:**
+- `original_request`: User's full original prompt (verbatim)
+- `required_fields`: From Step 1 extraction (if data_collection/mixed)
+- `expanded_analysis`: From Step 1.5 (dimensions or collection plan)
+- `output_files`: Generated file paths
+- `output_content`: Content that was put into the files
+
+**Key checks:**
+- Requirement coverage: every user requirement ✅/⚠️/❌
+- For data_collection: URL quality (direct links, not search pages), field completeness, quantity
+- Specificity: sample 5 claims — are they specific or vague?
+
+**On failure:** Report specifics → propose remediation → re-run if approved (max 1 fix cycle).
+**On pass:** Report coverage stats → proceed to final report.
 
 ---
 
@@ -559,6 +645,20 @@ Output: output/ai-trends-2026.pptx (22 slides — rich content from expanded res
 Input: "Đọc file Excel sales_data.xlsx, tạo biểu đồ bar chart rồi nhúng vào Word report"
 Flow: Request Analysis → thu-thap (đọc xlsx) → bien-soan → tao-hinh (bar chart PNG) → tao-word (embed chart)
 Output: 2 files output — comprehensive report with embedded charts
+
+**Example 4 (data_collection — the job search case):**
+Input: "Tìm tất cả job fresher JS ở HCM, tạo Excel có tên, lương, URL job, rồi tạo slide phân tích"
+Flow:
+  1. Step 1: request_type = mixed (data_collection + analysis)
+  2. Step 1.5: Identify platforms (ITViec, TopCV, LinkedIn), required fields (job_title, salary,
+     experience, skills, location, direct_url, company_review_url), target ~20-30 items
+  3. Step 4.1: thu-thap searches PLATFORM-SPECIFIC (site:itviec.com fresher javascript HCM, etc.)
+     → fetches INDIVIDUAL JOB PAGES (not search result pages) → extracts structured fields
+  4. Step 4.4: tao-excel with structured job data (each row = 1 job, columns = required fields)
+  5. Step 4.3: bien-soan analyzes jobs → rankings, recommendations, company comparisons
+  6. Step 4.4b: tao-slide with analysis content
+  7. Step 4.7: kiem-tra audits — checks URLs are direct job links, fields complete, quantity met
+Output: job-search.xlsx (30 jobs with direct URLs) + job-analysis.pptx (analysis & recommendations)
 
 ---
 

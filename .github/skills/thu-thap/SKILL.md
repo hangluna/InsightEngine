@@ -28,7 +28,7 @@ compatibility:
 
 # Thu Thập — Content Gathering Skill
 
-**References:** `references/code-patterns.md` | `references/web-search-enrichment.md` | `references/deep-research.md` | `references/playwright-stealth.md`
+**References:** `references/code-patterns.md` | `references/web-search-enrichment.md` | `references/deep-research.md` | `references/playwright-stealth.md` | `references/data-collection.md`
 
 This skill reads content from any source — local files, URLs, or web search — and returns
 clean Markdown text. It runs in two contexts: standalone (user asks to read something) or as
@@ -42,11 +42,14 @@ all requested topics, it automatically expands search queries and does additiona
 (max 2 supplementary rounds). The goal is to ensure bien-soan receives enough raw material to
 produce rich, expert-level output — not scraps that force shallow synthesis.
 
-**Two search modes:**
+**Three search modes:**
 - **Standard**: single-query search for simple requests (default)
 - **Deep Research**: multi-round iterative search for complex research requests — decomposes
   the query into dimensions, searches broadly, analyzes gaps, then searches deeper.
   See `references/deep-research.md` for the full protocol.
+- **Data Collection**: platform-specific search for structured item collection — finds individual
+  items (jobs, products, courses) on specific platforms, fetches item detail pages, and extracts
+  structured fields. See `references/data-collection.md` for the full protocol.
 
 All responses to the user are in Vietnamese.
 
@@ -108,18 +111,93 @@ COMPLEXITY_SIGNALS:
     - File reading only (no web search needed)
     - User provides specific URLs to fetch
 
+  data_collection:
+    # User wants SPECIFIC ITEMS collected with structured fields
+    # This is NOT research — it's entity discovery + field extraction
+    - tong-hop passes mode: data_collection
+    - User wants items: jobs, products, courses, apartments, companies
+    - User specifies output fields: "tên, lương, URL, kinh nghiệm"
+    - Needs platform-specific search, not generic Google
+    - Must return individual item URLs, not search result pages
+
 RESULT:
   deep → follow Deep Research Protocol below (replaces Steps 3-4 for web search)
   standard → follow standard Steps 1-4 as before
+  data_collection → follow Data Collection Protocol below
 ```
 
 ---
 
-## Deep Research Protocol (when research_depth = deep)
+## Data Collection Protocol (when mode = data_collection)
 
-When a request is classified as deep research, **replace the standard web search flow**
-(Step 3 single query) with this multi-round protocol. File reading and URL fetching still
-follow the standard steps.
+When tong-hop passes `mode: data_collection`, the entire search workflow changes.
+Instead of searching for knowledge, we're searching for specific items on specific platforms.
+See `references/data-collection.md` for the full protocol.
+
+### DC-1: Platform-Specific Search
+
+**Do NOT use generic Google search.** Target specific platforms where individual items live:
+
+1. For each platform identified in tong-hop's Step 1.5:
+   - Construct platform-specific search: `site:{platform} {keywords} {filters}`
+   - Also construct direct platform search URLs if known
+2. Execute searches and collect individual item URLs from results
+3. Report: "🔍 Tìm kiếm trên {N} nền tảng: {platform_list}"
+
+### DC-2: Fetch Individual Item Pages
+
+For each item URL found:
+1. Fetch the individual item page (NOT the search/listing page)
+2. Extract required fields from the page content
+3. Validate URL is an item page (has specific ID/slug, not a search URL)
+4. Report: "📋 Thu thập {N}/{total} items — đang trích xuất dữ liệu..."
+
+### DC-3: Company/Entity Research (if supplementary data requested)
+
+When user requests additional context per item (e.g., company reviews):
+1. Deduplicate entities (group items by company/brand)
+2. For each unique entity, search for supplementary data
+3. Attach supplementary data to relevant items
+
+### DC-4: Structured Output
+
+Return collected items as structured data (not prose):
+```markdown
+## Collected Items: {entity_type}
+### Item 1
+- **{field_1}**: {value}
+- **{field_2}**: {value}
+- **direct_url**: {specific_item_url}
+- **source_platform**: {platform}
+
+### Item 2
+...
+```
+
+### DC-5: Quality Check for Data Collection
+
+```yaml
+DC_QUALITY_CHECK:
+  url_specificity:
+    # Are URLs pointing to individual items?
+    check: No URL should match search patterns (?q=, /search?, /results?)
+    fail_action: Re-fetch from item detail pages
+  
+  field_completeness:
+    # Are required fields populated?
+    check: >70% of items have values for each required field
+    fail_action: Re-fetch detail pages for items with missing fields
+  
+  quantity:
+    # Did we find enough items?
+    check: Collected items ≥ 50% of target quantity
+    fail_action: Expand search to additional platforms
+  
+  filter_accuracy:
+    # Do items match the user's filter criteria?
+    check: Items match location, experience level, skill requirements
+    fail_action: Re-filter and remove non-matching items
+```
 
 Full spec: `references/deep-research.md`
 

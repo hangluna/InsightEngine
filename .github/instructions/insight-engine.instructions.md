@@ -63,7 +63,7 @@ applyTo: "**"
 ```
 .github/skills/
   tong-hop/      # 🔑 Pipeline chính — phân tích prompt → mở rộng → route → orchestrate + auto-review loop
-  thu-thap/      # Thu thập từ web (search + fetch) và đọc file + auto quality check
+  thu-thap/      # Thu thập từ web (search + fetch) và đọc file + auto quality check + data collection mode
   bien-soan/     # Tổng hợp nội dung comprehensive (default) + self-review loop + dịch thuật
   tao-word/      # Xuất Word (.docx) + thin content guard
   tao-excel/     # Xuất Excel (.xlsx)
@@ -72,6 +72,8 @@ applyTo: "**"
   tao-html/      # Xuất HTML + thin content guard
   tao-hinh/      # Biểu đồ + hình ảnh
   thiet-ke/      # Thiết kế visual (poster, bìa, certificate, banner)
+  kiem-tra/      # Audit output vs yêu cầu user (Step 4.7 trong pipeline + standalone)
+  cai-tien/      # Session retrospective + continuous improvement
 ```
 
 Full stack documentation: `docs/tech-stack/insight-engine/instructions.md`

@@ -170,6 +170,34 @@ SKILLS:
       - "design a poster"
       - "make a cover"
       - "/thiet-ke"
+
+  kiem-tra:
+    purpose: "Audit any InsightEngine output against user's original requirements. Checks requirement coverage, URL quality, field completeness, data specificity. Runs automatically as Step 4.7 in tong-hop pipeline, or standalone when user wants to verify output."
+    location: ".github/skills/kiem-tra/SKILL.md"
+    triggers:
+      - "kiểm tra đầu ra"
+      - "audit output"
+      - "so sánh với yêu cầu"
+      - "check xem đã đúng chưa"
+      - "verify output"
+      - "output có đúng không"
+      - "sai ở đâu"
+      - "thiếu gì"
+      - "/kiem-tra"
+
+  cai-tien:
+    purpose: "Session retrospective and continuous improvement. Analyzes entire work session (input → process → output → gaps), identifies root causes, proposes and executes improvements to skills and pipeline. Creates new skills if needed."
+    location: ".github/skills/cai-tien/SKILL.md"
+    triggers:
+      - "cải tiến"
+      - "retrospective"
+      - "phân tích session"
+      - "tại sao kết quả không tốt"
+      - "cải thiện quy trình"
+      - "improve pipeline"
+      - "nâng cấp skill"
+      - "lesson learned"
+      - "/cai-tien"
 ```
 
 ---
