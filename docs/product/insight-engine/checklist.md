@@ -766,8 +766,8 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
 
 ### Epic 7.2: Data Collection Enforcement
 
-- [ ] **US-7.2.1** — Inline data collection protocol in thu-thap
-  - Status: IN_PROGRESS
+- [x] **US-7.2.1** — Inline data collection protocol in thu-thap
+  - Status: DONE
   - Assignee: copilot
   - Branch: feature/insight-engine-us-7.2.1
   - Blocked By: None
@@ -776,7 +776,7 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
   - Status: PLANNED
   - Assignee: copilot
   - Branch: feature/insight-engine-us-7.2.2
-  - Blocked By: US-7.2.1
+  - Blocked By: ~~US-7.2.1~~ ✅
 
 ### Epic 7.3: Visible Pipeline Trace
 
