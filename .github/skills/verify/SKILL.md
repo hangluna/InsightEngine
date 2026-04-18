@@ -5,7 +5,7 @@ description: |
   data against actual web pages, and REASONS about quality — not just script-based rule checks.
   The key difference: this skill makes Copilot act as a human reviewer who actually clicks
   links, reads pages, and judges whether the output is truthful and complete.
-  Works as tong-hop Step 4.7 (automatic) or standalone when user says "kiểm tra", "audit",
+  Works as synthesize Step 4.7 (automatic) or standalone when user says "kiểm tra", "audit",
   "check xem đúng chưa", "sai ở đâu", "thiếu gì", "verify output".
 argument-hint: "[original request] [output file or content to audit]"
 version: 2.0
@@ -38,7 +38,7 @@ compatibility:
 
 ## Step 1: Gather Audit Inputs
 
-### Pipeline mode (from tong-hop Step 4.7):
+### Pipeline mode (from synthesize Step 4.7):
 Inputs already available: `original_request`, `required_fields`, `expanded_analysis`,
 `output_files`, `output_content`.
 
@@ -201,7 +201,7 @@ Fix instructions must be specific:
 
 ## What This Skill Does NOT Do
 
-- Does NOT evaluate writing style or content depth (bien-soan handles that)
+- Does NOT evaluate writing style or content depth (compose handles that)
 - Does NOT check formatting/layout (tao-format quality gates handle that)
 - Does NOT run validate_urls.py as primary method — script is supplementary only
 - Does NOT generate content — only audits and verifies existing output

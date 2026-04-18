@@ -990,16 +990,22 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
 
 ### Epic 10.6: Backfill Missing Skill Stories
 
-- [ ] **US-10.6.1** — design skill user story (formerly thiet-ke)
-  - Status: PLANNED
+- [x] **US-10.6.1** — design skill user story (formerly thiet-ke)
+  - Status: DONE
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-10.6.1-2-3
   - Blocked By: ~~US-10.1.1~~ ✅
 
-- [ ] **US-10.6.2** — verify skill user story (formerly kiem-tra)
-  - Status: PLANNED
+- [x] **US-10.6.2** — verify skill user story (formerly kiem-tra)
+  - Status: DONE
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-10.6.1-2-3
   - Blocked By: ~~US-10.1.1~~ ✅
 
-- [ ] **US-10.6.3** — improve skill user story (formerly cai-tien)
-  - Status: PLANNED
+- [x] **US-10.6.3** — improve skill user story (formerly cai-tien)
+  - Status: DONE
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-10.6.1-2-3
   - Blocked By: ~~US-10.1.1~~ ✅
 
 ### Epic 10.7: Product Doc Alignment

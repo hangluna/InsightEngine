@@ -11,7 +11,7 @@ description: |
   "lesson learned", or when the user is frustrated with output quality and wants systemic fixes
   rather than just a redo. Also use when the user explicitly asks to improve a specific skill
   based on real usage experience, or when a pattern of failures is noticed across multiple runs.
-  Do NOT use for one-off output fixes (use kiem-tra for that) or for creating skills from scratch
+  Do NOT use for one-off output fixes (use verify for that) or for creating skills from scratch
   without session context (use skill-creator/skill-forge for that).
 argument-hint: "[session context or specific issue to analyze]"
 version: 1.1
@@ -36,7 +36,7 @@ makes that analysis systematic rather than ad-hoc.
 Three modes:
 1. **Session retrospective**: Analyze a specific session (input → process → output → gaps)
 2. **Skill improvement**: Diagnose a specific skill's weaknesses from usage evidence
-3. **Pipeline improvement**: Identify systemic issues across the entire tong-hop pipeline
+3. **Pipeline improvement**: Identify systemic issues across the entire synthesize pipeline
 
 All responses to the user are in Vietnamese.
 
@@ -103,7 +103,7 @@ ROOT_CAUSE_FRAMEWORK:
     # Which step(s) failed?
     analysis_per_step:
       step_1_parse:
-        question: "Did tong-hop correctly understand the request type?"
+        question: "Did synthesize correctly understand the request type?"
         common_failures:
           - Misclassified research vs data_collection
           - Missed required fields in user's prompt
@@ -117,7 +117,7 @@ ROOT_CAUSE_FRAMEWORK:
           - Over-expanded scope, diluting focus
       
       step_4_1_thu_thap:
-        question: "Did thu-thap gather the right raw material?"
+        question: "Did gather gather the right raw material?"
         common_failures:
           - Used generic search instead of platform-specific
           - Returned search result pages instead of individual item pages
@@ -125,7 +125,7 @@ ROOT_CAUSE_FRAMEWORK:
           - Thin content from poor source selection
       
       step_4_3_bien_soan:
-        question: "Did bien-soan synthesize effectively from what it had?"
+        question: "Did compose synthesize effectively from what it had?"
         common_failures:
           - Synthesized from thin data (garbage in, garbage out)
           - Lost specific details during synthesis
@@ -173,7 +173,7 @@ IMPROVEMENT_CATEGORIES:
   skill_update:
     # Modify an existing skill's SKILL.md
     format:
-      skill: "tong-hop"
+      skill: "synthesize"
       file: ".github/skills/synthesize/SKILL.md"
       change_type: "add_instruction | modify_instruction | add_example"
       description: "Add data_collection request type detection"
@@ -186,7 +186,7 @@ IMPROVEMENT_CATEGORIES:
   new_skill:
     # Create a brand new skill to handle a gap
     format:
-      name: "kiem-tra"
+      name: "verify"
       purpose: "Audit output against requirements"
       justification: "No existing skill validates output vs requirements"
       priority: "high"
@@ -195,7 +195,7 @@ IMPROVEMENT_CATEGORIES:
   reference_update:
     # Update reference docs or add new ones
     format:
-      skill: "thu-thap"
+      skill: "gather"
       file: "references/data-collection-mode.md"
       change_type: "create"
       description: "Add protocol for platform-specific data collection"
@@ -204,7 +204,7 @@ IMPROVEMENT_CATEGORIES:
     # Change the overall pipeline flow
     format:
       change: "Add mandatory output audit step after all output generation"
-      affects: "tong-hop Step 4"
+      affects: "synthesize Step 4"
       justification: "Quality gates check format/depth but not requirement fulfillment"
   
   process_change:
@@ -285,7 +285,7 @@ EXECUTION_ORDER:
   1. Skill updates (modify existing SKILL.md files)
   2. New reference files (add to references/ folders)
   3. New skills (create SKILL.md + directory structure)
-  4. Pipeline changes (update tong-hop routing/flow)
+  4. Pipeline changes (update synthesize routing/flow)
   5. Registration (update copilot-instructions.md if new skills added)
 
 EXECUTION_METHOD:
@@ -341,28 +341,28 @@ LEARNING_RECORD:
 
 **Example 1: Job search output had search links instead of job links**
 ```
-Root cause: tong-hop didn't detect data_collection request type → thu-thap used generic search → fetched search result pages
+Root cause: synthesize didn't detect data_collection request type → gather used generic search → fetched search result pages
 Improvements:
-1. [HIGH] Add REQUEST_TYPE detection to tong-hop Step 1
-2. [HIGH] Add data_collection mode to thu-thap with platform-specific search
-3. [HIGH] Create kiem-tra skill for output audit
-4. [MED] Add URL quality validation to thu-thap quality gate
+1. [HIGH] Add REQUEST_TYPE detection to synthesize Step 1
+2. [HIGH] Add data_collection mode to gather with platform-specific search
+3. [HIGH] Create verify skill for output audit
+4. [MED] Add URL quality validation to gather quality gate
 ```
 
 **Example 2: Report content was too shallow despite comprehensive mode**
 ```
-Root cause: thu-thap only fetched 3 sources with thin content → bien-soan couldn't produce depth from scraps
+Root cause: gather only fetched 3 sources with thin content → compose couldn't produce depth from scraps
 Improvements:
-1. [HIGH] Increase minimum_chars threshold in thu-thap quality gate
+1. [HIGH] Increase minimum_chars threshold in gather quality gate
 2. [MED] Add source diversity check (min 5 sources from 3+ domains)
-3. [LOW] Add example in bien-soan showing how to request enrichment callback
+3. [LOW] Add example in compose showing how to request enrichment callback
 ```
 
 ---
 
 ## What This Skill Does NOT Do
 
-- Does NOT fix individual output files (use kiem-tra for spot fixes)
+- Does NOT fix individual output files (use verify for spot fixes)
 - Does NOT create skills from scratch without usage context (use skill-creator)
 - Does NOT re-run the pipeline (user does that after improvements are applied)
 - Does NOT modify skills without user approval
