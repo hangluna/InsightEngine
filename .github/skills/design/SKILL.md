@@ -280,6 +280,6 @@ Output: Custom script `tmp/gen_design.py` → infographic.pdf (A4, 45 KB), follo
 
 - Does NOT create data-driven charts — use gen-image (matplotlib)
 - Does NOT generate AI images from prompts — use gen-image (diffusers/torch)
-- Does NOT create interactive or animated content — use tao-html
+- Does NOT create interactive or animated content — use gen-html
 - Does NOT install dependencies — redirects to setup
 - Does NOT copy existing artists' work — all designs are original compositions

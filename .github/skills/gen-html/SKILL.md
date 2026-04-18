@@ -63,7 +63,7 @@ HTML pages are often shared via link or email. A thin page with mostly whitespac
 text looks unprofessional and reflects poorly on the user.
 
 **Automatic rejection criteria (when called from pipeline):**
-- **< 800 words** for a multi-section page: REJECT. Signal back to tong-hop:
+- **< 800 words** for a multi-section page: REJECT. Signal back to synthesize:
   "❌ Content quá mỏng ({word_count} từ) cho trang HTML. Cần biên soạn lại ở mức comprehensive."
 - **Sections without substance**: If more than 30% of sections have only 1-2 sentences, REJECT.
 - **Presentation mode with < 300 words**: REJECT — slides will be nearly empty.
@@ -218,7 +218,7 @@ Input: Slide content, 12 sections, dark-neon style
 Output: reveal.js .html, 18 slides, fragment animations, keyboard navigation, 35 KB
 
 **Example 3 — Academic page with charts:**
-Input: Research content + base64 chart images from tao-hinh
+Input: Research content + base64 chart images from gen-image
 Output: academic .html, embedded charts, semantic headings, print-friendly, 80 KB
 
 ---
@@ -248,6 +248,6 @@ AUDITOR_GATE:
 ## What This Skill Does NOT Do
 
 - Does NOT create multi-page websites (single .html file only)
-- Does NOT synthesize content — that is bien-soan
+- Does NOT synthesize content — that is compose
 - Does NOT install dependencies — redirects to setup
 - Presentation mode requires internet on first load (CDN for reveal.js)

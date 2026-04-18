@@ -1,7 +1,7 @@
 # Audit Rubric — Structured Scoring Template
 
 > Reusable scoring framework for comparing output against user requirements.  
-> Used by kiem-tra in both pipeline and standalone modes.
+> Used by verify in both pipeline and standalone modes.
 
 ---
 

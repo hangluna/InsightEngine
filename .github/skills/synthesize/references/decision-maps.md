@@ -74,7 +74,7 @@ reasoning_depth:
       - Provide explicit, numbered instructions (no implicit "figure it out")
       - Include examples for each output type
       - Use templates with fill-in-the-blank sections
-      - bien-soan: use standard mode, not comprehensive
+      - compose: use standard mode, not comprehensive
       - Skip multi-perspective analysis (advisory agent)
       - Quality gates: check format compliance, not depth
 
@@ -85,7 +85,7 @@ reasoning_depth:
       - Can infer some implicit requirements
       - Good at following established patterns
     workflow_recommendations:
-      - bien-soan: comprehensive mode with clear section outlines
+      - compose: comprehensive mode with clear section outlines
       - Advisory agent: 1 call max (for critical decisions only)
       - Strategist: use pre-built templates, minimal customization
       - Quality gates: check both format and content depth
@@ -97,7 +97,7 @@ reasoning_depth:
       - Infers implicit requirements accurately
       - Can design novel approaches when needed
     workflow_recommendations:
-      - bien-soan: comprehensive mode, trust model to find depth
+      - compose: comprehensive mode, trust model to find depth
       - Advisory agent: full multi-perspective analysis
       - Strategist: can customize templates or build from scratch
       - Quality gates: full depth + format + insight checks
@@ -163,7 +163,7 @@ multilingual:
       - Provide Vietnamese glossary for technical terms
       - Review Vietnamese output before delivery
       - Keep Vietnamese in user-facing text only
-      - bien-soan translation mode: add manual review step
+      - compose translation mode: add manual review step
 
   standard:
     characteristics:
@@ -173,7 +173,7 @@ multilingual:
       - Translation is natural for most content
     workflow_recommendations:
       - Standard pipeline (no extra review steps)
-      - bien-soan can handle translation directly
+      - compose can handle translation directly
       - Minimal glossary needed
 
   advanced:
@@ -286,7 +286,7 @@ AGENT_USAGE:
     reads: reasoning_depth
     uses: Decide if advisory calls are worthwhile
     
-  tong-hop:
+  synthesize:
     reads: Overall profile
     uses: Decide AGENT_MODE on/off, set retry limits
 ```

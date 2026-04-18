@@ -8,7 +8,7 @@ description: |
   — even casual requests like "làm cái bảng tính", "tạo file excel", "xuất ra bảng", "tính toán
   và lưu thành file", or "cho tôi bảng so sánh" where tabular data with formulas fits, even
   without saying "gen-excel" or ".xlsx".
-argument-hint: "[data from bien-soan or direct input] [output path]"
+argument-hint: "[data from compose or direct input] [output path]"
 version: 1.1
 compatibility:
   requires:
@@ -62,7 +62,7 @@ CLI_SCRIPT:
   output: Prints "✅ Saved: <path> (<size> KB, <N> sheet(s), style: <style>)"
 
 COPILOT_WORKFLOW:
-  1. Prepare data as JSON (from bien-soan output or user data)
+  1. Prepare data as JSON (from compose output or user data)
   2. Save JSON to tmp file
   3. Run: python3 .github/skills/gen-excel/scripts/gen_xlsx.py --input data.json --output output.xlsx --style <style>
   4. Run recalc.py if formulas used
@@ -88,7 +88,7 @@ Before generating, understand what the spreadsheet needs:
 - Summary rows/columns needed (SUM, AVERAGE, COUNT)?
 - Cross-sheet references if multi-sheet?
 
-Data can come from: Markdown tables (bien-soan output), CSV/TSV files, user-described
+Data can come from: Markdown tables (compose output), CSV/TSV files, user-described
 structure, or numbers extracted from synthesized text.
 
 ### Data Intelligence — Think Before You Build
@@ -138,7 +138,7 @@ Summary sheet, and understand the key story without scrolling through data.
 
 After analyzing the data, note which data would benefit from visualization. Report to the
 pipeline (or user): "Dữ liệu này phù hợp để tạo biểu đồ {type} — bạn muốn tạo biểu đồ
-không?" This helps tong-hop decide whether to chain tao-hinh.
+không?" This helps synthesize decide whether to chain gen-image.
 
 Present the enhanced plan to user (interactive mode):
 ```
@@ -318,7 +318,7 @@ AUDITOR_GATE:
 
 ## What This Skill Does NOT Do
 
-- Does NOT read/parse existing Excel files — that's thu-thap's job
-- Does NOT create charts from data — that's tao-hinh's job
-- Does NOT synthesize content — that's bien-soan's job
+- Does NOT read/parse existing Excel files — that's gather's job
+- Does NOT create charts from data — that's gen-image's job
+- Does NOT synthesize content — that's compose's job
 - Does NOT install dependencies — redirects to setup

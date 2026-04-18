@@ -13,7 +13,7 @@ Beyond the standard 6 criteria, InsightEngine skills must satisfy:
 INSIGHTENGINE_CHECKS:
   vietnamese_naming:
     rule: Skill directory name must be Vietnamese, lowercase, hyphenated
-    examples_good: thu-thap, bien-soan, tao-word, kiem-tra
+    examples_good: gather, compose, gen-word, verify
     examples_bad: data-collector, content-writer, output-checker
     
   bilingual_triggers:
@@ -25,7 +25,7 @@ INSIGHTENGINE_CHECKS:
     verify: No scripts in references/, no output in tmp/
     
   pipeline_integration:
-    rule: Skill must work both standalone AND as tong-hop sub-skill
+    rule: Skill must work both standalone AND as synthesize sub-skill
     verify: Accepts pipeline inputs, returns structured output
     
   shared_context:

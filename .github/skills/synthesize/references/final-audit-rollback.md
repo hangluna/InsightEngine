@@ -117,7 +117,7 @@ DIAGNOSIS_PROTOCOL:
     
     mapping_rules:
       requirement_coverage_low:
-        likely_cause: bien-soan (synthesis step)
+        likely_cause: compose (synthesis step)
         reason: Content wasn't synthesized with all dimensions
         
       format_compliance_low:
@@ -125,13 +125,13 @@ DIAGNOSIS_PROTOCOL:
         reason: Output generation had formatting issues
         
       content_depth_low:
-        likely_cause: bien-soan OR thu-thap
+        likely_cause: compose OR gather
         check: |
-          IF gathered content was thin → thu-thap (insufficient sources)
-          IF gathered content was rich but output thin → bien-soan (poor synthesis)
+          IF gathered content was thin → gather (insufficient sources)
+          IF gathered content was rich but output thin → compose (poor synthesis)
         
       data_completeness_low:
-        likely_cause: thu-thap (data collection step)
+        likely_cause: gather (data collection step)
         reason: Data wasn't fully gathered from sources
         
   output:
@@ -186,8 +186,8 @@ ROLLBACK_PROTOCOL:
         After re-executing the failing step,
         re-execute ALL downstream steps too.
         
-        Example: If bien-soan failed, re-run:
-          bien-soan (retry) → tao-word (re-generate)
+        Example: If compose failed, re-run:
+          compose (retry) → gen-word (re-generate)
           
         This ensures output reflects the improved intermediate step.
         
@@ -254,7 +254,7 @@ DELIVERY_PROTOCOL:
 
 ```yaml
 INTEGRATION:
-  called_by: tong-hop orchestrator (Step 4.7 — final quality gate)
+  called_by: synthesize orchestrator (Step 4.7 — final quality gate)
   
   in_pipeline_flow:
     ... → tao-<format> → FINAL AUDIT → deliver
@@ -288,7 +288,7 @@ final_audit:
 action: Deliver immediately
 ```
 
-### Example 2: Rollback to bien-soan
+### Example 2: Rollback to compose
 ```yaml
 scenario: User asked for comprehensive analysis, output is thin
 final_audit:
@@ -299,7 +299,7 @@ final_audit:
   result: fail
   
 diagnosis:
-  failing_step: "synthesize" (bien-soan)
+  failing_step: "synthesize" (compose)
   reason: "Content lacks depth in dimensions: market_analysis, competitive_landscape"
   
 rollback:
@@ -307,7 +307,7 @@ rollback:
     Expand sections on market_analysis and competitive_landscape.
     Add specific data points, company names, market size figures.
     Target: 3000+ words total, 400+ words per major section.
-  re_execute: bien-soan → tao-word → re-audit
+  re_execute: compose → gen-word → re-audit
   
 re_audit:
   overall_score: 78

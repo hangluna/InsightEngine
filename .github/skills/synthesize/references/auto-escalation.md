@@ -20,7 +20,7 @@ ESCALATION_RULE:
 
 ## Skill Escalation Tiers
 
-### thu-thap (Content Gathering)
+### gather (Content Gathering)
 
 ```yaml
 url_fetching:
@@ -82,7 +82,7 @@ file_reading:
     user_message: "Không thể đọc file này. Vui lòng kiểm tra định dạng."
 ```
 
-### tao-slide (Presentation Generation)
+### gen-slide (Presentation Generation)
 
 ```yaml
 slide_generation:
@@ -101,7 +101,7 @@ slide_generation:
     user_message: "File slide đã tạo nhưng có thể cần chỉnh sửa thêm."
 ```
 
-### tao-hinh (Chart/Image Generation)
+### gen-image (Chart/Image Generation)
 
 ```yaml
 chart_generation:
@@ -137,7 +137,7 @@ image_generation:
     user_message: "Bỏ qua hình ảnh AI — tiếp tục với nội dung."
 ```
 
-### bien-soan (Content Synthesis)
+### compose (Content Synthesis)
 
 ```yaml
 synthesis:
@@ -167,7 +167,7 @@ Each escalation attempt is logged to `tmp/.agent-context.json → escalation_log
 
 ```json
 {
-  "skill": "thu-thap",
+  "skill": "gather",
   "tool_tried": "fetch_webpage",
   "target": "https://example.com",
   "result": "failure",

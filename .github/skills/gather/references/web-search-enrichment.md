@@ -8,7 +8,7 @@ Auto-search Google when user describes a topic without providing specific source
 TRIGGER:
   - No files or URLs provided by user
   - User says "tìm kiếm về", "search for", "tìm thông tin", "tìm kiếm"
-  - Pipeline (tong-hop) routes with search_needed: true
+  - Pipeline (synthesize) routes with search_needed: true
   - Hybrid: user provides some files + asks to supplement with web search
 ```
 
@@ -64,20 +64,20 @@ HYBRID_MODE:
 
 ## Enrichment Callback (US-4.4.2)
 
-thu-thap can be called by bien-soan during synthesis when source content is thin.
+gather can be called by compose during synthesis when source content is thin.
 
 ```yaml
 ENRICHMENT_CALLBACK:
   trigger:
-    - bien-soan detects thin content in specific sections
-    - bien-soan generates search queries for those sections
-    - Copilot calls thu-thap web search on behalf of bien-soan
+    - compose detects thin content in specific sections
+    - compose generates search queries for those sections
+    - Copilot calls gather web search on behalf of compose
 
   workflow:
-    1. bien-soan passes enrichment queries (1-2 per thin section)
+    1. compose passes enrichment queries (1-2 per thin section)
     2. Copilot runs vscode-websearchforcopilot_webSearch per query
     3. Copilot fetches top 2-3 URLs via fetch_webpage
-    4. Content returned to bien-soan with [Web: url] attribution
+    4. Content returned to compose with [Web: url] attribution
 
   constraints:
     max_queries: 2 per section

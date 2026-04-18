@@ -138,7 +138,7 @@ SPEAKER_NOTES:
   how: Add "notes" key to any slide JSON object
   view: Press "S" in browser to open Speaker View
   example: '{"type": "content", "title": "...", "bullets": [...], "notes": "Talking points..."}'
-  auto_generate: bien-soan generates notes when tong-hop sets include_notes: true
+  auto_generate: compose generates notes when synthesize sets include_notes: true
 
 PDF_EXPORT:
   with_notes:    python3 gen_reveal.py --input data.json --output slides.html --print-notes

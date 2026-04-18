@@ -1,7 +1,7 @@
 # Quality Gates — Full Criteria Reference
 
 These are the specific pass/fail criteria for each pipeline step's quality gate.
-The orchestrator (tong-hop) references this file when evaluating step outputs.
+The orchestrator (synthesize) references this file when evaluating step outputs.
 
 ---
 
@@ -53,7 +53,7 @@ THU_THAP_QUALITY_CRITERIA:
     fail_action: "Nội dung thu thập quá chung chung, thiếu số liệu cụ thể. Tìm nguồn có data."
 
   url_fetch_escalation:
-    note: thu-thap v1.2 handles Playwright escalation internally. Only retry for topic mismatch.
+    note: gather v1.2 handles Playwright escalation internally. Only retry for topic mismatch.
 
   # Additional checks for data_collection mode:
   data_collection_checks:
@@ -142,12 +142,12 @@ OUTPUT_QUALITY_CRITERIA:
 
 ---
 
-## OUTPUT AUDIT Gate (Step 4.7 — kiem-tra)
+## OUTPUT AUDIT Gate (Step 4.7 — verify)
 
 ```yaml
 OUTPUT_AUDIT:
   trigger: ALWAYS — after all tao-<format> steps complete, before final report
-  sub_skill: kiem-tra (see .github/skills/verify/SKILL.md)
+  sub_skill: verify (see .github/skills/verify/SKILL.md)
   
   inputs:
     - original_request: The user's full original prompt (verbatim)

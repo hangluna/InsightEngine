@@ -6,7 +6,7 @@ description: |
   Always use this skill when the user wants a PDF output — even casual requests like "xuất PDF",
   "tạo file pdf", "lưu thành PDF để in", "tôi cần file pdf", or "cho tôi file không chỉnh sửa
   được" (read-only document implies PDF) — even without saying "gen-pdf" or ".pdf".
-argument-hint: "[content from bien-soan or direct text] [output path]"
+argument-hint: "[content from compose or direct text] [output path]"
 version: 1.1
 compatibility:
   requires:
@@ -78,7 +78,7 @@ PDF is often the final delivery format — it goes to bosses, clients, or gets p
 PDF is worse than a thin Word doc because the recipient can't easily fix it.
 
 **Automatic rejection criteria (when called from pipeline):**
-- **< 1000 words** for a multi-section report PDF: REJECT. Signal back to tong-hop:
+- **< 1000 words** for a multi-section report PDF: REJECT. Signal back to synthesize:
   "❌ Content quá mỏng ({word_count} từ) cho PDF. Cần biên soạn lại ở mức comprehensive."
 - **< 500 words** for any PDF: REJECT (unless it's a single-page certificate/label).
 - **Sections without substance**: If more than 30% of sections have only 1-2 sentences, REJECT.
@@ -178,7 +178,7 @@ Input: Short executive summary, 300 words
 Output: Minimal PDF, 1 page, Canvas API, clean layout, 15 KB
 
 **Example 3 — Report with embedded charts:**
-Input: Content + 3 chart PNGs from tao-hinh
+Input: Content + 3 chart PNGs from gen-image
 Output: PDF with inline images, captions, proper page breaks, 250 KB
 
 ---
@@ -207,7 +207,7 @@ AUDITOR_GATE:
 
 ## What This Skill Does NOT Do
 
-- Does NOT read existing PDFs — that is thu-thap
-- Does NOT create charts — that is tao-hinh
-- Does NOT synthesize content — that is bien-soan
+- Does NOT read existing PDFs — that is gather
+- Does NOT create charts — that is gen-image
+- Does NOT synthesize content — that is compose
 - Does NOT install dependencies — redirects to setup

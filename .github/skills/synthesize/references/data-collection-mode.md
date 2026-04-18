@@ -8,13 +8,13 @@ pipeline behavior is fundamentally different.
 
 ### Research mode (default):
 - Input: topic/question → Output: synthesized document about that topic
-- thu-thap: search broadly, gather diverse perspectives
-- bien-soan: merge, analyze, write prose
+- gather: search broadly, gather diverse perspectives
+- compose: merge, analyze, write prose
 - Example: "Tổng hợp về xu hướng AI 2026" → a report about AI trends
 
 ### Data collection mode:
 - Input: entity type + filter criteria → Output: structured list of specific items
-- thu-thap: search platform-specific, fetch individual item pages, extract fields
+- gather: search platform-specific, fetch individual item pages, extract fields
 - Output: Excel/table with rows = items, columns = fields
 - Example: "Tìm tất cả job fresher JS ở HCM" → Excel with 30 job rows
 

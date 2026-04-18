@@ -81,7 +81,7 @@ pip3 install --user httpx beautifulsoup4
 
 Some file types (especially scanned PDFs or complex PPTX) can produce garbled output.
 
-**Fix:** The thu-thap skill automatically falls back to format-specific readers. If you're
+**Fix:** The gather skill automatically falls back to format-specific readers. If you're
 calling markitdown directly:
 ```python
 from markitdown import MarkItDown
@@ -185,7 +185,7 @@ matplotlib.use('Agg')  # MUST be before any other matplotlib import
 import matplotlib.pyplot as plt
 ```
 
-This is already enforced in InsightEngine's tao-hinh skill, but if you write custom scripts,
+This is already enforced in InsightEngine's gen-image skill, but if you write custom scripts,
 always include this line.
 
 ---

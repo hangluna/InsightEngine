@@ -13,11 +13,11 @@ CHAIN_DETECTION:
 
   common_chains:
     data_to_presentation:
-      - tao-excel → tao-hinh (charts) → tao-slide (embed charts)
+      - gen-excel → gen-image (charts) → gen-slide (embed charts)
     report_multi_format:
-      - bien-soan → tao-word + tao-pdf (parallel export)
+      - compose → gen-word + gen-pdf (parallel export)
     visual_report:
-      - thu-thap → bien-soan → tao-hinh → tao-html (embed all)
+      - gather → compose → gen-image → gen-html (embed all)
 ```
 
 ## Chain Execution

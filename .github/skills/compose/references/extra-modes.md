@@ -39,7 +39,7 @@ PIPELINE_MODE:
 
 ## Speaker Notes Generation (US-4.5.2)
 
-When output target is a presentation (tao-html presentation mode or tao-slide).
+When output target is a presentation (gen-html presentation mode or gen-slide).
 
 ```yaml
 TRIGGER:
@@ -65,8 +65,8 @@ GENERATION_RULES:
     - Example: {"type": "content", "title": "...", "bullets": [...], "notes": "Giải thích chi tiết..."}
 
 PIPELINE_INTEGRATION:
-  - tong-hop passes "include_notes: true" to bien-soan when output is presentation
-  - bien-soan generates notes during synthesis (not as separate step)
+  - synthesize passes "include_notes: true" to compose when output is presentation
+  - compose generates notes during synthesis (not as separate step)
 ```
 
 ---
@@ -93,7 +93,7 @@ ENRICHMENT_WORKFLOW:
     - Formulate 1-2 search queries in content's language
 
   3_REQUEST_ENRICHMENT:
-    - Trigger thu-thap web search for each query
+    - Trigger gather web search for each query
     - Fetch top 2-3 URLs via fetch_webpage
 
   4_MERGE:

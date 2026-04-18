@@ -41,10 +41,10 @@ DECISION_FLOW:
       Can inline code/script solve this without a full skill?
       
     alternatives:
-      - bien-soan with custom instructions → covers most text tasks
-      - thu-thap with specific search terms → covers most research
+      - compose with custom instructions → covers most text tasks
+      - gather with specific search terms → covers most research
       - Inline Python script in /scripts → covers data transforms
-      - tao-html with custom template → covers web output
+      - gen-html with custom template → covers web output
       
   3_advisory_decision:
     call: advisory agent (1 call)
@@ -132,7 +132,7 @@ CREATION_STEPS:
         
   5_register_skill:
     action: |
-      NOTE: Do NOT modify copilot-instructions.md or tong-hop SKILL.md
+      NOTE: Do NOT modify copilot-instructions.md or synthesize SKILL.md
       during pipeline runtime. The created skill is used inline for
       this pipeline run only. Registration for future use is a
       post-pipeline task.
@@ -222,20 +222,20 @@ gap: No audio skill exists
 advisory_evaluation:
   alternatives:
     - "Use inline Python with whisper library"
-    - "Use thu-thap to read audio file via markitdown"
+    - "Use gather to read audio file via markitdown"
   decision: NOT_NEEDED
-  reason: "markitdown supports audio → use thu-thap with audio mode"
-result: No skill created, thu-thap handles it
+  reason: "markitdown supports audio → use gather with audio mode"
+result: No skill created, gather handles it
 ```
 
 ### Example 2: Forge Approved and Successful
 
 ```yaml
 scenario: User wants interactive web dashboard (not static HTML)
-gap: tao-html only does static pages, no interactive dashboards
+gap: gen-html only does static pages, no interactive dashboards
 advisory_evaluation:
   alternatives:
-    - "tao-html with JavaScript inline" → too complex, unreliable
+    - "gen-html with JavaScript inline" → too complex, unreliable
     - "Inline streamlit script" → requires running server
   decision: APPROVED
   reason: "No existing skill can produce interactive dashboards reliably"
@@ -259,6 +259,6 @@ gap: No 3D rendering skill
 advisory: APPROVED
 creation_attempt: Script uses three.js but test fails (complex setup)
 retry: Still fails (WebGL dependency issues)
-fallback: Use tao-hinh to generate 2D charts + note to user
+fallback: Use gen-image to generate 2D charts + note to user
 log: "skill_forge_failed: 3D rendering too complex for runtime creation"
 ```

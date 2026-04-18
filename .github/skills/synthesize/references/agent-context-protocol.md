@@ -64,13 +64,13 @@ READ_PROTOCOL:
       - model_profile (full)
       - decisions (to avoid repeating)
     
-    thu-thap:
+    gather:
       - user_request.request_type
       - user_request.required_fields
       - workflow.current_step_index
       - escalation_log (to know what's been tried)
     
-    bien-soan:
+    compose:
       - user_request.content_depth
       - user_request.expanded_dimensions
       - audit_history (prior quality checks)
@@ -120,7 +120,7 @@ WRITE_PROTOCOL:
     updated_at: Always update
     
     # SET-ONCE fields (only write if empty)
-    user_request: Set by tong-hop at pipeline start
+    user_request: Set by synthesize at pipeline start
     model_profile: Set by model detection at pipeline start
     workflow.template_used: Set by strategist
 
@@ -179,7 +179,7 @@ UPDATE:
   updated_at: "2026-04-18T10:30:00Z"
   
 APPEND to audit_history:
-  - step_id: "bien-soan"
+  - step_id: "compose"
     tier: "self_review"
     result: "pass"
     score: 85

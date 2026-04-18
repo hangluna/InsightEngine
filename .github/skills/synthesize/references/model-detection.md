@@ -17,7 +17,7 @@ dynamically at startup and stores the profile in shared context.
 
 ```yaml
 MODEL_DETECTION:
-  when: Pipeline start (tong-hop Step 0, before any work)
+  when: Pipeline start (synthesize Step 0, before any work)
   
   step_1_self_declare:
     prompt: |
@@ -155,7 +155,7 @@ KNOWN_MODELS:
 
 ```yaml
 USAGE:
-  tong-hop:
+  synthesize:
     - Reads model_profile to decide AGENT_MODE on/off
     - basic models → AGENT_MODE: false (skip agent overhead)
     - standard/advanced → AGENT_MODE: true
