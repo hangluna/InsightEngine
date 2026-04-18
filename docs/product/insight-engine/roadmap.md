@@ -126,6 +126,44 @@
 | **Epic 6.5 — Tiered Audit System (`kiem-dinh`)** | Self-review tier 1 (mọi step) → agent audit tier 2 (critical steps) → final audit tier 3 (output vs requirements). Max 3 retries/step, 10 total, fail-fast. |
 | **Epic 6.6 — Advisory Agent & Conditional Skill Creation (`tu-van`)** | Agent tư vấn đa góc nhìn (1 call, max 2/pipeline). Conditional skill-forge runtime (30-min budget, clone-first từ verified public repos, mandatory security check). |
 | **Epic 6.7 — Pipeline Integration** | Tích hợp agent architecture vào `tong-hop` với feature flag `AGENT_MODE`. Step-level rollback trên final audit fail. Budget cap 30 agent calls/pipeline. |
+
+---
+
+## Phase 7 — Pipeline Enforcement & Compliance Hardening
+
+**Goal:** Close the gap between Phase 6 design and actual runtime behavior. Phase 6 defined the right architecture (strategist, audit, decision maps), but real-world testing reveals models frequently skip critical steps when instructions are buried in reference files. Phase 7 moves enforcement mechanisms inline, adds hard confirmation gates, and makes pipeline compliance visible to the user.
+
+> **Nguồn gốc:** Real-world testing — user prompt "tìm jobs fresher JS ở HCM, tạo Excel + slide phân tích" resulted in: no request analysis shown, no dimension expansion, generic search URLs instead of platform-specific job URLs, no URL validation, AGENT_MODE pipeline flow not activated.
+
+### Root Cause Analysis
+
+```yaml
+ROOT_CAUSES:
+  RC1_reference_depth:
+    problem: "Critical pipeline logic (Step 1.5, REQUEST_TYPE, data_collection protocol) lives in reference files"
+    effect: "Models — especially smaller ones — skip reference reads and miss critical steps"
+    
+  RC2_no_hard_gates:
+    problem: "Instructions say MUST but nothing forces the model to stop if it skips"
+    effect: "Pipeline runs straight through without showing analysis to user"
+    
+  RC3_late_validation:
+    problem: "URL validation only happens at audit step (4.7) — after output is already generated"
+    effect: "Invalid URLs reach the final Excel file; post-hoc fix is wasteful"
+    
+  RC4_invisible_progress:
+    problem: "User cannot see which pipeline steps are running vs skipped"
+    effect: "User has no way to catch non-compliance until they inspect the output"
+```
+
+### Epics
+
+| Epic | Description |
+|------|-------------|
+| **Epic 7.1 — Inline Critical Steps & Hard Gates** | Move Step 1.5 request analysis and REQUEST_TYPE detection back inline in tong-hop SKILL.md. Add mandatory user confirmation gate — pipeline MUST show analysis output and get explicit 'ok' before proceeding to Step 3. |
+| **Epic 7.2 — Data Collection Enforcement** | Inline data_collection protocol in thu-thap SKILL.md main body (not reference file). Add pre-output URL validation gate — `validate_urls.py` runs BEFORE tao-excel generates the file, not just in post-hoc audit. |
+| **Epic 7.3 — Visible Pipeline Trace** | Pipeline prints a numbered step list at start, marks each step ✅ as it completes. User always sees where pipeline is and can catch skips. |
+
 ---
 
 ## Skill Map theo Phase
@@ -138,6 +176,7 @@ Phase 3:  tao-hinh (MỚI)    bien-soan (nâng)   tao-slide (nâng)  tong-hop (n
 Phase 4:  tao-slide (templates)  tao-html (reveal.js)  bien-soan (depth)  all skills (scripts/)
 Phase 5:  all skills (small model refactor)  tong-hop (session state + resume)
 Phase 6:  agents (MỚI: strategist, audit, advisory)  tong-hop (dynamic workflow)  all skills (strict rules)
+Phase 7:  tong-hop (inline critical steps + hard gates)  thu-thap (data collection hardening)  pipeline trace
 ```
 
 **Tổng số skills:** 10 + 3 agents (strategist, audit, advisory)
@@ -280,6 +319,21 @@ Phase 0 là bắt buộc — không có `cai-dat` và `tong-hop` thì các skill
 | **Epic 6.5 — Tiered Audit System** | Self-review → agent audit (critical) → final audit. Max 3 retries/step |
 | **Epic 6.6 — Advisory Agent & Skill Creation** | Tư vấn đa góc nhìn. Tạo skill có điều kiện (30 phút, clone-first, security check) |
 | **Epic 6.7 — Pipeline Integration** | Tích hợp agents vào tong-hop với feature flag AGENT_MODE |
+
+---
+
+## Phase 7 — Pipeline Enforcement & Compliance Hardening
+
+**Mục tiêu:** Đóng khoảng cách giữa thiết kế Phase 6 và hành vi thực tế. Model thường bỏ qua các step quan trọng khi instruction nằm quá sâu trong reference files. Phase 7 đưa enforcement inline, thêm hard gates, và làm pipeline compliance hiển thị cho user.
+
+> **Nguồn gốc:** Test thực tế — model skip Step 1.5 request analysis, không dùng platform-specific search, trả URL search page thay vì direct job URL, không activate AGENT_MODE flow.
+
+| Epic | Mô tả |
+|------|-------|
+| **Epic 7.1 — Inline Critical Steps & Hard Gates** | Đưa Step 1.5 và REQUEST_TYPE detection về inline trong tong-hop. Thêm gate xác nhận bắt buộc trước Step 3. |
+| **Epic 7.2 — Data Collection Enforcement** | Inline data_collection protocol trong thu-thap. URL validation chạy TRƯỚC khi tạo Excel output. |
+| **Epic 7.3 — Visible Pipeline Trace** | Pipeline in danh sách step có đánh số ở đầu, đánh dấu ✅ từng step khi hoàn thành. |
+
 ---
 
 *Roadmap này không bao gồm task-level breakdown. Xem User Stories để biết chi tiết triển khai.*  

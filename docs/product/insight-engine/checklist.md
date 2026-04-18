@@ -3,7 +3,7 @@
 > **Product:** InsightEngine  
 > **Product Slug:** insight-engine  
 > **Created:** 2026-04-16  
-> **Total User Stories:** 54 (21 Phase 0-3 DONE + 15 Phase 4 DONE + 4 Phase 5 DONE + 14 Phase 6 PLANNED)  
+> **Total User Stories:** 59 (21 Phase 0-3 DONE + 15 Phase 4 DONE + 4 Phase 5 DONE + 14 Phase 6 DONE + 5 Phase 7 PLANNED)  
 > **Purpose:** Single source of execution state — track progress, enforce dependencies, enable safe parallel work
 
 ---
@@ -746,6 +746,48 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
 
 ---
 
+## Phase 7: Pipeline Enforcement & Compliance Hardening
+
+> **Nguồn gốc:** Real-world testing — model skip critical steps khi instructions nằm trong reference files. **5 stories PLANNED.**
+
+### Epic 7.1: Inline Critical Steps & Hard Gates
+
+- [ ] **US-7.1.1** — Inline request analysis and REQUEST_TYPE detection
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-7.1.1
+  - Blocked By: None
+
+- [ ] **US-7.1.2** — Hard confirmation gate before execution
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-7.1.2
+  - Blocked By: US-7.1.1
+
+### Epic 7.2: Data Collection Enforcement
+
+- [ ] **US-7.2.1** — Inline data collection protocol in thu-thap
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-7.2.1
+  - Blocked By: None
+
+- [ ] **US-7.2.2** — Pre-output URL validation gate
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-7.2.2
+  - Blocked By: US-7.2.1
+
+### Epic 7.3: Visible Pipeline Trace
+
+- [ ] **US-7.3.1** — Numbered step trace with live progress
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-7.3.1
+  - Blocked By: None
+
+---
+
 ### Execution Order (Recommended)
 
 ```
@@ -772,6 +814,9 @@ Wave 17 (parallel): US-6.1.2, US-6.2.2, US-6.3.3, US-6.5.1, US-6.6.1
 Wave 18 (parallel): US-6.3.2, US-6.4.1, US-6.6.2
 Wave 19 (parallel): US-6.5.2, US-6.6.3, US-6.7.1
 --- Phase 6 DONE (14/14) ---
+Wave 20 (parallel): US-7.1.1, US-7.2.1, US-7.3.1
+Wave 21 (sequential): US-7.1.2 (after 7.1.1), US-7.2.2 (after 7.2.1)
+--- Phase 7 DONE (5/5) ---
 ```
 
 ---

@@ -3,8 +3,8 @@
 > **Product:** InsightEngine  
 > **Product Slug:** insight-engine  
 > **Created:** 2026-04-16  
-> **Scope:** Phase 0 → Phase 5 (all phases)  
-> **Total User Stories:** 54 (21 Phase 0-3 + 15 Phase 4 + 4 Phase 5 + 14 Phase 6)
+> **Scope:** Phase 0 → Phase 7 (all phases)  
+> **Total User Stories:** 59 (21 Phase 0-3 + 15 Phase 4 + 4 Phase 5 + 14 Phase 6 + 5 Phase 7)
 
 ---
 
@@ -12,8 +12,8 @@
 
 - **Product name:** InsightEngine
 - **Product slug:** `insight-engine`
-- **Scope covered:** Phase 0, Phase 1, Phase 2, Phase 3, Phase 4, Phase 5
-- **Total stories:** 54 (Phase 0: 5, Phase 1: 6, Phase 2: 5, Phase 3: 5, Phase 4: 15, Phase 5: 4, Phase 6: 14)
+- **Scope covered:** Phase 0, Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, Phase 7
+- **Total stories:** 59 (Phase 0: 5, Phase 1: 6, Phase 2: 5, Phase 3: 5, Phase 4: 15, Phase 5: 4, Phase 6: 14, Phase 7: 5)
 - **ID format:** `US-<phase>.<epic>.<index>`
 
 ### Dependency Graph (Summary)
@@ -739,14 +739,82 @@ US-0.3.1 + US-2.5.1 → US-3.4.1                                   │
 
 ---
 
+## Phase 7: Pipeline Enforcement & Compliance Hardening
+
+> **Nguồn gốc:** Real-world testing reveals models skip critical pipeline steps (request analysis, URL validation, AGENT_MODE flow) when instructions are buried in reference files. Phase 7 moves enforcement inline and adds hard gates.
+
+---
+
+### Epic 7.1: Inline Critical Steps & Hard Gates
+
+**US-7.1.1: Inline request analysis and REQUEST_TYPE detection**
+- Description: As a pipeline user, I want Step 1.5 (request deep analysis) and Step 1 REQUEST_TYPE detection logic to live inline in tong-hop SKILL.md rather than in reference files, so that all models — including smaller ones — reliably execute these critical steps.
+- Acceptance Criteria:
+  - AC1: Step 1.5 request analysis protocol (dimension expansion, data collection strategy) is inline in tong-hop SKILL.md
+  - AC2: REQUEST_TYPE detection logic (research vs data_collection vs mixed) is inline in Step 1
+  - AC3: Reference files (`references/request-analysis.md`) retain supplementary details only — not the core decision flow
+  - AC4: tong-hop SKILL.md remains ≤ 500 lines (use progressive disclosure for non-critical content)
+  - AC5: Tested with GPT-4o-mini — model correctly identifies REQUEST_TYPE and shows analysis
+- Blocked By: `None`
+
+**US-7.1.2: Hard confirmation gate before execution**
+- Description: As a user, I want the pipeline to STOP and show me its analysis of my request (expanded dimensions, detected type, execution plan) and wait for my explicit 'ok' before proceeding, so I can verify the pipeline understood correctly.
+- Acceptance Criteria:
+  - AC1: Pipeline MUST display Step 1.5 analysis output to user in Vietnamese
+  - AC2: Pipeline MUST receive explicit user confirmation ("ok", "đồng ý", "tiếp tục") before moving to Step 3
+  - AC3: If user does not confirm, pipeline STOPS (does not silently proceed)
+  - AC4: Analysis display includes: request_type, detected dimensions/fields, planned steps, content_depth
+  - AC5: Gate is enforced regardless of model — instruction is unambiguous imperative ("STOP HERE. Show analysis. Wait for user.")
+- Blocked By: `US-7.1.1`
+
+---
+
+### Epic 7.2: Data Collection Enforcement
+
+**US-7.2.1: Inline data collection protocol in thu-thap**
+- Description: As a pipeline user requesting structured data collection (jobs, products, courses), I want thu-thap to reliably use platform-specific search and extract individual item URLs, so I get direct links instead of search result pages.
+- Acceptance Criteria:
+  - AC1: Data collection protocol (platform-specific search, individual page fetch, field extraction) is inline in thu-thap SKILL.md main body
+  - AC2: `references/data-collection-mode.md` retains advanced examples only — core protocol is inline
+  - AC3: thu-thap MUST use `site:{platform}` search when mode=data_collection (not generic Google)
+  - AC4: thu-thap MUST fetch and verify individual item pages (not search result pages, not aggregator listing pages)
+  - AC5: Each extracted item MUST have a `direct_url` field pointing to the specific item page
+- Blocked By: `None`
+
+**US-7.2.2: Pre-output URL validation gate**
+- Description: As a user, I want URLs in my Excel output to be validated BEFORE the file is generated, so invalid URLs never reach the final deliverable.
+- Acceptance Criteria:
+  - AC1: `scripts/validate_urls.py` runs BEFORE tao-excel generates the output file (not just in post-hoc audit)
+  - AC2: URLs classified as SEARCH or LISTING trigger automatic re-fetch for that specific item
+  - AC3: After re-fetch attempt, remaining invalid URLs are flagged with ⚠️ in the Excel file
+  - AC4: Validation summary shown to user: "X/Y URLs verified as direct links"
+  - AC5: If >50% URLs invalid after re-fetch: STOP and ask user whether to proceed or re-search
+- Blocked By: `US-7.2.1`
+
+---
+
+### Epic 7.3: Visible Pipeline Trace
+
+**US-7.3.1: Numbered step trace with live progress**
+- Description: As a user, I want to see a numbered list of all pipeline steps at the start, with each step marked ✅ as it completes, so I can verify the pipeline is following the correct sequence and catch any skipped steps.
+- Acceptance Criteria:
+  - AC1: Pipeline prints numbered step list at start (after plan approval): "📋 Pipeline steps: 1. Phân tích yêu cầu 2. Thu thập 3. Biên soạn 4. Xuất file 5. Kiểm tra"
+  - AC2: Each step is marked ✅ with a one-line summary when completed
+  - AC3: Skipped steps are marked ⏭️ with explanation
+  - AC4: Failed steps are marked ❌ with error summary
+  - AC5: Step trace is always visible (not buried in collapsed sections or reference files)
+- Blocked By: `None`
+
+---
+
 ---
 
 ## Tổng quan User Stories (Tiếng Việt)
 
 - **Tên sản phẩm:** InsightEngine
 - **Product slug:** `insight-engine`
-- **Phạm vi:** Phase 0 → Phase 6
-- **Tổng số User Stories:** 54 (21 Phase 0-3 + 15 Phase 4 + 4 Phase 5 + 14 Phase 6)
+- **Phạm vi:** Phase 0 → Phase 7
+- **Tổng số User Stories:** 59 (21 Phase 0-3 + 15 Phase 4 + 4 Phase 5 + 14 Phase 6 + 5 Phase 7)
 
 ---
 
@@ -1254,6 +1322,65 @@ US-0.3.1 + US-2.5.1 → US-3.4.1                                   │
 **US-6.7.1: Tích hợp tong-hop với feature flag AGENT_MODE**
 - Mô tả: AGENT_MODE true → agent pipeline, false → current pipeline. User experience không đổi.
 - Bị chặn bởi: `US-6.4.1`, `US-6.5.1`, `US-6.6.1`
+
+---
+
+## Phase 7: Pipeline Enforcement & Compliance Hardening
+
+> **Nguồn gốc:** Test thực tế — model skip Step 1.5, không dùng platform-specific search, trả URL search page, không kích hoạt AGENT_MODE flow.
+
+### Epic 7.1: Inline Critical Steps & Hard Gates
+
+**US-7.1.1: Đưa request analysis và REQUEST_TYPE detection inline**
+- Mô tả: Step 1.5 và REQUEST_TYPE detection phải nằm inline trong tong-hop SKILL.md, không ở reference files, để mọi model đều tuân thủ.
+- Tiêu chí nghiệm thu:
+  - AC1: Step 1.5 request analysis inline trong tong-hop SKILL.md
+  - AC2: REQUEST_TYPE detection inline trong Step 1
+  - AC3: Reference files chỉ chứa supplementary details
+  - AC4: tong-hop SKILL.md ≤ 500 dòng
+  - AC5: Test pass với GPT-4o-mini
+- Bị chặn bởi: `None`
+
+**US-7.1.2: Gate xác nhận bắt buộc trước khi thực thi**
+- Mô tả: Pipeline PHẢI hiển thị phân tích cho user VÀ nhận xác nhận trước Step 3. Không xác nhận → STOP.
+- Tiêu chí nghiệm thu:
+  - AC1: Hiển thị phân tích Step 1.5 bằng tiếng Việt
+  - AC2: Nhận xác nhận rõ ràng trước Step 3
+  - AC3: Không xác nhận → pipeline STOP
+  - AC4: Phân tích gồm: request_type, dimensions/fields, planned steps, content_depth
+- Bị chặn bởi: `US-7.1.1`
+
+### Epic 7.2: Data Collection Enforcement
+
+**US-7.2.1: Inline data collection protocol trong thu-thap**
+- Mô tả: Protocol thu thập dữ liệu cấu trúc (platform-specific search, fetch individual page, extract fields) nằm inline trong thu-thap SKILL.md.
+- Tiêu chí nghiệm thu:
+  - AC1: Protocol nằm inline trong thu-thap main body
+  - AC2: Dùng `site:{platform}` khi mode=data_collection
+  - AC3: Fetch individual item pages, không phải search result pages
+  - AC4: Mỗi item phải có `direct_url`
+- Bị chặn bởi: `None`
+
+**US-7.2.2: URL validation gate trước khi tạo output**
+- Mô tả: validate_urls.py chạy TRƯỚC khi tao-excel tạo file. URL sai → re-fetch hoặc flag.
+- Tiêu chí nghiệm thu:
+  - AC1: validate_urls.py chạy trước tao-excel output
+  - AC2: URL SEARCH/LISTING → auto re-fetch
+  - AC3: URL còn sai sau re-fetch → flag ⚠️ trong Excel
+  - AC4: >50% invalid → STOP hỏi user
+- Bị chặn bởi: `US-7.2.1`
+
+### Epic 7.3: Visible Pipeline Trace
+
+**US-7.3.1: Trace pipeline có đánh số với progress trực tiếp**
+- Mô tả: Pipeline in danh sách step có đánh số ở đầu, đánh dấu ✅ từng step khi hoàn thành.
+- Tiêu chí nghiệm thu:
+  - AC1: In danh sách step có đánh số ở đầu pipeline
+  - AC2: Mỗi step hoàn thành → ✅ + tóm tắt 1 dòng
+  - AC3: Step bị skip → ⏭️ + lý do
+  - AC4: Step fail → ❌ + error summary
+  - AC5: Trace luôn hiển thị, không bị ẩn
+- Bị chặn bởi: `None`
 
 ---
 
