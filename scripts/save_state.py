@@ -1,13 +1,28 @@
 #!/usr/bin/env python3
-"""Session state manager for InsightEngine tong-hop pipeline.
+"""Session state manager for InsightEngine pipeline.
 
 Commands:
     python3 scripts/save_state.py check        # Check if a session state exists
     python3 scripts/save_state.py save <json>   # Save current state (JSON string or @file)
     python3 scripts/save_state.py resume-plan   # Return pending steps as JSON
     python3 scripts/save_state.py archive       # Archive current state and start fresh
+    python3 scripts/save_state.py update --step <name> [--output-file <path>]  # Update step status
+    python3 scripts/save_state.py complete      # Mark pipeline as completed
 
 State file: tmp/.session-state.json
+
+Enhanced Schema (v2 — Phase 9):
+    raw_prompt: str             # Original user request
+    intent_classification: str  # synthesis | creation | research | design | data_collection | mixed
+    analyzed_requirements: dict # Expanded dimensions from analysis
+    generated_plan: dict        # Workflow plan from strategist
+    step_states: list           # Per-step: {name, status, input_summary, output_summary, started_at, completed_at}
+    audit_test_cases: list      # Dynamic test cases from auditor
+    score_history: list         # [{attempt, score, failing_tests}]
+    created_skills: list        # Runtime-created skills/agents
+    output_files: list          # [{path, hash, format, size}]
+    status: str                 # IN_PROGRESS | COMPLETED | FAILED
+    schema_version: int         # 2
 """
 
 import json
