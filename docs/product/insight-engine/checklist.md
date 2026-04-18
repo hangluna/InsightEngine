@@ -844,85 +844,85 @@ Wave 15 (sequential): US-5.1.2 (after 5.1.1), US-5.2.2 (after 5.2.1)
 
 ### Epic 9.1: Central Orchestrator (`dieu-phoi`)
 
-- [ ] **US-9.1.1** — Central orchestrator agent skeleton
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-8.4.2
+- [x] **US-9.1.1** — Central orchestrator agent skeleton
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.1.1
+  - Blocked By: ~~US-8.4.2~~ ✅
 
-- [ ] **US-9.1.2** — tong-hop refactor to synthesis-only
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-9.1.1
+- [x] **US-9.1.2** — tong-hop refactor to synthesis-only
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.1.2
+  - Blocked By: ~~US-9.1.1~~ ✅
 
-- [ ] **US-9.1.3** — dieu-phoi integration with shared agents
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-9.1.1
+- [x] **US-9.1.3** — dieu-phoi integration with shared agents
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.1.3
+  - Blocked By: ~~US-9.1.1~~ ✅
 
 ### Epic 9.2: Adaptive Self-Improvement
 
-- [ ] **US-9.2.1** — Capability gap evaluation protocol
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-9.1.1
+- [x] **US-9.2.1** — Capability gap evaluation protocol
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.2.1
+  - Blocked By: ~~US-9.1.1~~ ✅
 
-- [ ] **US-9.2.2** — Runtime agent creation with user consent
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-9.2.1
+- [x] **US-9.2.2** — Runtime agent creation with user consent
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.2.2
+  - Blocked By: ~~US-9.2.1~~ ✅
 
-- [ ] **US-9.2.3** — Runtime skill creation/upgrade
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-9.2.1
+- [x] **US-9.2.3** — Runtime skill creation/upgrade
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.2.3
+  - Blocked By: ~~US-9.2.1~~ ✅
 
 ### Epic 9.3: Enhanced Working State & Cross-Session Resume
 
-- [ ] **US-9.3.1** — Enhanced session state schema
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-5.2.1
+- [x] **US-9.3.1** — Enhanced session state schema
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.3.1
+  - Blocked By: ~~US-5.2.1~~ ✅
 
-- [ ] **US-9.3.2** — Step-level state persistence
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-9.3.1
+- [x] **US-9.3.2** — Step-level state persistence
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.3.2
+  - Blocked By: ~~US-9.3.1~~ ✅
 
-- [ ] **US-9.3.3** — Cross-session resume
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-9.3.2
+- [x] **US-9.3.3** — Cross-session resume
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.3.3
+  - Blocked By: ~~US-9.3.2~~ ✅
 
 ### Epic 9.4: 100-Point Weighted Audit Scoring
 
-- [ ] **US-9.4.1** — 100-point audit scoring system
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-8.1.1
+- [x] **US-9.4.1** — 100-point audit scoring system
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.4.1
+  - Blocked By: ~~US-8.1.1~~ ✅
 
-- [ ] **US-9.4.2** — Targeted retry loop with score tracking
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-9.4.1
+- [x] **US-9.4.2** — Targeted retry loop with score tracking
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.4.2
+  - Blocked By: ~~US-9.4.1~~ ✅
 
 ### Epic 9.5: VS Code Custom Agent Standard Migration
 
-- [ ] **US-9.5.1** — Migrate existing agents to .agent.md format
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
-  - Blocked By: US-8.1.1, US-8.2.1, US-8.3.1
+- [x] **US-9.5.1** — Migrate existing agents to .agent.md format
+  - Status: DONE
+  - Assignee: Copilot
+  - Branch: feature/insight-engine-us-9.5.1
+  - Blocked By: ~~US-8.1.1~~ ✅, ~~US-8.2.1~~ ✅, ~~US-8.3.1~~ ✅
 
 ---
 

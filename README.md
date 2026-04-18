@@ -53,7 +53,7 @@ Mở Copilot Chat (Ctrl+Alt+I hoặc icon chat trên thanh bên), rồi gõ:
 Sau khi cài xong dependencies, thử ngay:
 
 ```
-/tong-hop tìm kiếm về xu hướng AI 2025 và tổng hợp thành file Word
+tìm kiếm về xu hướng AI 2025 và tổng hợp thành file Word
 ```
 
 **Bước 5 — Stop Codespace sau khi dùng xong** ⚠️
@@ -90,143 +90,129 @@ GitHub Copilot Free có giới hạn request/tháng. Nếu muốn dùng model ca
 
 ## 💡 Hướng dẫn sử dụng hiệu quả
 
-### 1. Muốn output dài và chi tiết hơn? Nói rõ trong prompt
+### 1. Chỉ cần mô tả những gì bạn muốn — bằng tiếng Việt
 
-InsightEngine mặc định tạo output ở mức vừa phải (~3,000–5,000 từ). Để nhận được tài liệu thực sự chuyên sâu, hãy thêm từ khóa vào yêu cầu:
-
-| Bạn muốn | Từ khóa nên thêm | Kết quả |
-|----------|-----------------|---------|
-| Tóm tắt nhanh | `"tóm tắt ngắn gọn"`, `"overview"` | ~1,000–2,000 từ, ý chính |
-| Báo cáo đầy đủ | *(mặc định — không cần thêm gì)* | ~3,000–5,000 từ, có phân tích |
-| Phân tích chuyên sâu | `"phân tích sâu"`, `"chi tiết"`, `"đầy đủ"` | ~8,000–15,000 từ, case study, bảng so sánh |
+InsightEngine tự phân loại yêu cầu và chọn flow phù hợp. Không cần nhớ lệnh hay tên skill.
 
 **Ví dụ:**
 ```
-/tong-hop tìm hiểu về thị trường EV Việt Nam và làm báo cáo Word — phân tích sâu, đầy đủ
+tìm hiểu về xu hướng AI 2025 và tổng hợp thành file Word
 ```
 ```
-/tong-hop đọc file input/meeting-notes.docx và tóm tắt ngắn gọn thành email
+đọc file input/meeting-notes.docx và tóm tắt thành email
 ```
+```
+tạo slide thuyết trình về thị trường fintech Đông Nam Á
+```
+```
+đọc tất cả file trong thư mục input/ và gộp thành một báo cáo duy nhất
+```
+
+Pipeline sẽ hiển thị **kế hoạch thực hiện** trước khi chạy — bạn duyệt, điều chỉnh, hoặc bổ sung.
 
 ---
 
-### 2. Muốn tìm kiếm toàn diện? Mô tả nhiều chiều
+### 2. Muốn output dài và chi tiết hơn? Nói rõ trong prompt
 
-Khi yêu cầu liên quan đến so sánh, tổng hợp dữ liệu từ nhiều góc độ, hoặc trải dài theo thời gian — pipeline sẽ tự động kích hoạt chế độ **deep research** (tìm kiếm nhiều vòng, phân tích gaps, bổ sung thêm).
+Mặc định tạo output ở mức vừa phải (~3,000–5,000 từ). Để nhận tài liệu chuyên sâu:
 
-Những dấu hiệu giúp AI nhận ra bạn cần deep research:
-- Có **so sánh** hoặc **phân loại** ("so sánh A và B", "phân loại các loại...")
-- Trải dài **thời gian** ("từ 2023 đến nay", "qua các năm")
-- Yêu cầu **toàn bộ / đầy đủ** ("tất cả các mô hình", "toàn bộ thị trường")
-- Có **nhiều chiều thông tin** cần tổng hợp
+| Bạn muốn | Từ khóa nên thêm | Kết quả |
+|----------|-----------------|---------|
+| Tóm tắt nhanh | `"tóm tắt ngắn gọn"`, `"overview"` | ~1,000–2,000 từ |
+| Báo cáo đầy đủ | *(mặc định)* | ~3,000–5,000 từ |
+| Phân tích chuyên sâu | `"phân tích sâu"`, `"chi tiết"`, `"đầy đủ"` | ~8,000–15,000 từ |
 
-**Ví dụ prompt kích hoạt deep research:**
+---
+
+### 3. Muốn tìm kiếm toàn diện? Mô tả nhiều chiều
+
+Pipeline tự động kích hoạt **deep research** khi phát hiện yêu cầu phức tạp:
+- Có **so sánh** ("so sánh A và B", "phân loại các loại...")
+- Trải dài **thời gian** ("từ 2023 đến nay")
+- Yêu cầu **đầy đủ** ("tất cả các mô hình", "toàn bộ thị trường")
+
+**Ví dụ:**
 ```
-/tong-hop tổng hợp toàn bộ các mô hình AI lớn từ 2023 đến nay — so sánh benchmark,
+tổng hợp toàn bộ các mô hình AI lớn từ 2023 đến nay — so sánh benchmark,
 nhà phát triển, và ứng dụng thực tế — làm slide dark-modern
 ```
-```
-/tong-hop phân tích thị trường fintech Đông Nam Á: phân loại theo phân khúc, so sánh
-các nước, xu hướng 2025–2026 — báo cáo Word chi tiết
-```
-
-> Pipeline sẽ thông báo khi đang dùng deep research và ước tính thời gian (thường thêm 3–5 phút).
 
 ---
 
-### 3. Chọn style phù hợp với ngữ cảnh
+### 4. Chọn style phù hợp
 
-Thêm tên style vào cuối yêu cầu để kiểm soát giao diện của slide và HTML:
+Thêm tên style vào cuối yêu cầu để kiểm soát giao diện slide và HTML:
 
 | Style | Dùng khi nào |
 |-------|-------------|
 | `corporate` | Báo cáo doanh nghiệp, tài liệu chính thức |
-| `academic` | Nghiên cứu, luận văn, hội thảo học thuật |
-| `minimal` | Tóm tắt nhanh, nội dung đơn giản |
-| `dark-modern` | Tech talks, startup pitches, nội dung công nghệ |
+| `academic` | Nghiên cứu, luận văn, hội thảo |
+| `minimal` | Tóm tắt nhanh, đơn giản |
+| `dark-modern` | Tech talks, startup, công nghệ |
 | `creative` | Marketing, sự kiện, workshop |
 
-```
-/tong-hop ... và tạo slide style dark-modern
-/tong-hop ... xuất HTML style academic
-```
-
-Nếu không chỉ định, pipeline sẽ tự chọn style phù hợp nhất với nội dung.
+Nếu không chỉ định, pipeline tự chọn style phù hợp nhất.
 
 ---
 
-### 4. Kết hợp nhiều đầu ra trong một lệnh
+### 5. Kết hợp nhiều đầu ra
 
-InsightEngine hỗ trợ **output chaining** — tạo nhiều file liên kết nhau từ cùng một nguồn dữ liệu:
+InsightEngine hỗ trợ **output chaining** — tạo nhiều file liên kết nhau:
 
 ```
-/tong-hop đọc file input/sales_data.xlsx, tạo biểu đồ bar chart và line chart,
+đọc file input/sales_data.xlsx, tạo biểu đồ bar chart và line chart,
 rồi nhúng vào báo cáo Word kiểu corporate
 ```
 ```
-/tong-hop tìm kiếm về AI trends 2025, tạo bảng Excel tổng hợp số liệu,
+tìm kiếm về AI trends 2025, tạo bảng Excel tổng hợp số liệu,
 sau đó dùng số liệu đó làm slide thuyết trình 15 trang
 ```
 
 ---
 
-### 5. Cung cấp file đầu vào đúng cách
+### 6. Cung cấp file đầu vào
 
-Đặt file cần xử lý vào thư mục `input/` trước khi chạy lệnh. Pipeline hỗ trợ:
-
-| Định dạng | Ví dụ |
-|-----------|-------|
-| Word, PDF, Excel, PowerPoint | `input/report.docx`, `input/data.xlsx` |
-| Text, Markdown | `input/notes.txt` |
-| URL | Dán trực tiếp vào prompt |
-| Web search | Mô tả chủ đề cần tìm kiếm |
+Đặt file cần xử lý vào thư mục `input/`. Hỗ trợ: Word, PDF, Excel, PowerPoint, Text, Markdown, URL, web search.
 
 ```
-/tong-hop đọc tất cả file trong thư mục input/ và tổng hợp thành một báo cáo duy nhất
+đọc tất cả file trong thư mục input/ và tổng hợp thành một báo cáo duy nhất
 ```
 
 ---
 
-### 6. Xem và chỉnh sửa kế hoạch trước khi chạy
+### 7. Kiểm tra chất lượng output
 
-Trước khi thực hiện, pipeline luôn hiển thị **kế hoạch thực hiện** và hỏi bạn có đồng ý không. Đây là lúc bạn có thể:
-- Thay đổi format đầu ra
-- Điều chỉnh style
-- Thêm hoặc bớt nguồn dữ liệu
+Pipeline tự động chấm điểm output (thang 100 điểm) trước khi giao. Nếu không đạt, tự sửa các phần yếu.
 
-Chỉ cần trả lời bằng tiếng Việt — pipeline hiểu và điều chỉnh theo.
+Bạn cũng có thể yêu cầu kiểm tra thủ công:
+```
+kiểm tra xem output có đúng yêu cầu không
+```
 
 ---
 
-## Skills
+### 8. Tiếp tục từ lần trước
 
-| Skill | Chức năng | Lệnh |
-|-------|-----------|------|
-| **tong-hop** | Điều phối pipeline — phân tích yêu cầu, gọi các sub-skills | `/tong-hop` |
-| **thu-thap** | Thu thập nội dung từ file, URL, tìm kiếm web | `/thu-thap` |
-| **bien-soan** | Tổng hợp, gộp nguồn, dịch (Vi↔En), xử lý doc lớn | `/bien-soan` |
-| **tao-word** | Tạo Word (.docx) với 3 template style | `/tao-word` |
-| **tao-excel** | Tạo Excel (.xlsx) với công thức, định dạng | `/tao-excel` |
-| **tao-slide** | Tạo PowerPoint (.pptx) với 5 template style | `/tao-slide` |
-| **tao-pdf** | Tạo PDF, hỗ trợ font tiếng Việt | `/tao-pdf` |
-| **tao-html** | Tạo HTML tĩnh với 5 template style | `/tao-html` |
-| **tao-hinh** | Biểu đồ (matplotlib) + tạo ảnh AI (Apple Silicon) | `/tao-hinh` |
-| **thiet-ke** | Thiết kế visual: poster, bìa, certificate, banner | `/thiet-ke` |
-| **cai-dat** | Cài đặt / kiểm tra dependencies | `/cai-dat` |
+Nếu pipeline bị gián đoạn (hết context, đổi session), trạng thái được lưu tự động. Chỉ cần nói:
+```
+tiếp tục
+```
 
-## Pipeline Flow
+Pipeline sẽ tiếp tục từ bước đang dở, không cần bắt đầu lại.
+
+---
+
+## Architecture
 
 ```
-User Request → tong-hop (orchestrator)
-  ├─ thu-thap (gather from files/URLs/web)
-  ├─ bien-soan (synthesize + translate)
-  └─ tao-[format] (output)
-       ├─ tao-word (.docx)
-       ├─ tao-excel (.xlsx)
-       ├─ tao-slide (.pptx)
-       ├─ tao-pdf (.pdf)
-       ├─ tao-html (.html)
-       └─ tao-hinh (charts/images → PNG)
+User Request → dieu-phoi (central orchestrator)
+  ├─ Phân loại intent (synthesis / research / creation / design / data)
+  ├─ Lên kế hoạch workflow
+  ├─ Thu thập dữ liệu (files, URLs, web search)
+  ├─ Tổng hợp & biên soạn nội dung
+  ├─ Xuất file (Word / Excel / Slide / PDF / HTML / Chart)
+  ├─ Kiểm tra chất lượng (100-point audit)
+  └─ Giao kết quả
 ```
 
 ## Tech Stack
