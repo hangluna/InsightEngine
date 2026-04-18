@@ -9,7 +9,7 @@ description: |
   layout, and artistic intent — "tạo poster", "thiết kế bìa", "làm certificate", "tạo thiệp",
   "thiết kế cover page", "tạo bằng khen", "tạo banner", "design a poster", "make a cover",
   "tạo infographic", "tạo hình bìa báo cáo" — even without saying "design".
-  Do NOT use for data charts (use tao-hinh) or AI-generated illustrations (use tao-hinh image mode).
+  Do NOT use for data charts (use gen-image) or AI-generated illustrations (use gen-image image mode).
 argument-hint: "[type: poster|cover|certificate|infographic|invitation|banner|artistic] [style hints]"
 version: 1.1
 compatibility:
@@ -30,8 +30,8 @@ license: Apache-2.0 (see LICENSE.txt). Fonts under SIL OFL (see canvas-fonts/*.t
 **Bundled fonts:** `canvas-fonts/` (80+ TTF files with OFL licenses)
 
 This skill creates visual compositions by writing Python code that draws directly onto a canvas
-(reportlab Canvas for PDF, Pillow for PNG). The difference from tao-hinh is fundamental:
-tao-hinh generates **data charts** and **AI images**, while thiet-ke creates **designed layouts**
+(reportlab Canvas for PDF, Pillow for PNG). The difference from gen-image is fundamental:
+gen-image generates **data charts** and **AI images**, while design creates **designed layouts**
 where typography, shapes, color, and whitespace work together as a deliberate composition. Think
 of it as the difference between a bar chart and a poster — one visualizes data, the other
 communicates through design.
@@ -72,18 +72,18 @@ code references for font registration, color handling, and layout patterns.
 
 ---
 
-## When to Use This Skill (vs tao-hinh)
+## When to Use This Skill (vs gen-image)
 
 | User wants | Skill | Why |
 |---|---|---|
-| Bar/line/pie chart from data | tao-hinh | Data-driven, matplotlib |
-| AI-generated illustration | tao-hinh | Needs diffusers/SD-Turbo |
-| Report cover page | **thiet-ke** | Typography + layout composition |
-| Event poster | **thiet-ke** | Artistic design with text hierarchy |
-| Certificate / bằng khen | **thiet-ke** | Formal layout with decorative elements |
-| Infographic layout | **thiet-ke** | Structured information design |
-| Invitation / thiệp | **thiet-ke** | Decorative composition |
-| Abstract art piece | **thiet-ke** | Creative shapes + typography |
+| Bar/line/pie chart from data | gen-image | Data-driven, matplotlib |
+| AI-generated illustration | gen-image | Needs diffusers/SD-Turbo |
+| Report cover page | **design** | Typography + layout composition |
+| Event poster | **design** | Artistic design with text hierarchy |
+| Certificate / bằng khen | **design** | Formal layout with decorative elements |
+| Infographic layout | **design** | Structured information design |
+| Invitation / thiệp | **design** | Decorative composition |
+| Abstract art piece | **design** | Creative shapes + typography |
 
 ---
 
@@ -244,7 +244,7 @@ elements; instead make existing ones work better together.
 
 1. Confirm output file exists and size is reasonable (PDF > 5KB, PNG > 50KB)
 2. Report: `✅ Thiết kế hoàn tất: {path} ({size})`
-3. If called from tong-hop pipeline, return `{path, type, width, height}` to the caller
+3. If called from synthesize pipeline, return `{path, type, width, height}` to the caller
 
 ---
 
@@ -278,8 +278,8 @@ Output: Custom script `tmp/gen_design.py` → infographic.pdf (A4, 45 KB), follo
 
 ## What This Skill Does NOT Do
 
-- Does NOT create data-driven charts — use tao-hinh (matplotlib)
-- Does NOT generate AI images from prompts — use tao-hinh (diffusers/torch)
+- Does NOT create data-driven charts — use gen-image (matplotlib)
+- Does NOT generate AI images from prompts — use gen-image (diffusers/torch)
 - Does NOT create interactive or animated content — use tao-html
 - Does NOT install dependencies — redirects to setup
 - Does NOT copy existing artists' work — all designs are original compositions
