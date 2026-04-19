@@ -1,9 +1,21 @@
 # Copilot Instructions — InsightEngine
 
-<!-- Version: 1.2 | Product: insight-engine | Updated: 2026-04-16 -->
+<!-- Version: 1.3 | Product: insight-engine | Updated: 2026-04-16 -->
 
 This file is read automatically by GitHub Copilot.
 It defines how Copilot MUST behave in this workspace.
+
+---
+
+## ⚠️ RULE.md — Non-Negotiable Pipeline Rules
+
+```yaml
+MANDATORY:
+  file: .github/RULE.md
+  priority: HIGHEST — overrides ALL skill-level and agent-level instructions
+  action: READ .github/RULE.md at the START of every session, before any other work
+  enforcement: If a skill instruction contradicts RULE.md, RULE.md wins
+```
 
 ---
 
