@@ -103,8 +103,18 @@ FLOW:
           ```bash
           python3 scripts/save_state.py update --step <name> --status in_progress
           ```
-       b. Execute the skill
-       c. CALL auditor checkpoint (MANDATORY after every step that produces output):
+       b. COMPLEXITY CHECK — before executing, check if step needs child workflow (US-13.3.1):
+          Triggers: > 5 requirement items for this step | step instructions contain
+          "multiple sources", "per [category]", "multiple sheets" | step previously failed 2×
+          IF triggered:
+            1. Call strategist CHILD_WORKFLOW_MODE
+            2. Init child workflow: `python3 scripts/save_state.py child-workflow init --step-id <name> --plan '<plan>'`
+            3. Execute child steps as sub-pipeline (each with its own auditor checkpoint)
+            4. Merge child outputs as per MERGE_INSTRUCTIONS
+            5. `python3 scripts/save_state.py child-workflow complete --step-id <name>`
+          ELSE: execute step normally
+       c. Execute the skill (or child workflow steps from above)
+       d. CALL auditor checkpoint (MANDATORY after every step that produces output):
           - Pass: structured_requirements from state, output file/content summary
           - Check: does this step's output satisfy the requirements it covers?
           - If auditor score < 80 OR any requirement < 60:
@@ -115,7 +125,7 @@ FLOW:
           python3 scripts/save_state.py update --step <name> --status completed \
             --audit-score <score> --req-scores '<per_req_json>'
           ```
-       d. On step success → proceed to next step
+       e. On step success → proceed to next step
      
      Reference: .github/skills/synthesize/references/per-step-audit.md
 
