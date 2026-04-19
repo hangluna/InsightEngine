@@ -230,6 +230,67 @@ Steps: construct `site:{platform}` search → collect item URLs → deduplicate.
 
 Validate URL is item page (has ID/slug, not ?q= or /search?). If field missing → "Không rõ".
 
+### DC-2.5: DOM Exploration (triggered when DC-1 returns thin results)
+
+If after running DC-1 (and the site-search step from DC-0's sub-flow) the result is
+**fewer than 3 quality item URLs**, automatically trigger DOM exploration:
+
+```yaml
+THIN_RESULT_THRESHOLD: 3  # Item URLs below this count → trigger DOM exploration
+
+TRIGGER_CONDITION:
+  - DC-1 search returned < 3 valid item URLs for this source, OR
+  - All results are listing/search pages (no item-page URLs), OR
+  - Site returned only homepage or generic pages
+```
+
+**DOM Exploration Steps:**
+
+1. **Fetch source homepage** (or known category page) using standard 3-tier fallback:
+   ```bash
+   python3 .github/skills/gather/scripts/dom_explorer.py "{source_url}" --extract nav,search,links
+   ```
+   Use `--use-playwright` if Tier 1+2 return empty content.
+
+2. **Extract structure** — the script returns JSON with:
+   - `nav_links`: Category/section links on the site
+   - `search_forms`: Form action URL + input field names
+   - `url_patterns`: Item URL format (e.g., `/jobs/{SLUG}` or `/products/{ID}`)
+   - `api_hints`: API endpoint patterns found in inline JS
+
+3. **Choose strategy based on results:**
+   ```yaml
+   if search_forms found:
+     strategy: Construct search URL from form action + inputs
+     example: "https://source.com/search?q={keyword}&type=jobs"
+     
+   elif nav_links found:
+     strategy: Fetch the most relevant category page directly
+     example: "https://source.com/it-jobs?query={keyword}"
+     
+   elif url_patterns found:
+     strategy: Use pattern to validate/find item URLs in fetched listing
+     example: Filter hrefs matching "/jobs/{SLUG}-{ID}"
+     
+   else:
+     strategy: Skip source, move to next platform or trigger DC-6
+   ```
+
+4. **Re-run search** using the discovered strategy — feed results back to DC-2 Phase 1.
+
+5. **Report:**
+   ```
+   🔍 DOM exploration: {source_domain}
+     - Nav links: {N} found
+     - Search form: {found/not found} → {action_url}
+     - URL pattern: {example_pattern}
+     - Strategy chosen: {A/B/C}
+   → Re-searching with improved query...
+   ```
+
+**Full reference:** `references/dom-exploration.md`
+**Known platform patterns:** See the "Known Platform Search Patterns" table in that file.
+
 ### DC-3: Company/Entity Research (if supplementary data requested)
 
 When user requests additional context per item (e.g., company reviews):

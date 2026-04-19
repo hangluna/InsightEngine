@@ -1089,22 +1089,23 @@ Wave 33 (sequential): US-10.3.2 (after 10.3.1)
 
 ### Epic 11.2: Source DOM Explorer
 
-- [ ] **US-11.2.1** — Auto DOM exploration when site-scoped search returns thin results
-  - Status: PLANNED
+- [x] **US-11.2.1** — Auto DOM exploration when site-scoped search returns thin results
+  - Status: DONE
   - Assignee: copilot
+  - Branch: `feature/insight-engine-us-11.2.1`
   - Blocked By: ~~US-11.1.1~~ ✅
 
 - [ ] **US-11.2.2** — Internal search usage via DOM-discovered endpoints
   - Status: PLANNED
   - Assignee: copilot
-  - Blocked By: US-11.2.1
+  - Blocked By: ~~US-11.2.1~~ ✅
 
 ### Epic 11.3: Detail URL Extractor
 
 - [ ] **US-11.3.1** — Extract canonical detail-page URLs for inline/popup detail sources
   - Status: PLANNED
   - Assignee: copilot
-  - Blocked By: US-11.2.1
+  - Blocked By: ~~US-11.2.1~~ ✅
 
 ### Epic 11.4: Adaptive Flow Advisor
 
