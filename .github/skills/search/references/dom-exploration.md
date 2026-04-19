@@ -53,7 +53,7 @@ Parse the fetched HTML to find navigation and search elements:
 
 ```python
 # Run via terminal (scripts/dom_explorer.py)
-python3 .github/skills/gather/scripts/dom_explorer.py "{url}" --extract nav,search,links
+python3 .github/skills/search/scripts/dom_explorer.py "{url}" --extract nav,search,links
 ```
 
 **What to extract:**
@@ -112,7 +112,7 @@ When `fetch_webpage` returns insufficient HTML (SPA/JS-rendered), use Playwright
 extract the fully-rendered DOM:
 
 ```bash
-python3 .github/skills/gather/scripts/dom_explorer.py "{url}" --use-playwright
+python3 .github/skills/search/scripts/dom_explorer.py "{url}" --use-playwright
 ```
 
 The script:

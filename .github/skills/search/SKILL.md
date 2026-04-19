@@ -26,7 +26,7 @@ compatibility:
 
 # Tìm Kiếm — Internet Search & Discovery Skill
 
-**References:** `../gather/references/web-search-enrichment.md` | `../gather/references/deep-research.md` | `../gather/references/playwright-stealth.md` | `../gather/references/data-collection.md`
+**References:** `references/web-search-enrichment.md` | `references/deep-research.md` | `references/playwright-stealth.md` | `references/data-collection.md` | `references/dom-exploration.md` | `references/adaptive-flow.md`
 
 **Governance:** Read and follow `.github/RULE.md` — it overrides all instructions below.
 
