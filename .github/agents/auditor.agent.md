@@ -116,6 +116,61 @@ OPTIONAL:
   required_fields: string[]  # Specific fields user requested
   previous_score: number     # Score from previous attempt (for retry tracking)
   attempt_number: number     # Which retry attempt this is
+  
+  # Phase 13: Structured requirements (preferred over free-text user_request)
+  structured_requirements: object  # From save_state.py check-requirements
+    # Schema: {output_files, fields_required, filters, grouping, format_constraints, sources, content_requirements}
+    # When provided, auditor scores EACH requirement item individually (not just overall)
+    # Reference: .github/skills/synthesize/references/requirement-anchor.md
+```
+
+### Per-Requirement Scoring (Phase 13)
+
+When `structured_requirements` is provided, the auditor performs **per-requirement scoring**
+in ADDITION to the standard 100-point scoring:
+
+```yaml
+PER_REQUIREMENT_SCORING:
+  trigger: structured_requirements is provided in auditor input
+  
+  for_each_requirement_item:
+    categories: output_files + fields_required + filters + grouping + format_constraints
+    
+    scoring:
+      100: Requirement fully met
+      60-99: Partially met (note what's missing)
+      0-59: Requirement failed (blocking — must fix before continuing)
+    
+    output_per_item:
+      req_id: "REQ-001"              # Sequential ID
+      req_category: "grouping"       # Which category this belongs to
+      req_description: "one sheet per province/city"  # The requirement text
+      score: 0                       # 0-100
+      pass: false                    # score >= 60
+      reason: "Output has 1 sheet named 'unknown' — no per-province grouping"
+      evidence: "Sheet names found: ['unknown']"  # Concrete observation
+
+  BLOCKING_THRESHOLD: 60
+    # Any requirement with score < 60 = FAIL, pipeline must NOT continue
+    # Requirement scores < 60 are listed as BLOCKING_FAILURES
+
+  PASS_CONDITION:
+    # Per-requirement audit passes when ALL requirements score >= 60
+    # AND the overall 100-point score >= 80
+
+  REPORT_ADDITION: |
+    # Appended to standard verdict when structured_requirements is provided:
+
+    PER-REQUIREMENT AUDIT:
+    | ID     | Category           | Requirement                     | Score | Pass | Reason |
+    |--------|--------------------|---------------------------------|-------|------|--------|
+    | REQ-001 | grouping          | one sheet per province/city     | 0     | ❌   | 1 sheet named 'unknown' |
+    | REQ-002 | fields_required   | company_name present            | 100   | ✅   | All rows have company name |
+    | REQ-003 | filters           | fresher/junior roles only       | 10    | ❌   | 2 senior roles, 1 teamlead |
+    
+    BLOCKING_FAILURES: (requirements with score < 60)
+    - REQ-001: one sheet per province/city → FIX: create N sheets, one per province found in data
+    - REQ-003: fresher/junior roles only → FIX: filter out senior/teamlead roles before writing
 ```
 
 ### Audit Steps
@@ -124,12 +179,14 @@ OPTIONAL:
 2. **Requirement Coverage** — For each requirement from user's request:
    - Find where it is addressed in the output
    - Grade each test case
+   - **Phase 13**: If `structured_requirements` provided → score EACH requirement item individually
+     (see Per-Requirement Scoring section). BLOCKING_FAILURES (score < 60) prevent pipeline from continuing.
 
 3. **Content Quality** — Depth, specificity, structure, completeness
 
 4. **Format-Specific Checks**
    - Word/PDF: Section completeness, no placeholder text, proper formatting
-   - Excel: Data population, formula correctness, no empty required columns
+   - Excel: Data population, formula correctness, no empty required columns, **correct sheet names**
    - Slides: Slide count adequacy, content per slide, visual structure
    - HTML: Rendering, link validity, responsive structure
 
@@ -137,19 +194,23 @@ OPTIONAL:
    - URLs pointing to real item pages (not search results)?
    - Numerical values plausible?
    - Fields genuinely different across rows?
+   - **Phase 13**: For Excel — sheet names match `grouping` requirements? Columns match `fields_required`?
 
 6. **Score and verdict** (Step 2-3 above)
 
 ### Verdict Handling
 
 ```yaml
-ON_PASS (>= 80/100):
+ON_PASS (>= 80/100 AND all requirements >= 60):
   action: Continue pipeline / deliver to user
 
-ON_FAIL (< 80/100):
-  action: Return FAILING_TESTS with specific fix instructions
+ON_FAIL (< 80/100 OR any requirement < 60):
+  action: Return FAILING_TESTS + BLOCKING_FAILURES with specific fix instructions
   caller_action: Re-generate targeting only failing areas
   max_retries: 5 (managed by caller — see US-9.4.2 retry loop)
+  
+  # Phase 13: When structured_requirements provided, also return per-requirement scores
+  # BLOCKING_FAILURES (score < 60) must be addressed before pipeline continues
 ```
 
 ---
@@ -173,9 +234,11 @@ CALL_AUDITOR:
   when: After generating .xlsx file
   prompt_vars:
     user_request: "{original user request}"
-    output_content: "{column headers, sample rows, formula summary}"
+    output_content: "{column headers, sheet names, sample rows, formula summary}"
     output_format: "excel"
     required_fields: "{data fields user specified}"
+    # Phase 13: include structured_requirements for per-requirement scoring
+    structured_requirements: "{from save_state.py check-requirements}"
 ```
 
 ---
