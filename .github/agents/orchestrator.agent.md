@@ -43,7 +43,7 @@ INTENT_CATEGORIES:
   research:
     description: Search and analyze a topic, then produce output
     signals: ["tìm hiểu", "nghiên cứu", "search about", "phân tích"]
-    route: gather → compose → tao-[format]
+    route: search → compose → tao-[format]
 
   design:
     description: Create visual assets (poster, cover, certificate, banner)
@@ -53,12 +53,12 @@ INTENT_CATEGORIES:
   data_collection:
     description: Collect structured data from platforms/sources
     signals: ["tìm tất cả", "liệt kê", "danh sách", "list all", "collect"]
-    route: gather (data mode) → gen-excel
+    route: search (data mode) → gen-excel
 
   mixed:
     description: Combination of data collection + analysis/presentation
     signals: ["tìm và phân tích", "collect then analyze", "data + report"]
-    route: gather → gen-excel → compose → tao-[format]
+    route: search → gen-excel → compose → tao-[format]
 
   unknown:
     description: Cannot classify — ask user for clarification
@@ -69,16 +69,19 @@ INTENT_CATEGORIES:
 
 ## Orchestration Flow
 
+> **⚠️ RULE-1 GOVERNS THIS FLOW.** Read `.github/RULE.md` first. The session init sequence below
+> implements RULE-1's 4-step hard start. No skill may be invoked before step 2 completes.
+
 ```yaml
 FLOW:
   1. CLASSIFY intent from user request
-  2. LOG classification to session state — MANDATORY, run before anything else:
+  2. HARD SESSION START (RULE-1) — MANDATORY, run before anything else:
      ```bash
      python3 scripts/save_state.py init "<raw_user_prompt>" "<intent_classification>"
      ```
-     Verify: must print STATE_INITIALIZED. If context is lost later, the request is
-     recoverable via `python3 scripts/save_state.py check`.
-  2b. EXTRACT structured requirements — MANDATORY, run immediately after init:
+     Verify: must print STATE_INITIALIZED. If save_state.py missing → run setup skill first.
+     If context is lost later, the request is recoverable via `python3 scripts/save_state.py check`.
+  2b. EXTRACT structured requirements (RULE-6) — MANDATORY, run immediately after init:
      Analyze raw_prompt and extract typed requirement fields (output_files, fields_required,
      filters, grouping, format_constraints, sources, content_requirements).
      Reference schema: .github/skills/synthesize/references/requirement-anchor.md
@@ -88,6 +91,8 @@ FLOW:
      ```
      This structured list is the ground-truth for ALL auditor calls in this pipeline.
      Do NOT skip even for simple requests — minimal requirements are still valid.
+  2c. BEGIN OUTPUT TEMPLATE CREATION in parallel with step 3 (RULE-1 step 2):
+     Based on classified intent and target format, prepare skeleton file structure.
   3. CALL strategist agent → get workflow plan
   4. PRESENT plan to user in Vietnamese → wait for approval (guided mode only)
      EXCEPTION: session_mode=silent → skip presentation and proceed immediately
