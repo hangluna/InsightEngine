@@ -90,6 +90,7 @@ def cmd_init(prompt: str, intent: str = "unknown"):
         "analyzed_requirements": {},
         "generated_plan": {},
         "step_states": [],
+        "child_workflows": {},     # {step_id: {plan, step_states, status}}
         "audit_test_cases": [],
         "score_history": [],
         "created_skills": [],
@@ -471,6 +472,135 @@ def main():
             print("NO_REQUIREMENTS — run extract-requirements first")
         else:
             print(json.dumps(reqs, indent=2, ensure_ascii=False))
+    elif command == "child-workflow":
+        # child-workflow <subcommand> --step-id <id> [--plan <json>] [--step-name <n>] [--status <s>]
+        subcmd = sys.argv[2] if len(sys.argv) >= 3 else None
+        args_rest = sys.argv[3:]
+        if subcmd == "init":
+            # init --step-id <id> --plan <json>
+            step_id, plan_json = None, None
+            i = 0
+            while i < len(args_rest):
+                if args_rest[i] == "--step-id" and i + 1 < len(args_rest):
+                    step_id = args_rest[i + 1]; i += 2
+                elif args_rest[i] == "--plan" and i + 1 < len(args_rest):
+                    plan_json = args_rest[i + 1]; i += 2
+                else:
+                    i += 1
+            if not step_id:
+                print("Error: --step-id required"); sys.exit(1)
+            state = load_state()
+            if state is None:
+                print("Error: NO_STATE"); sys.exit(1)
+            child_workflows = state.get("child_workflows", {})
+            child_workflows[step_id] = {
+                "plan": json.loads(plan_json) if plan_json else {},
+                "step_states": [],
+                "status": "IN_PROGRESS",
+                "started_at": datetime.now().isoformat(),
+            }
+            state["child_workflows"] = child_workflows
+            state["updated_at"] = datetime.now().isoformat()
+            STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
+            print(f"CHILD_WORKFLOW_INIT: {step_id}")
+        elif subcmd == "update":
+            # update --step-id <id> --step-name <n> --status <s> [--audit-score <score>]
+            step_id, step_name, step_status = None, None, "completed"
+            audit_score = None
+            i = 0
+            while i < len(args_rest):
+                if args_rest[i] == "--step-id" and i + 1 < len(args_rest):
+                    step_id = args_rest[i + 1]; i += 2
+                elif args_rest[i] == "--step-name" and i + 1 < len(args_rest):
+                    step_name = args_rest[i + 1]; i += 2
+                elif args_rest[i] == "--status" and i + 1 < len(args_rest):
+                    step_status = args_rest[i + 1]; i += 2
+                elif args_rest[i] == "--audit-score" and i + 1 < len(args_rest):
+                    try:
+                        audit_score = int(args_rest[i + 1])
+                    except ValueError:
+                        pass
+                    i += 2
+                else:
+                    i += 1
+            if not step_id or not step_name:
+                print("Error: --step-id and --step-name required"); sys.exit(1)
+            state = load_state()
+            if state is None:
+                print("Error: NO_STATE"); sys.exit(1)
+            child_workflows = state.get("child_workflows", {})
+            if step_id not in child_workflows:
+                print(f"Error: child workflow {step_id} not found — call init first"); sys.exit(1)
+            wf = child_workflows[step_id]
+            steps = wf.get("step_states", [])
+            found = False
+            for step in steps:
+                if step["name"] == step_name:
+                    step["status"] = step_status
+                    if audit_score is not None:
+                        step["audit_score"] = audit_score
+                    if step_status == "completed":
+                        step["completed_at"] = datetime.now().isoformat()
+                    found = True; break
+            if not found:
+                new_step = {"name": step_name, "status": step_status,
+                            "started_at": datetime.now().isoformat() if step_status == "in_progress" else None,
+                            "completed_at": datetime.now().isoformat() if step_status == "completed" else None}
+                if audit_score is not None:
+                    new_step["audit_score"] = audit_score
+                steps.append(new_step)
+            wf["step_states"] = steps
+            state["child_workflows"] = child_workflows
+            state["updated_at"] = datetime.now().isoformat()
+            STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
+            print(f"CHILD_STEP_UPDATED: {step_id}/{step_name} → {step_status}")
+        elif subcmd == "complete":
+            # complete --step-id <id> [--status completed|failed]
+            step_id, final_status = None, "completed"
+            i = 0
+            while i < len(args_rest):
+                if args_rest[i] == "--step-id" and i + 1 < len(args_rest):
+                    step_id = args_rest[i + 1]; i += 2
+                elif args_rest[i] == "--status" and i + 1 < len(args_rest):
+                    final_status = args_rest[i + 1]; i += 2
+                else:
+                    i += 1
+            if not step_id:
+                print("Error: --step-id required"); sys.exit(1)
+            state = load_state()
+            if state is None:
+                print("Error: NO_STATE"); sys.exit(1)
+            child_workflows = state.get("child_workflows", {})
+            if step_id in child_workflows:
+                child_workflows[step_id]["status"] = final_status
+                child_workflows[step_id]["completed_at"] = datetime.now().isoformat()
+                state["child_workflows"] = child_workflows
+                state["updated_at"] = datetime.now().isoformat()
+                STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
+                print(f"CHILD_WORKFLOW_COMPLETE: {step_id} → {final_status}")
+            else:
+                print(f"Error: child workflow {step_id} not found"); sys.exit(1)
+        elif subcmd == "check":
+            # check [--step-id <id>]
+            step_id = None
+            i = 0
+            while i < len(args_rest):
+                if args_rest[i] == "--step-id" and i + 1 < len(args_rest):
+                    step_id = args_rest[i + 1]; i += 2
+                else:
+                    i += 1
+            state = load_state()
+            if state is None:
+                print("NO_STATE"); sys.exit(1)
+            child_workflows = state.get("child_workflows", {})
+            if step_id:
+                print(json.dumps(child_workflows.get(step_id, {}), indent=2, ensure_ascii=False))
+            else:
+                print(json.dumps(child_workflows, indent=2, ensure_ascii=False))
+        else:
+            print(f"Error: unknown child-workflow subcommand: {subcmd}")
+            print("Usage: child-workflow <init|update|complete|check> --step-id <id> ...")
+            sys.exit(1)
     elif command == "check":
         cmd_check()
     elif command == "save":

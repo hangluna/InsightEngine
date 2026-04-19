@@ -19,7 +19,83 @@ user-invocable: false
 
 ## Budget
 
-Max **1 strategist call** per pipeline run.
+Max **1 strategist call** per pipeline run (includes re-plan and child workflow calls).
+
+---
+
+## Child Workflow Generation Mode (US-13.3.1)
+
+Invoked by orchestrator when a step qualifies as "complex" — too many sub-tasks
+to execute as a single skill call. Returns a mini-plan for just that step.
+
+### Complexity Criteria
+
+A step qualifies for child workflow if ANY of the following:
+
+```yaml
+COMPLEXITY_TRIGGERS:
+  - gather step needs to collect data from > 5 sources or > 3 search rounds
+  - gen-excel step needs > 2 sheets with different schemas
+  - compose step has > 3 distinct sections requiring separate research
+  - gen-slide step has > 12 slides to fill with varied content types
+  - Any step has structured_requirements with > 5 requirement items
+  - Previous attempt failed 2× with "too much in one step" failure pattern
+```
+
+### Input (Child Workflow Mode)
+
+```yaml
+CHILD_WORKFLOW_MODE: true
+
+REQUIRED:
+  parent_step: string           # Which step needs decomposition: "gather", "gen-excel", etc.
+  structured_requirements: object   # From save_state.py check-requirements
+  step_instructions: string     # The original instructions for this step from the plan
+
+OPTIONAL:
+  partial_output: string        # Any output already produced (for incremental child workflow)
+  blocking_failures: list       # Failed requirements from prior attempt
+```
+
+### Instructions (Child Workflow Mode)
+
+1. Analyze the `step_instructions` + `structured_requirements` for the parent step
+2. Identify the natural sub-tasks (gather from source A, gather from source B, merge, etc.)
+3. Create a child workflow with 2-5 steps maximum
+4. Each child step should be independently executable and testable
+
+### Response Format (Child Workflow Mode)
+
+```
+CHILD_WORKFLOW_FOR: [parent_step]
+COMPLEXITY_REASON: [why it needs decomposition]
+CHILD_STEPS: [N]
+
+STEPS:
+1. [skill_name] | mode: [mode] | Instructions: [targeted sub-task]
+2. [skill_name] | mode: [mode] | Instructions: [targeted sub-task]
+
+MERGE_STEP: [yes/no — whether a final merge step is needed]
+MERGE_INSTRUCTIONS: [how to combine sub-results if yes]
+```
+
+### Orchestrator Usage
+
+```yaml
+# Trigger condition (check before executing any step):
+CHILD_WORKFLOW_CHECK:
+  when:
+    - step has > 5 structured_requirements items
+    - step instructions contain "from multiple sources", "per [category]", "multiple sheets"
+    - previous attempt of step failed with "too many requirements"
+  action:
+    1. Call strategist CHILD_WORKFLOW_MODE for the step
+    2. Parse child workflow plan
+    3. Execute child steps as sub-pipeline
+    4. Call save_state.py child-workflow init --step-id <parent_step> --plan '<plan_json>'
+    5. For each child step: save_state.py child-workflow update --step-id <parent> --step-name <child>
+    6. On child workflow complete: save_state.py child-workflow complete --step-id <parent>
+```
 
 ---
 

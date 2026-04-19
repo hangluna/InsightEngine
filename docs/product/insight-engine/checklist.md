@@ -1231,8 +1231,8 @@ Wave 42 (sequential): US-12.4.2 (after 12.4.1)
 
 ### Epic 13.3: Child Soft-Workflow for Complex Steps
 
-- [ ] **US-13.3.1** — Child workflow generation via strategist for complex steps
-  - Status: PLANNED
+- [x] **US-13.3.1** — Child workflow generation via strategist for complex steps
+  - Status: DONE
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-13.3.1`
   - Blocked By: ~~US-13.1.1~~ ✅
@@ -1241,7 +1241,7 @@ Wave 42 (sequential): US-12.4.2 (after 12.4.1)
   - Status: PLANNED
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-13.3.2`
-  - Blocked By: US-13.3.1
+  - Blocked By: ~~US-13.3.1~~ ✅
 
 ### Epic 13.4: Template-First Output Protocol
 
