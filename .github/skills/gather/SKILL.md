@@ -278,6 +278,25 @@ TRIGGER_CONDITION:
 
 4. **Re-run search** using the discovered strategy — feed results back to DC-2 Phase 1.
 
+4a. **If search form found — execute internal search directly** (DC-2.5 extension):
+   ```bash
+   # GET-based search form (most common)
+   python3 .github/skills/gather/scripts/internal_search.py \
+     "{form_action_url}" --query "{keyword}" --method GET
+
+   # POST-based search form
+   python3 .github/skills/gather/scripts/internal_search.py \
+     "{form_action_url}" --query "{keyword}" --method POST \
+     --fields '{"type": "jobs", "location": "{city}"}'
+
+   # For JS-rendered results (SPA search — requires Playwright)
+   python3 .github/skills/gather/scripts/internal_search.py \
+     "{form_action_url}" --query "{keyword}" --use-playwright
+   ```
+   Script extracts item URLs from search results page, returns structured JSON
+   with `{url, title, snippet}` per item. Validate: item URLs must have ID/slug,
+   not search/listing page patterns. If 0 items returned → fall back to DC-1 strategies.
+
 5. **Report:**
    ```
    🔍 DOM exploration: {source_domain}
