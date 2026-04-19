@@ -3,8 +3,8 @@
 > **Product:** InsightEngine  
 > **Product Slug:** insight-engine  
 > **Created:** 2026-04-16  
-> **Scope:** Phase 0 → Phase 12 (all phases)  
-> **Total User Stories:** 105 (21 Phase 0-3 + 15 Phase 4 + 4 Phase 5 + 14 Phase 6 + 5 Phase 7 + 6 Phase 8 + 12 Phase 9 + 14 Phase 10 + 6 Phase 11 + 8 Phase 12)
+> **Scope:** Phase 0 → Phase 13 (all phases)
+> **Total User Stories:** 114 (21 Phase 0-3 + 15 Phase 4 + 4 Phase 5 + 14 Phase 6 + 5 Phase 7 + 6 Phase 8 + 12 Phase 9 + 14 Phase 10 + 6 Phase 11 + 8 Phase 12 + 9 Phase 13)
 
 ---
 
@@ -2140,3 +2140,115 @@ US-0.3.1 + US-2.5.1 → US-3.4.1                                   │
 
 *Backlog này không bao gồm task-level detail hoặc trạng thái thực hiện.*
 *Bước tiếp theo: `/roadmap-to-user-stories-review` hoặc `/product-checklist`*
+
+---
+
+## Phase 13: Requirement Tracking & Structured Output Enforcement
+
+> **Origin:** Real-world failure — requirement drift over multi-step pipelines produces structurally and content-wise incorrect outputs. Phase 13 adds requirement anchoring, per-step audit enforcement, child soft-workflows, and template-first output protocol. **9 stories PLANNED.**
+
+### Epic 13.1: Requirement Anchor Protocol
+
+**US-13.1.1: Structured requirements extraction from raw_prompt**
+- Description: As a pipeline that has just received a user request, I want to immediately extract a structured requirements list from the raw prompt (output_files[], fields_required[], filters[], grouping[], format_constraints[]) and save it to session state, so that every subsequent audit call has a precise ground-truth checklist rather than just a long raw prompt.
+- Acceptance Criteria:
+  - AC1: On pipeline start (before any gather/compose step), orchestrator extracts a typed requirements list via `save_state.py init` with structured fields
+  - AC2: Requirements list includes: output_files (name, type, structure), fields_required (per output file), filters (e.g., "only fresher/junior"), grouping (e.g., "by province"), format_constraints (e.g., "one sheet per province")
+  - AC3: Requirements list is stored in session state JSON and retrievable via `save_state.py check`
+  - AC4: Requirements list is shown to user for confirmation before any step executes (guided mode) or logged silently (silent mode)
+  - AC5: If requirements cannot be extracted with confidence → ask one clarifying question before proceeding
+- Blocked By: None
+
+**US-13.1.2: Per-requirement scoring in auditor calls**
+- Description: As an auditor checking pipeline output, I want to receive the structured requirements list alongside the output to score, so that I can report a per-requirement score instead of a single overall verdict, enabling targeted retry on specific failures.
+- Acceptance Criteria:
+  - AC1: Auditor input format includes `requirements[]` array (from US-13.1.1) alongside the generated output
+  - AC2: Auditor returns per-requirement scores: `{req_id, req_description, score (0-100), pass (bool), reason}`
+  - AC3: Overall score = weighted average of per-requirement scores (weight proportional to importance)
+  - AC4: Audit report highlights FAILED requirements specifically (score < 60)
+  - AC5: Retry logic targets only failed requirements, not full regeneration
+- Blocked By: `US-13.1.1`
+
+---
+
+### Epic 13.2: Per-Step Auditor Enforcement
+
+**US-13.2.1: Mandatory auditor checkpoint after each pipeline step**
+- Description: As a pipeline executing a multi-step workflow, I want to run a mandatory auditor checkpoint after every substantive step (gather, compose, gen-excel, gen-slide, gen-word, gen-pdf, gen-html), so that no step can proceed when the current step's output fails the requirements.
+- Acceptance Criteria:
+  - AC1: After each step, the pipeline MUST call auditor with: step output + structured requirements list
+  - AC2: If audit PASS (≥80/100 on all requirements): log pass, proceed to next step
+  - AC3: If audit FAIL (any requirement < 60): log failure reason to state, STOP, trigger re-plan
+  - AC4: Audit call is an explicit terminal command (`python3 scripts/save_state.py update --step <name> --status audit_pass/audit_fail`), not just a documentation note
+  - AC5: Maximum 2 retries per step before escalating to full re-plan
+- Blocked By: `US-13.1.2`
+
+**US-13.2.2: Failure-triggered re-planning protocol**
+- Description: As a pipeline that has detected a step audit failure after max retries, I want to trigger a targeted re-planning of only that step (not the full pipeline), so that recovery is efficient and does not discard completed work.
+- Acceptance Criteria:
+  - AC1: On step audit failure after 2 retries: call strategist agent with failed step context + failed requirements
+  - AC2: Strategist returns alternative approach for that step only
+  - AC3: Re-planned step executes and goes through same audit gate
+  - AC4: If re-planned step also fails: escalate to user with specific failure description (user-friendly language, no jargon)
+  - AC5: All failure events logged in session state with timestamp and reason
+- Blocked By: `US-13.2.1`
+
+---
+
+### Epic 13.3: Child Soft-Workflow for Complex Steps
+
+**US-13.3.1: Child workflow generation via strategist for complex steps**
+- Description: As a pipeline encountering a step with high complexity (multi-platform data collection, multi-source research with > 3 sources), I want the strategist to generate a dedicated child workflow for that step, so that it has its own strategy, execution sequence, and failure handling independent of the parent pipeline.
+- Acceptance Criteria:
+  - AC1: Complexity criteria: > 3 data sources OR step duration > estimated 5 minutes OR step requires platform-specific sub-strategies
+  - AC2: On detection, call strategist with: step requirements, source list, complexity indicators
+  - AC3: Strategist returns child workflow: ordered steps, per-source strategy, failure fallback per source
+  - AC4: Child workflow is stored in session state as a sub-plan linked to the parent step
+  - AC5: Parent pipeline suspends at that step and waits for child completion signal
+- Blocked By: `US-13.1.1`
+
+**US-13.3.2: Child workflow state + failure isolation**
+- Description: As a child workflow executing within a parent pipeline, I want to have isolated state and be re-plannable independently, so that a failure in one source does not cascade to other sources or the parent pipeline.
+- Acceptance Criteria:
+  - AC1: Child workflow writes to its own state key in session state (e.g., `child_workflows[step_id]`)
+  - AC2: A source failure within child workflow only retries that source — does not stop other sources
+  - AC3: Child workflow passes its own audit gate (per-step auditor) before signaling parent to resume
+  - AC4: If child workflow fails all retries: parent pipeline receives failure signal with details, can present alternatives to user
+  - AC5: Child state is preserved in session state for potential resume in a new Copilot session
+- Blocked By: `US-13.3.1`
+
+---
+
+### Epic 13.4: Template-First Output Protocol
+
+**US-13.4.1: Placeholder file creation before output generation**
+- Description: As a pipeline about to generate a structured output file (Excel, Word, PPT, HTML), I want to first create a structural placeholder with the correct names and layout (sheet names, section headings, slide titles, column headers), so that the structure is locked in and validated before any content is generated.
+- Acceptance Criteria:
+  - AC1: Before any gen-excel/gen-word/gen-slide/gen-html step: create placeholder file with structural elements only (no content)
+  - AC2: Excel placeholder: correct sheet names per requirements (e.g., one sheet per province from requirements grouping[])
+  - AC3: Word/PDF placeholder: correct section headings and TOC structure
+  - AC4: PPT placeholder: correct slide count and title per slide
+  - AC5: HTML placeholder: correct section IDs and nav structure
+  - AC6: Placeholder file saved to `tmp/placeholder-<output_name>.<ext>`
+- Blocked By: `US-13.1.1`
+
+**US-13.4.2: Placeholder validation vs requirements before fill**
+- Description: As a pipeline that has created a structural placeholder, I want to validate the placeholder structure against the requirements list before filling any content, so that structural errors are caught early rather than at delivery time.
+- Acceptance Criteria:
+  - AC1: Run auditor on placeholder structure (not content) with requirements list
+  - AC2: Auditor checks: correct number of output files, correct sheet/section/slide names, correct column headers
+  - AC3: If placeholder fails structural audit: fix placeholder (not discard), re-audit
+  - AC4: Only after placeholder passes structural audit: proceed to content fill
+  - AC5: Validation result logged in session state
+- Blocked By: `US-13.4.1`, `US-13.1.2`
+
+**US-13.4.3: Content-fill into validated placeholder (update, not create)**
+- Description: As a pipeline filling content into a validated placeholder, I want output scripts to receive the placeholder path and update it in place, rather than creating a new file from scratch, so that the pre-validated structure is preserved throughout the fill process.
+- Acceptance Criteria:
+  - AC1: gen-excel script accepts `--placeholder <path>` argument and writes data into existing sheets (not creates new file)
+  - AC2: gen-word script accepts `--placeholder <path>` and fills sections in place
+  - AC3: gen-slide script accepts `--placeholder <path>` and fills slide content
+  - AC4: gen-html script accepts `--placeholder <path>` and fills section content
+  - AC5: On completion, output script moves validated+filled file from `tmp/` to `output/` (not save to output directly)
+  - AC6: Final output file path matches the name from requirements output_files[]
+- Blocked By: `US-13.4.2`

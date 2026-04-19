@@ -3,7 +3,7 @@
 > **Product:** InsightEngine  
 > **Product Slug:** insight-engine  
 > **Created:** 2026-04-16  
-> **Total User Stories:** 105 (21 Phase 0-3 DONE + 15 Phase 4 DONE + 4 Phase 5 DONE + 14 Phase 6 DONE + 5 Phase 7 DONE + 6 Phase 8 DONE + 12 Phase 9 DONE + 13 Phase 10 DONE + 1 Phase 10 PLANNED + 6 Phase 11 PLANNED + 8 Phase 12 PLANNED)  
+> **Total User Stories:** 114 (21 Phase 0-3 DONE + 15 Phase 4 DONE + 4 Phase 5 DONE + 14 Phase 6 DONE + 5 Phase 7 DONE + 6 Phase 8 DONE + 12 Phase 9 DONE + 13 Phase 10 DONE + 1 Phase 10 PLANNED + 6 Phase 11 DONE + 8 Phase 12 DONE + 9 Phase 13 PLANNED)  
 > **Purpose:** Single source of execution state — track progress, enforce dependencies, enable safe parallel work
 
 ---
@@ -1196,6 +1196,82 @@ Wave 40 (parallel): US-12.1.2 (after 12.1.1), US-12.2.2 (after 12.2.1)
 Wave 41 (sequential): US-12.3.2 (after 12.3.1 + 12.1.1)
 Wave 42 (sequential): US-12.4.2 (after 12.4.1)
 --- Phase 12 PLANNED (0/8) ---
+
+## Phase 13: Requirement Tracking & Structured Output Enforcement
+
+> **Origin:** Real-world failure — requirement drift over multi-step pipelines. Phase 13 adds requirement anchoring, per-step audit enforcement, child soft-workflows, template-first output. **9 stories PLANNED.**
+
+### Epic 13.1: Requirement Anchor Protocol
+
+- [ ] **US-13.1.1** — Structured requirements extraction from raw_prompt
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-13.1.1`
+  - Blocked By: None
+
+- [ ] **US-13.1.2** — Per-requirement scoring in auditor calls
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-13.1.2`
+  - Blocked By: US-13.1.1
+
+### Epic 13.2: Per-Step Auditor Enforcement
+
+- [ ] **US-13.2.1** — Mandatory auditor checkpoint after each pipeline step
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-13.2.1`
+  - Blocked By: US-13.1.2
+
+- [ ] **US-13.2.2** — Failure-triggered re-planning protocol
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-13.2.2`
+  - Blocked By: US-13.2.1
+
+### Epic 13.3: Child Soft-Workflow for Complex Steps
+
+- [ ] **US-13.3.1** — Child workflow generation via strategist for complex steps
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-13.3.1`
+  - Blocked By: US-13.1.1
+
+- [ ] **US-13.3.2** — Child workflow state + failure isolation
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-13.3.2`
+  - Blocked By: US-13.3.1
+
+### Epic 13.4: Template-First Output Protocol
+
+- [ ] **US-13.4.1** — Placeholder file creation before output generation
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-13.4.1`
+  - Blocked By: US-13.1.1
+
+- [ ] **US-13.4.2** — Placeholder validation vs requirements before fill
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-13.4.2`
+  - Blocked By: US-13.4.1, US-13.1.2
+
+- [ ] **US-13.4.3** — Content-fill into validated placeholder (update, not create)
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-13.4.3`
+  - Blocked By: US-13.4.2
+
+```
+Wave 43 (parallel): US-13.1.1
+Wave 44 (sequential): US-13.1.2 (after 13.1.1)
+Wave 45 (parallel): US-13.2.1 (after 13.1.2), US-13.3.1 (after 13.1.1), US-13.4.1 (after 13.1.1)
+Wave 46 (sequential): US-13.2.2 (after 13.2.1)
+Wave 47 (sequential): US-13.3.2 (after 13.3.1)
+Wave 48 (sequential): US-13.4.2 (after 13.4.1 + 13.1.2)
+Wave 49 (sequential): US-13.4.3 (after 13.4.2)
+--- Phase 13 PLANNED (0/9) ---
 ```
 
 ---
