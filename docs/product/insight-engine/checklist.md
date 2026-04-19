@@ -1283,9 +1283,12 @@ Wave 49 (sequential): US-13.4.3 (after 13.4.2)
 ### Epic 14.1: Source Discovery Protocol
 
 - [ ] **US-14.1.1** — Source discovery search for domain + country
-  - Status: PLANNED
+  - Status: IN_PROGRESS
   - Assignee: copilot
+  - AI: copilot
   - Branch: `feature/insight-engine-us-14.1.1`
+  - Locked: 2026-04-19T00:00:00Z
+  - StateFile: docs/runs/insight-engine-us-14.1.1/.workflow-state.yaml
   - Blocked By: None
 
 - [ ] **US-14.1.2** — Source classification by reliability and data type
