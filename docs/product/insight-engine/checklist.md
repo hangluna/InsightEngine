@@ -3,7 +3,7 @@
 > **Product:** InsightEngine  
 > **Product Slug:** insight-engine  
 > **Created:** 2026-04-16  
-> **Total User Stories:** 91 (21 Phase 0-3 DONE + 15 Phase 4 DONE + 4 Phase 5 DONE + 14 Phase 6 DONE + 5 Phase 7 DONE + 6 Phase 8 DONE + 12 Phase 9 DONE + 14 Phase 10 PLANNED)  
+> **Total User Stories:** 97 (21 Phase 0-3 DONE + 15 Phase 4 DONE + 4 Phase 5 DONE + 14 Phase 6 DONE + 5 Phase 7 DONE + 6 Phase 8 DONE + 12 Phase 9 DONE + 14 Phase 10 PLANNED + 6 Phase 11 PLANNED)  
 > **Purpose:** Single source of execution state — track progress, enforce dependencies, enable safe parallel work
 
 ---
@@ -1072,6 +1072,20 @@ Wave 31 (parallel): US-10.1.2, US-10.4.1, US-10.5.2, US-10.6.1, US-10.6.2, US-10
 Wave 32 (parallel): US-10.3.1, US-10.4.2, US-10.7.2
 Wave 33 (sequential): US-10.3.2 (after 10.3.1)
 --- Phase 10 PLANNED (14/14) ---
+
+## ☐ US-11.1.1: Integrate per-step search planner in gather skill
+## ☐ US-11.2.1: Auto DOM exploration when site-scoped search returns thin results
+## ☐ US-11.2.2: Internal search usage via DOM-discovered endpoints
+## ☐ US-11.3.1: Extract canonical detail-page URLs for inline/popup detail sources
+## ☐ US-11.4.1: Advisory agent fallback after 2 failed search attempts
+## ☐ US-11.4.2: User-facing flow alternatives presentation
+
+Wave 34 (sequential): US-11.1.1
+Wave 35 (sequential): US-11.2.1 (after 11.1.1)
+Wave 36 (parallel): US-11.2.2 (after 11.2.1), US-11.3.1 (after 11.2.1)
+Wave 37 (sequential): US-11.4.1 (after 11.1.1)
+Wave 38 (sequential): US-11.4.2 (after 11.4.1)
+--- Phase 11 PLANNED (6/6) ---
 ```
 
 ---

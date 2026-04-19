@@ -240,6 +240,23 @@ ROOT_CAUSES:
 
 ---
 
+## Phase 11 — Adaptive Search Intelligence
+
+**Goal:** Make complex structured-data searches (sales leads, job listings, product catalogs) reliable and precise. Instead of a flat Google query, the `gather` skill generates a specialized search sub-flow for each complex search step: source planning → site-scoped search → DOM exploration → internal search → detail URL extraction. If a sub-flow fails, the advisory agent proposes an alternative approach.
+
+> **Origin:** Real-world usage reveals internet-based searches for structured data (e.g., "find sales leads", "collect job openings with direct URLs") consistently produce poor results because the current `gather` skill runs a flat Google search with no source strategy. Phase 11 adds per-step micro-planning and adaptive fallbacks to close this gap.
+
+### Epics
+
+| Epic | Description |
+|------|-------------|
+| **Epic 11.1 — Per-Step Search Planner** | Before any complex search step, call the strategist agent to generate a specialized search sub-flow (source plan → site-scoped search → DOM navigation → internal search). Replaces flat "search Google → get results" for data-collection requests. Budget: 1 strategist call per search step, max 3 per pipeline. |
+| **Epic 11.2 — Source DOM Explorer** | When `site:source.com` search returns thin results (< threshold), automatically fetch the source homepage, extract DOM structure (nav links, search inputs, URL patterns), and construct targeted queries or direct navigation paths using the discovered structure. Falls back to existing Playwright stealth tier when needed. |
+| **Epic 11.3 — Detail URL Extractor** | For sources that display results via open popup, expandable card, or JS-rendered inline detail — detect this pattern and extract the canonical detail-page URL. Enforce the rule: a listing-page URL is never acceptable as a final item output URL. |
+| **Epic 11.4 — Adaptive Flow Advisor** | If a search sub-flow produces insufficient results after 2 attempts, call the advisory agent to propose an alternative flow (e.g., switch from Google site-search to direct platform URL pattern, use internal search API, or suggest alternative platforms). Present 2-3 options to the user before retrying. Budget: 1 advisory call per failed sub-flow, max 2 per pipeline. |
+
+---
+
 ## Skill Map theo Phase
 
 ```
@@ -254,6 +271,7 @@ Phase 7:  synthesize (inline critical steps + hard gates)  gather (data collecti
 Phase 8:  shared agents (refactor → runSubagent)  all output skills (auditor integration)  synthesize (delegate to agents)
 Phase 9:  orchestrator (NEW agent)  synthesize (refactor → synthesis-only)  all agents (→ .agent.md standard)  auditor (100-point scoring)  improve (upgrade)  session state (enhanced)
 Phase 10: ALL skills (Vietnamese → English rename)  orchestrator (renamed from dieu-phoi)  natural language UX  legacy cleanup  design/verify/improve (backfill stories)
+Phase 11: gather (per-step search planner + DOM explorer + detail URL extractor + adaptive flow advisor)
 ```
 
 > Note: Phase 0-9 Skill Map shows English names for readability. Actual rename happens in Phase 10.
@@ -461,6 +479,21 @@ Phase 0 là bắt buộc — không có `cai-dat` và `tong-hop` thì các skill
 | **Epic 10.5 — Dọn dẹp artifact cũ** | Xóa `shared-agents/` trong `.github/skills/`. Di chuyển `agent-protocol.md`. Xóa file agent trùng lặp. Sửa lỗi số lượng user-stories. |
 | **Epic 10.6 — Bổ sung User Stories thiếu** | Thêm stories cho `design`, `verify`, `improve` — skills có trong code nhưng chưa có stories. |
 | **Epic 10.7 — Căn chỉnh tài liệu sản phẩm** | Cập nhật idea.md, roadmap.md. Cập nhật Skill Map. Đảm bảo tên tiếng Anh nhất quán. |
+
+---
+
+## Phase 11 — Tìm kiếm thông minh thích ứng
+
+**Mục tiêu:** Biến các yêu cầu tìm kiếm dữ liệu có cấu trúc (sales lead, tin tuyển dụng, danh mục sản phẩm) trở nên đáng tin cậy và chính xác. Thay vì tìm kiếm Google phẳng, skill `gather` tự tạo sub-flow tìm kiếm chuyên biệt cho từng bước phức tạp. Nếu sub-flow thất bại, advisory agent đề xuất hướng tiếp cận thay thế.
+
+> **Nguồn gốc:** Sử dụng thực tế cho thấy tìm kiếm internet dạng "tìm sales lead", "thu thập tin tuyển dụng với URL trực tiếp" thường không hiệu quả vì `gather` skill đang chạy tìm kiếm Google phẳng, không có chiến lược nguồn.
+
+| Epic | Mô tả |
+|------|-------|
+| **Epic 11.1 — Per-Step Search Planner** | Trước mọi bước tìm kiếm phức tạp, gọi strategist agent để tạo sub-flow chuyên biệt (lên kế hoạch nguồn → tìm theo site → khám phá DOM → tìm kiếm nội trang). Thay thế tìm kiếm Google phẳng cho các yêu cầu data-collection. |
+| **Epic 11.2 — Source DOM Explorer** | Khi tìm `site:nguồn.com` trả kết quả mỏng, tự động fetch trang chủ nguồn, trích xuất cấu trúc DOM (nav links, ô tìm kiếm, URL patterns), và xây dựng query nhắm mục tiêu hoặc đường dẫn trực tiếp dựa trên cấu trúc vừa khám phá. |
+| **Epic 11.3 — Detail URL Extractor** | Với nguồn hiển thị kết quả qua popup mở, expandable card, hoặc detail inline — phát hiện pattern và trích xuất URL trang detail chính xác. Quy tắc bắt buộc: URL trang listing không bao giờ được dùng làm URL đầu ra cuối cùng. |
+| **Epic 11.4 — Adaptive Flow Advisor** | Nếu sub-flow tìm kiếm thất bại sau 2 lần, gọi advisory agent đề xuất hướng tiếp cận thay thế (chuyển sang URL pattern trực tiếp, API nội trang, hoặc nền tảng khác). Hiển thị 2-3 lựa chọn cho user trước khi thử lại. |
 
 ---
 

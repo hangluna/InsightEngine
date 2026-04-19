@@ -3,8 +3,8 @@
 > **Product:** InsightEngine  
 > **Product Slug:** insight-engine  
 > **Created:** 2026-04-16  
-> **Scope:** Phase 0 → Phase 10 (all phases)  
-> **Total User Stories:** 91 (21 Phase 0-3 + 15 Phase 4 + 4 Phase 5 + 14 Phase 6 + 5 Phase 7 + 6 Phase 8 + 12 Phase 9 + 14 Phase 10)
+> **Scope:** Phase 0 → Phase 11 (all phases)  
+> **Total User Stories:** 97 (21 Phase 0-3 + 15 Phase 4 + 4 Phase 5 + 14 Phase 6 + 5 Phase 7 + 6 Phase 8 + 12 Phase 9 + 14 Phase 10 + 6 Phase 11)
 
 ---
 
@@ -12,7 +12,7 @@
 
 - **Product name:** InsightEngine
 - **Product slug:** `insight-engine`
-- **Scope covered:** Phase 0, Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, Phase 7, Phase 8, Phase 9, Phase 10
+- **Scope covered:** Phase 0, Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, Phase 7, Phase 8, Phase 9, Phase 10, Phase 11
 - **Total stories:** 91 (Phase 0: 5, Phase 1: 6, Phase 2: 5, Phase 3: 5, Phase 4: 15, Phase 5: 4, Phase 6: 14, Phase 7: 5, Phase 8: 6, Phase 9: 12, Phase 10: 14)
 - **ID format:** `US-<phase>.<epic>.<index>`
 
@@ -1961,6 +1961,80 @@ US-0.3.1 + US-2.5.1 → US-3.4.1                                   │
   - AC4: Cập nhật references từ shared-agents sang .github/agents
   - AC5: Cập nhật copilot-instructions.md với agent registry
 - Bị chặn bởi: `US-8.1.1`, `US-8.2.1`, `US-8.3.1`
+
+---
+
+## Phase 11 — Adaptive Search Intelligence
+
+> **Scope:** Make complex structured-data searches (sales leads, job listings, products) reliable by generating specialized per-step search sub-flows with DOM exploration, detail URL extraction, and adaptive fallbacks.
+
+### Epic 11.1: Per-Step Search Planner
+
+**US-11.1.1: Integrate per-step search planner in gather skill**
+- Mô tả: Trước bất kỳ bước tìm kiếm nào được `gather` skill phân loại là data-collection phức tạp (sales leads, job listings, sản phẩm), gọi strategist agent để tạo search sub-flow chuyên biệt (lên kế hoạch nguồn → tìm theo site → khám phá DOM → tìm kiếm nội trang). Budget: 1 strategist call/bước, tối đa 3/pipeline.
+- Tiêu chí nghiệm thu:
+  - AC1: `gather` skill nhận diện intent data-collection phức tạp
+  - AC2: strategist agent được gọi với context: loại item, nguồn tiềm năng, số lượng mong muốn
+  - AC3: Sub-flow trả về ít nhất 4 bước có thứ tự: source-plan, site-search, dom-explore, internal-search
+  - AC4: Sub-flow được `gather` skill thực thi tuần tự
+  - AC5: Budget strategist call được tuân thủ (≤3 calls/pipeline)
+- Bị chặn bởi: `US-9.5.1`
+
+### Epic 11.2: Source DOM Explorer
+
+**US-11.2.1: Auto DOM exploration when site-scoped search returns thin results**
+- Mô tả: Sau khi tìm `site:nguồn.com [query]` trả về ít hơn ngưỡng (ví dụ 3 kết quả chất lượng), tự động fetch trang chủ của nguồn bằng Playwright, trích xuất cấu trúc DOM (nav links, form tìm kiếm, URL patterns), và lưu cấu trúc này để xây các query tiếp theo.
+- Tiêu chí nghiệm thu:
+  - AC1: Ngưỡng thin-results được cấu hình (mặc định: <3 kết quả quality)
+  - AC2: DOM extraction lấy được: nav links, input[type=search], URL patterns từ anchor tags
+  - AC3: Kết quả DOM được dùng để xây ≥1 query tìm kiếm mới
+  - AC4: Không gọi DOM exploration nếu site-search đã đủ kết quả
+  - AC5: Playwright stealth mode được dùng nếu trang block headless browser
+- Bị chặn bởi: `US-11.1.1`
+
+**US-11.2.2: Internal search usage via DOM-discovered endpoints**
+- Mô tả: Khi DOM exploration phát hiện internal search endpoint (form action URL, API endpoint qua network intercept), sử dụng endpoint đó để thực hiện tìm kiếm nội trang thay vì Google site-search.
+- Tiêu chí nghiệm thu:
+  - AC1: Phát hiện được search form và action URL từ DOM
+  - AC2: Gửi request tới internal search endpoint với query phù hợp
+  - AC3: Parse kết quả từ internal search (HTML hoặc JSON response)
+  - AC4: Kết quả internal search được xử lý qua cùng extraction pipeline
+  - AC5: Fallback về site:search nếu internal endpoint không accessible
+- Bị chặn bởi: `US-11.2.1`
+
+### Epic 11.3: Detail URL Extractor
+
+**US-11.3.1: Extract canonical detail-page URLs for inline/popup detail sources**
+- Mô tả: Với nguồn hiển thị chi tiết qua popup, expandable card, hoặc JS-rendered inline content (ví dụ: company card mở rộng tại chỗ) — phát hiện pattern này và trích xuất URL trang detail canonical. Rule bắt buộc: không bao giờ trả listing-page URL làm item URL đầu ra cuối cùng.
+- Tiêu chí nghiệm thu:
+  - AC1: Phát hiện được pattern: single-page listing với detail inline (không có `<a>` dẫn đến detail page)
+  - AC2: Thử extract canonical URL từ: `link[rel=canonical]`, `og:url`, data attributes, history.pushState patterns
+  - AC3: Nếu không có canonical URL → sử dụng Playwright để click item và capture URL sau navigation
+  - AC4: Output validation: từ chối kết quả có URL chứa `?page=`, `?q=`, `#results` hoặc match listing page pattern
+  - AC5: Log rõ ràng khi item bị loại do không extract được detail URL
+- Bị chặn bởi: `US-11.2.1`
+
+### Epic 11.4: Adaptive Flow Advisor
+
+**US-11.4.1: Advisory agent fallback after 2 failed search attempts**
+- Mô tả: Nếu search sub-flow của một bước cụ thể thất bại sau 2 lần thử (không đủ results), gọi advisory agent với context: (loại item, nguồn đã thử, lỗi gặp phải, số lượng còn thiếu). Advisory agent phân tích và trả về 2-3 phương án thay thế có mô tả rõ ràng.
+- Tiêu chí nghiệm thu:
+  - AC1: Failed sub-flow được phát hiện sau đúng 2 lần thử (không sớm hơn)
+  - AC2: Advisory agent nhận đủ context: item_type, attempted_sources, errors, gap_count
+  - AC3: Advisory trả về ≥2 alternatives với: tên phương án, mô tả cách thực hiện, pros/cons ngắn
+  - AC4: Budget advisory: ≤1 call/failed sub-flow, ≤2 calls/pipeline
+  - AC5: Pipeline DỪNG và chờ user quyết định trước khi retry
+- Bị chặn bởi: `US-11.1.1`
+
+**US-11.4.2: User-facing flow alternatives presentation**
+- Mô tả: Hiển thị các phương án thay thế từ advisory agent cho user theo format rõ ràng: số thứ tự, tên phương án, mô tả, và ví dụ cụ thể. User chọn 1 phương án hoặc cung cấp hướng dẫn thủ công. Pipeline tiếp tục theo lựa chọn.
+- Tiêu chí nghiệm thu:
+  - AC1: Phương án được trình bày theo numbered list với tên rõ ràng
+  - AC2: Mỗi phương án có: mô tả ngắn, ví dụ thực tế, điểm mạnh/yếu
+  - AC3: User có thể chọn số (1/2/3) hoặc nhập hướng dẫn thủ công
+  - AC4: Lựa chọn được ghi vào session state để không hỏi lại
+  - AC5: Nếu user không chọn trong context window → sử dụng phương án #1 mặc định
+- Bị chặn bởi: `US-11.4.1`
 
 ---
 
