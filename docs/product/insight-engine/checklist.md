@@ -1297,9 +1297,11 @@ Wave 49 (sequential): US-13.4.3 (after 13.4.2)
 ### Epic 14.2: Per-Source Accessibility Test
 
 - [ ] **US-14.2.1** — Per-source accessibility test with auto-retry (Playwright escalation)
-  - Status: PLANNED
+  - Status: IN_PROGRESS
   - Assignee: copilot
+  - AI: copilot
   - Branch: `feature/insight-engine-us-14.2.1`
+  - Locked: 2026-04-19T00:02:00Z
   - Blocked By: ~~US-14.1.2~~ ✅
 
 - [ ] **US-14.2.2** — Source reliability scoring and ranking
