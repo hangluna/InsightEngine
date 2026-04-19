@@ -24,15 +24,21 @@ compatibility:
 
 **References:** `references/comprehensive-mode.md` | `references/translation-mode.md` | `references/extra-modes.md`
 
+**Governance:** Read and follow `.github/RULE.md` — it overrides all instructions below.
+
 This skill takes raw content from multiple sources and produces a unified, coherent document.
 The key challenge is merging overlapping information without losing important details or
 creating contradictions. The skill proposes an outline first (so the user can adjust structure
 before writing begins), then synthesizes content section by section.
 
-**Quality-first approach:** This skill auto-reviews its own output section by section. After
-writing each major section, it checks against a richness scorecard. Sections that are too thin,
-too generic, or lack analysis are automatically rewritten before moving to the next section.
-This self-review loop is what transforms a basic summary into an expert-level document.
+**Quality loop (RULE-2):** After each section and after the full document, self-review runs.
+Pivot strategies (max 3 per RULE-2):
+1. Different structure: reorder sections, merge/split, change heading hierarchy
+2. Different depth: expand thin sections with more data points, examples, analysis
+3. Different analytical angle: change framework, add comparison dimensions, stronger conclusions
+
+Sections that fail self-review are rewritten before moving on. After the full document is
+assembled, auditor gate (>80/100) must pass before delivery.
 
 Four modes: **comprehensive** (default — expert-level depth with analysis and specifics),
 **standard** (brief, only when explicitly requested), **translation** (Vietnamese↔English),
