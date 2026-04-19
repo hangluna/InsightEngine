@@ -82,7 +82,11 @@ Mở Copilot Chat và nhắn `setup InsightEngine` để cài dependencies.
 
 ### Nâng cấp Copilot (tùy chọn)
 
-GitHub Copilot Free có giới hạn request/tháng. Nếu muốn dùng model cao cấp hơn (Claude Sonnet, GPT-4o) và không giới hạn:
+**GitHub Copilot Free** cho phép dùng các model như GPT-4o và Claude Sonnet, nhưng có giới hạn số lượng request mỗi tháng (completions và chat).
+
+**Nâng cấp lên Copilot Pro/Pro+** nếu muốn:
+- Không giới hạn số request
+- Truy cập thêm các model mới nhất (o1, o3, Claude 3.7 Sonnet Thinking, Gemini 2.5 Pro...)
 
 👉 https://github.com/settings/copilot/features
 
