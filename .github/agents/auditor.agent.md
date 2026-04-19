@@ -124,12 +124,14 @@ OPTIONAL:
 2. **Requirement Coverage** — For each requirement from user's request:
    - Find where it is addressed in the output
    - Grade each test case
+   - **Phase 13**: If `structured_requirements` provided → score EACH requirement item individually
+     (see Per-Requirement Scoring section). BLOCKING_FAILURES (score < 60) prevent pipeline from continuing.
 
 3. **Content Quality** — Depth, specificity, structure, completeness
 
 4. **Format-Specific Checks**
    - Word/PDF: Section completeness, no placeholder text, proper formatting
-   - Excel: Data population, formula correctness, no empty required columns
+   - Excel: Data population, formula correctness, no empty required columns, **correct sheet names**
    - Slides: Slide count adequacy, content per slide, visual structure
    - HTML: Rendering, link validity, responsive structure
 
@@ -137,19 +139,23 @@ OPTIONAL:
    - URLs pointing to real item pages (not search results)?
    - Numerical values plausible?
    - Fields genuinely different across rows?
+   - **Phase 13**: For Excel — sheet names match `grouping` requirements? Columns match `fields_required`?
 
 6. **Score and verdict** (Step 2-3 above)
 
 ### Verdict Handling
 
 ```yaml
-ON_PASS (>= 80/100):
+ON_PASS (>= 80/100 AND all requirements >= 60):
   action: Continue pipeline / deliver to user
 
-ON_FAIL (< 80/100):
-  action: Return FAILING_TESTS with specific fix instructions
+ON_FAIL (< 80/100 OR any requirement < 60):
+  action: Return FAILING_TESTS + BLOCKING_FAILURES with specific fix instructions
   caller_action: Re-generate targeting only failing areas
   max_retries: 5 (managed by caller — see US-9.4.2 retry loop)
+  
+  # Phase 13: When structured_requirements provided, also return per-requirement scores
+  # BLOCKING_FAILURES (score < 60) must be addressed before pipeline continues
 ```
 
 ---
