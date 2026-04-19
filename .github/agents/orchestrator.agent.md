@@ -78,6 +78,16 @@ FLOW:
      ```
      Verify: must print STATE_INITIALIZED. If context is lost later, the request is
      recoverable via `python3 scripts/save_state.py check`.
+  2b. EXTRACT structured requirements — MANDATORY, run immediately after init:
+     Analyze raw_prompt and extract typed requirement fields (output_files, fields_required,
+     filters, grouping, format_constraints, sources, content_requirements).
+     Reference schema: .github/skills/synthesize/references/requirement-anchor.md
+     ```bash
+     python3 scripts/save_state.py extract-requirements '<structured_json>'
+     python3 scripts/save_state.py check-requirements  # verify extraction
+     ```
+     This structured list is the ground-truth for ALL auditor calls in this pipeline.
+     Do NOT skip even for simple requests — minimal requirements are still valid.
   3. CALL strategist agent → get workflow plan
   4. PRESENT plan to user in Vietnamese → wait for approval (guided mode only)
      EXCEPTION: session_mode=silent → skip presentation and proceed immediately

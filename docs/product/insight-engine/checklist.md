@@ -1203,8 +1203,8 @@ Wave 42 (sequential): US-12.4.2 (after 12.4.1)
 
 ### Epic 13.1: Requirement Anchor Protocol
 
-- [ ] **US-13.1.1** — Structured requirements extraction from raw_prompt
-  - Status: PLANNED
+- [x] **US-13.1.1** — Structured requirements extraction from raw_prompt
+  - Status: DONE
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-13.1.1`
   - Blocked By: None
@@ -1213,7 +1213,7 @@ Wave 42 (sequential): US-12.4.2 (after 12.4.1)
   - Status: PLANNED
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-13.1.2`
-  - Blocked By: US-13.1.1
+  - Blocked By: ~~US-13.1.1~~ ✅
 
 ### Epic 13.2: Per-Step Auditor Enforcement
 
@@ -1235,7 +1235,7 @@ Wave 42 (sequential): US-12.4.2 (after 12.4.1)
   - Status: PLANNED
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-13.3.1`
-  - Blocked By: US-13.1.1
+  - Blocked By: ~~US-13.1.1~~ ✅
 
 - [ ] **US-13.3.2** — Child workflow state + failure isolation
   - Status: PLANNED
@@ -1249,7 +1249,7 @@ Wave 42 (sequential): US-12.4.2 (after 12.4.1)
   - Status: PLANNED
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-13.4.1`
-  - Blocked By: US-13.1.1
+  - Blocked By: ~~US-13.1.1~~ ✅
 
 - [ ] **US-13.4.2** — Placeholder validation vs requirements before fill
   - Status: PLANNED
