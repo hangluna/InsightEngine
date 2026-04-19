@@ -1184,8 +1184,8 @@ Wave 38 (sequential): US-11.4.2 (after 11.4.1)
   - Branch: `feature/insight-engine-us-12.4.1`
   - Blocked By: None
 
-- [ ] **US-12.4.2** — Final delivery summary (single message with all outputs)
-  - Status: IN_PROGRESS
+- [x] **US-12.4.2** — Final delivery summary (single message with all outputs)
+  - Status: DONE
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-12.4.2`
   - Blocked By: US-12.4.1
