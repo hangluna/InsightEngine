@@ -1095,9 +1095,10 @@ Wave 33 (sequential): US-10.3.2 (after 10.3.1)
   - Branch: `feature/insight-engine-us-11.2.1`
   - Blocked By: ~~US-11.1.1~~ ✅
 
-- [ ] **US-11.2.2** — Internal search usage via DOM-discovered endpoints
-  - Status: PLANNED
+- [x] **US-11.2.2** — Internal search usage via DOM-discovered endpoints
+  - Status: DONE
   - Assignee: copilot
+  - Branch: `feature/insight-engine-us-11.2.2`
   - Blocked By: ~~US-11.2.1~~ ✅
 
 ### Epic 11.3: Detail URL Extractor
