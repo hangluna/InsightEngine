@@ -1136,8 +1136,8 @@ Wave 38 (sequential): US-11.4.2 (after 11.4.1)
 
 ### Epic 12.1: Fire-and-Forget Pipeline Mode
 
-- [ ] **US-12.1.1** — Default auto-execute mode after plan approval
-  - Status: IN_PROGRESS
+- [x] **US-12.1.1** — Default auto-execute mode after plan approval
+  - Status: DONE
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-12.1.1`
   - Blocked By: None
@@ -1150,8 +1150,9 @@ Wave 38 (sequential): US-11.4.2 (after 11.4.1)
 ### Epic 12.2: Technical Jargon Shield
 
 - [ ] **US-12.2.1** — Technical jargon blocklist for user messages
-  - Status: PLANNED
+  - Status: IN_PROGRESS
   - Assignee: copilot
+  - Branch: `feature/insight-engine-us-12.2.1`
   - Blocked By: None
 
 - [ ] **US-12.2.2** — User-friendly progress message templates
