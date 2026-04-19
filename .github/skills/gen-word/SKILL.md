@@ -42,6 +42,16 @@ All responses to the user are in Vietnamese.
 3. Determine style (user-specified, pipeline-inferred, or ask user: corporate / academic / minimal)
 4. Determine output path (default: `./<title>.docx`)
 
+### Template-First Protocol (US-13.4.1)
+
+When structured_requirements available with content_requirements:
+```bash
+# Create structural placeholder before generating
+python3 scripts/create_placeholder.py word output/<filename>.docx \
+  --sections "<section1>,<section2>,..."
+# Then fill with real content in Step 3+
+```
+
 ### Thin Content Guard (STRICT — reject and loop back)
 
 Before generating the document, check if the input content is substantive enough for the
