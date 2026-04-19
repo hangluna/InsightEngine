@@ -280,6 +280,28 @@ SEPARATION:
 
 ---
 
+## Jargon Shield
+
+ALL messages composed by orchestrator and sent to the user MUST pass through jargon shield.
+
+```yaml
+JARGON_SHIELD:
+  reference: ".github/skills/synthesize/references/jargon-shield.md"
+  
+  APPLIES_TO:
+    - Every progress update during pipeline execution
+    - Every error message or warning
+    - Every question asked to user
+    - Final delivery summary
+    
+  CORE_RULE: >
+    Users see business outcomes, not technical machinery.
+    Replace library names, script paths, architecture terms, and error stack traces
+    with plain Vietnamese before sending. See blocklist in jargon-shield.md.
+```
+
+---
+
 ## Fallback Behavior
 
 ```yaml
