@@ -67,15 +67,24 @@ SKILLS:
       - "create presentation"
 
   gather:
-    purpose: "Gather content from web (Google search + fetch URL) and read local files. Auto-reviews gathered content quality and expands search if insufficient."
+    purpose: "Read content from local files and explicit URLs. Uses markitdown + 3-tier URL fetch. For web search/discovery, use search skill instead."
     location: ".github/skills/gather/SKILL.md"
     triggers:
-      - "tìm kiếm thông tin"
       - "đọc file"
-      - "lấy nội dung từ"
+      - "lấy nội dung từ URL"
       - "fetch URL"
-      - "search web"
       - "read file"
+
+  search:
+    purpose: "Search the internet for information, discover platforms, and collect structured data. Web search + deep research + data collection with source intelligence."
+    location: ".github/skills/search/SKILL.md"
+    triggers:
+      - "tìm kiếm thông tin"
+      - "search web"
+      - "tìm hiểu về"
+      - "danh sách việc làm"
+      - "research topic"
+      - "search Google"
 
   compose:
     purpose: "Synthesize multi-source content into expert-level documents (comprehensive by default). Self-reviews each section for depth, specificity, and analysis — auto-rewrites thin sections. Supports Vietnamese ↔ English translation."
@@ -244,7 +253,9 @@ PIPELINE_FLOW:
   2. orchestrator agent classifies intent, extracts structured requirements (Phase 13),
      calls strategist for workflow plan, presents to user, and manages full pipeline
   3. For synthesis requests: orchestrator routes to synthesize skill which runs:
-     gather → compose → gen-[format] (pure content pipeline)
+     search/gather → compose → gen-[format] (pure content pipeline)
+     - search: internet research, platform discovery, data collection
+     - gather: local files and explicit user-provided URLs
   4. Copilot executes scripts via run_in_terminal; per-step auditor checkpoints enforce quality
   5. Confirm result (output file path + size)
 
@@ -283,7 +294,8 @@ url_fetch: Copilot fetch_webpage tool
 | Skill | Description |
 |-------|-------------|
 | synthesize | Start content synthesis pipeline |
-| gather | Gather content from sources |
+| search | Search internet, discover platforms, collect structured data |
+| gather | Read local files and fetch explicit URLs |
 | compose | Synthesize / translate content |
 | gen-word | Create Word file |
 | gen-excel | Create Excel file |
