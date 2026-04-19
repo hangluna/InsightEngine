@@ -1245,8 +1245,8 @@ Wave 42 (sequential): US-12.4.2 (after 12.4.1)
 
 ### Epic 13.4: Template-First Output Protocol
 
-- [ ] **US-13.4.1** — Placeholder file creation before output generation
-  - Status: PLANNED
+- [x] **US-13.4.1** — Placeholder file creation before output generation
+  - Status: DONE
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-13.4.1`
   - Blocked By: ~~US-13.1.1~~ ✅
@@ -1255,7 +1255,7 @@ Wave 42 (sequential): US-12.4.2 (after 12.4.1)
   - Status: PLANNED
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-13.4.2`
-  - Blocked By: US-13.4.1, ~~US-13.1.2~~ ✅
+  - Blocked By: ~~US-13.4.1~~ ✅, ~~US-13.1.2~~ ✅
 
 - [ ] **US-13.4.3** — Content-fill into validated placeholder (update, not create)
   - Status: PLANNED

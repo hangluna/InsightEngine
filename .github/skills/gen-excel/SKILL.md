@@ -80,6 +80,37 @@ COPILOT_WORKFLOW:
 
 ---
 
+## Template-First Protocol (US-13.4.1)
+
+Before generating real content, create a structural placeholder to validate structure:
+
+```bash
+# Step 0a: Create placeholder with required structure
+python3 scripts/create_placeholder.py excel output/<filename>.xlsx \
+  --sheets "<sheet1>,<sheet2>,...>" \
+  --columns '{"<sheet1>": ["col1","col2",...], "<sheet2>": [...]}' \
+  --requirements '<structured_requirements_json>'
+
+# Step 0b: Validate placeholder structure (auditor validates before filling)
+# See US-13.4.2 — call auditor in structural mode on placeholder
+
+# Step 1+: Generate real script and fill data into validated placeholder
+# See US-13.4.3 — use --placeholder flag or fill mode
+python3 scripts/create_placeholder.py excel output/<filename>.xlsx --fill tmp/data.json
+```
+
+**When to use Template-First:**
+- Structured requirements available (fields_required + grouping defined)
+- gen-excel step has > 3 sheets or > 8 columns
+- Previous attempt produced wrong sheet names or missing columns
+
+**When to skip (use direct generation):**
+- Simple single-sheet spreadsheet with few columns
+- No structured requirements available
+- User wants a quick result and structure is obvious
+
+---
+
 ## Step 1: Analyze Data Structure
 
 Before generating, understand what the spreadsheet needs:

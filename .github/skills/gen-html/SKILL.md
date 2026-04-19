@@ -57,6 +57,16 @@ Full color/font specs: `references/presentation-styles.md`
 2. Confirm content available (from pipeline or ask user)
 3. Determine style
 
+### Template-First Protocol (US-13.4.1)
+
+When structured_requirements available with content_requirements:
+```bash
+# Create structural placeholder before generating
+python3 scripts/create_placeholder.py html output/<filename>.html \
+  --sections "<section1>,<section2>,..."
+# Then fill with real content
+```
+
 ### Thin Content Guard (STRICT — reject and loop back)
 
 HTML pages are often shared via link or email. A thin page with mostly whitespace and generic

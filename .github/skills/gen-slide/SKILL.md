@@ -99,6 +99,16 @@ Full color/font specs: `references/template-styles.md`
 3. Determine style (user-specified, pipeline-inferred, or ask)
 4. Determine output path (default: `./<title>.pptx`)
 
+### Template-First Protocol (US-13.4.1)
+
+When structured_requirements available with content_requirements:
+```bash
+# Create structural placeholder before generating
+python3 scripts/create_placeholder.py slide output/<filename>.pptx \
+  --slide-titles '["Title 1","Title 2","Title 3"]'
+# Then fill with real content
+```
+
 ### Thin Content Guard (STRICT — reject and loop back)
 
 A presentation with only bullet-point titles and no substance looks amateurish. This is the
