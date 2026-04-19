@@ -63,20 +63,20 @@ applyTo: "**"
 
 ```
 .github/skills/
-  synthesize/      # 🔑 Pipeline chính — phân tích prompt → mở rộng → route → orchestrate + auto-review loop
-  gather/      # Thu thập từ web (search + fetch) và đọc file + auto quality check + data collection mode
-  compose/     # Tổng hợp nội dung comprehensive (default) + self-review loop + dịch thuật
-  gen-word/      # Xuất Word (.docx) + thin content guard
-  gen-excel/     # Xuất Excel (.xlsx)
-  gen-slide/     # Xuất PowerPoint (.pptx) + thin content guard
-  gen-pdf/       # Xuất PDF + thin content guard
-  gen-html/      # Xuất HTML + thin content guard
-  gen-image/      # Biểu đồ + hình ảnh
-  design/      # Thiết kế visual (poster, bìa, certificate, banner)
-  verify/      # Audit output vs yêu cầu user (Step 4.7 trong pipeline + standalone)
-  improve/      # Session retrospective + continuous improvement
-  skill-creator/ # Tạo, cải thiện, test, benchmark skill
-  skill-forge/   # Auto-review loop nâng cao — grade 6 tiêu chí (A/B/C/D), iterate đến khi all A
+  synthesize/      # 🔑 Main pipeline — analyze prompt → expand dimensions → route → orchestrate + auto-review loop
+  gather/          # Collect from web (search + fetch) and read local files + auto quality check + data collection mode
+  compose/         # Synthesize content comprehensive (default) + self-review loop + translation
+  gen-word/        # Export Word (.docx) + thin content guard
+  gen-excel/       # Export Excel (.xlsx)
+  gen-slide/       # Export PowerPoint (.pptx) + thin content guard
+  gen-pdf/         # Export PDF + thin content guard
+  gen-html/        # Export HTML + thin content guard
+  gen-image/       # Charts + images
+  design/          # Visual design (poster, cover, certificate, banner)
+  verify/          # Audit output vs user requirements (Step 4.7 in pipeline + standalone)
+  improve/         # Session retrospective + continuous improvement
+  skill-creator/   # Create, improve, test, benchmark skills
+  skill-forge/     # Advanced auto-review loop — grade 6 criteria (A/B/C/D), iterate until all A
 ```
 
 Full stack documentation: `docs/tech-stack/insight-engine/instructions.md`
