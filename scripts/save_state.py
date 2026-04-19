@@ -3,6 +3,7 @@
 
 Commands:
     python3 scripts/save_state.py init '<prompt>' [intent]  # FIRST CALL: save raw prompt immediately
+    python3 scripts/save_state.py extract-requirements      # Parse raw_prompt → structured requirements list
     python3 scripts/save_state.py check        # Check if a session state exists
     python3 scripts/save_state.py save <json>   # Save current state (JSON string or @file)
     python3 scripts/save_state.py resume-plan   # Return pending steps as JSON
@@ -13,9 +14,10 @@ Commands:
 
 State file: tmp/.session-state.json  (hidden file — use: ls -la tmp/)
 
-Enhanced Schema (v3 — Phase 12):
+Enhanced Schema (v3 — Phase 13 update):
     raw_prompt: str             # Original user request — saved FIRST before any processing
     intent_classification: str  # synthesis | creation | research | design | data_collection | mixed
+    structured_requirements: dict  # Parsed from raw_prompt: output_files[], fields_required, filters, grouping, format_constraints
     analyzed_requirements: dict # Expanded dimensions from analysis
     generated_plan: dict        # Workflow plan from strategist
     step_states: list           # Per-step: {name, status, input_summary, output_summary, started_at, completed_at}
@@ -84,6 +86,7 @@ def cmd_init(prompt: str, intent: str = "unknown"):
         "autonomy_mode": False,
         "consecutive_approvals": 0,
         "frustration_detected": False,
+        "structured_requirements": {},
         "analyzed_requirements": {},
         "generated_plan": {},
         "step_states": [],
@@ -116,6 +119,70 @@ def cmd_set_mode(mode: str):
     state["updated_at"] = datetime.now().isoformat()
     STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"MODE_SET: session_mode={mode}, autonomy_mode={state['autonomy_mode']}")
+
+
+def cmd_extract_requirements(requirements_json: str = None):
+    """Parse raw_prompt into a structured requirements list and save to state.
+    Usage: save_state.py extract-requirements [json_string]
+
+    If json_string is provided, it must be a JSON object with typed requirement fields.
+    If omitted, Copilot calls this after performing its own analysis of raw_prompt and
+    passes the structured object as argument.
+
+    Structured requirements schema (requirement-anchor.md):
+        output_files: list[{name, type, structure_hint}]
+            # e.g., [{name: "jobs.xlsx", type: "excel", structure_hint: "one sheet per province"}]
+        fields_required: dict[output_name → list[str]]
+            # e.g., {"jobs.xlsx": ["company_name", "province", "salary", "experience", "skills", "job_url"]}
+        filters: list[str]
+            # e.g., ["only fresher/junior roles", "max 2 years experience", "Vietnam only"]
+        grouping: list[str]
+            # e.g., ["by province/city", "by company"]
+        format_constraints: list[str]
+            # e.g., ["one sheet per province", "10-20 slides", "include charts"]
+        sources: list[str]
+            # e.g., ["ITViec", "TopCV", "VietnamWorks", "LinkedIn"]
+        content_requirements: list[str]
+            # e.g., ["company ratings", "review links", "work environment ranking"]
+    """
+    state = load_state()
+    if state is None:
+        print("Error: NO_STATE — run init first")
+        sys.exit(1)
+
+    if requirements_json:
+        try:
+            reqs = json.loads(requirements_json)
+        except json.JSONDecodeError as e:
+            print(f"Error: invalid JSON — {e}")
+            sys.exit(1)
+    else:
+        # Return schema template for Copilot to fill
+        reqs = {
+            "output_files": [],
+            "fields_required": {},
+            "filters": [],
+            "grouping": [],
+            "format_constraints": [],
+            "sources": [],
+            "content_requirements": [],
+        }
+        print("REQUIREMENTS_SCHEMA (fill and pass as argument):")
+        print(json.dumps(reqs, indent=2, ensure_ascii=False))
+        return
+
+    state["structured_requirements"] = reqs
+    state["updated_at"] = datetime.now().isoformat()
+    STATE_FILE.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    # Print summary for verification
+    n_outputs = len(reqs.get("output_files", []))
+    n_filters = len(reqs.get("filters", []))
+    n_fields = sum(len(v) for v in reqs.get("fields_required", {}).values())
+    print(f"REQUIREMENTS_SAVED: {n_outputs} output files, {n_filters} filters, {n_fields} required fields")
+    print(f"Grouping: {reqs.get('grouping', [])}")
+    print(f"Format constraints: {reqs.get('format_constraints', [])}")
+    print("Run 'check-requirements' or 'check' to verify.")
 
 
 def cmd_check():
@@ -335,7 +402,7 @@ def cmd_archive():
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: save_state.py <init|check|save|resume-plan|update|set-mode|complete|archive> [data]")
+        print("Usage: save_state.py <init|extract-requirements|check|save|resume-plan|update|set-mode|complete|archive> [data]")
         sys.exit(1)
 
     command = sys.argv[1]
@@ -346,11 +413,24 @@ def main():
             sys.exit(1)
         intent = sys.argv[3] if len(sys.argv) >= 4 else "unknown"
         cmd_init(sys.argv[2], intent)
+    elif command == "extract-requirements":
+        reqs_json = sys.argv[2] if len(sys.argv) >= 3 else None
+        cmd_extract_requirements(reqs_json)
     elif command == "set-mode":
         if len(sys.argv) < 3:
             print("Error: set-mode requires guided|standard|silent")
             sys.exit(1)
         cmd_set_mode(sys.argv[2])
+    elif command == "check-requirements":
+        state = load_state()
+        if state is None:
+            print("NO_STATE")
+            sys.exit(1)
+        reqs = state.get("structured_requirements", {})
+        if not reqs:
+            print("NO_REQUIREMENTS — run extract-requirements first")
+        else:
+            print(json.dumps(reqs, indent=2, ensure_ascii=False))
     elif command == "check":
         cmd_check()
     elif command == "save":
