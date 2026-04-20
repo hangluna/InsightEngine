@@ -203,7 +203,7 @@ AUDITOR_GATE:
        structured_requirements: from `python3 scripts/save_state.py check-requirements` (if available)
     3. CALL runSubagent(agentName="auditor", prompt=<built_prompt>, description="Audit PDF output")
     4. PARSE response:
-       IF VERDICT == PASS → deliver to user
+       IF VERDICT == PASS → return to orchestrator
        IF VERDICT == FAIL → re-generate with IMPROVEMENTS guidance (max 2 retries)
   budget: Counts toward max 5 auditor calls per pipeline run
   skip_when: Standalone quick generation

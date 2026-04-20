@@ -4,6 +4,7 @@ description: |
   Workflow generation agent for InsightEngine. Receives user request + model profile,
   returns optimized step-by-step execution plan with skill assignments and quality gates.
   Called by the orchestrator (orchestrator) to generate dynamic workflows.
+  Output returned to orchestrator, NOT to user (RULE-10).
 tools:
   - read_file
 user-invocable: false

@@ -4,6 +4,7 @@ description: |
   Multi-perspective decision support agent for InsightEngine. Receives a decision question
   + context, returns analysis from 3-5 perspectives + recommendation. Any skill can invoke
   when facing ambiguous decisions.
+  Output returned to orchestrator, NOT to user (RULE-10).
 tools:
   - read_file
 user-invocable: false
