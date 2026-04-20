@@ -3,7 +3,7 @@
 > **Product:** InsightEngine  
 > **Product Slug:** insight-engine  
 > **Created:** 2026-04-16  
-> **Total User Stories:** 132 (21 Phase 0-3 DONE + 15 Phase 4 DONE + 4 Phase 5 DONE + 14 Phase 6 DONE + 5 Phase 7 DONE + 6 Phase 8 DONE + 12 Phase 9 DONE + 13 Phase 10 DONE + 1 Phase 10 PLANNED + 6 Phase 11 DONE + 8 Phase 12 DONE + 9 Phase 13 DONE + 6 Phase 14 DONE + 12 Phase 15 PLANNED)  
+> **Total User Stories:** 141 (21 Phase 0-3 DONE + 15 Phase 4 DONE + 4 Phase 5 DONE + 14 Phase 6 DONE + 5 Phase 7 DONE + 6 Phase 8 DONE + 12 Phase 9 DONE + 13 Phase 10 DONE + 1 Phase 10 PLANNED + 6 Phase 11 DONE + 8 Phase 12 DONE + 9 Phase 13 DONE + 6 Phase 14 DONE + 12 Phase 15 PLANNED + 9 Phase 16 PLANNED)  
 > **Purpose:** Single source of execution state — track progress, enforce dependencies, enable safe parallel work
 
 ---
@@ -1145,6 +1145,83 @@ Wave 56 (parallel): US-15.1.1 ✅ + US-15.2.1 ✅
 Wave 57 (sequential): US-15.1.2 ✅ + US-15.2.2 ✅ + US-15.3.1 ✅ + US-15.4.1 ✅
 Wave 58 (sequential): US-15.1.3 ✅ + US-15.3.2 ✅ + US-15.3.3 ✅ + US-15.4.2 ✅ + US-15.4.3 ✅ + US-15.4.4 ✅
 --- Phase 15 PLANNED (0/12) ---
+```
+
+---
+
+## Phase 16: Agent-Centric Architecture & Tool-Agnostic Search
+
+### Epic 16.1: Tool-Agnostic Search Cascade
+
+- [ ] **US-16.1.1** — Tool availability probe before search execution
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-16.1.1
+  - Blocked By: None
+
+- [ ] **US-16.1.2** — Playwright stealth fallback when primary search fails
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-16.1.2
+  - Blocked By: US-16.1.1
+
+- [ ] **US-16.1.3** — HTTP zero-auth fallback as final tier
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-16.1.3
+  - Blocked By: US-16.1.2
+
+### Epic 16.2: Execution Agent
+
+- [ ] **US-16.2.1** — Create execution.agent.md
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-16.2.1
+  - Blocked By: None
+
+- [ ] **US-16.2.2** — Execution Agent child soft-flow request
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-16.2.2
+  - Blocked By: US-16.2.1
+
+### Epic 16.3: Hard-Flow Protocol in RULE.md
+
+- [ ] **US-16.3.1** — Formalize Hard-Flow execution order in RULE.md
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-16.3.1
+  - Blocked By: US-16.2.1
+
+### Epic 16.4: Adaptive Re-planning on Failure
+
+- [ ] **US-16.4.1** — Failure triggers Advisory/Strategist re-planning, not same-method retry
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-16.4.1
+  - Blocked By: US-16.2.1
+
+### Epic 16.5: Experience Template Accumulation
+
+- [ ] **US-16.5.1** — Save experience template after successful pipeline run
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-16.5.1
+  - Blocked By: US-16.4.1
+
+- [ ] **US-16.5.2** — Load matching experience template at pipeline start
+  - Status: PLANNED
+  - Assignee: copilot
+  - Branch: feature/insight-engine-us-16.5.2
+  - Blocked By: US-16.5.1
+
+```
+Dependency map:
+Wave 59 (parallel): US-16.1.1 + US-16.2.1
+Wave 60 (parallel): US-16.1.2 + US-16.2.2 + US-16.3.1 + US-16.4.1
+Wave 61 (sequential): US-16.1.3 (after 16.1.2) + US-16.5.1 (after 16.4.1)
+Wave 62 (sequential): US-16.5.2 (after 16.5.1)
+--- Phase 16 PLANNED (0/9) ---
 ```
 
 ---

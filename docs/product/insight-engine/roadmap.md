@@ -11,7 +11,7 @@
 
 - **Product name:** InsightEngine
 - **Product slug:** `insight-engine`
-- **Roadmap scope:** Milestone-based — each phase delivers a usable capability increment (Phase 0 → Phase 10)
+- **Roadmap scope:** Milestone-based — each phase delivers a usable capability increment (Phase 0 → Phase 16)
 - **Delivery model:** Copilot skill system built incrementally; each phase is independently usable
 
 ---
@@ -620,6 +620,40 @@ Phase 0 là bắt buộc — không có `cai-dat` và `tong-hop` thì các skill
 | **Epic 15.2 — Lớp bắt buộc RULE.md** | Tạo `.github/RULE.md` với luật pipeline không thương lượng (init state, thứ tự workflow, cổng audit, thực thi tự động, không hỏi thừa). Inject tham chiếu bắt buộc đầu `copilot-instructions.md`. |
 | **Epic 15.3 — Kỷ luật bắt đầu session cứng** | Định nghĩa và bắt buộc trình tự init session: tạo state file + lưu raw prompt qua `save_state.py` là hành động đầu tiên tuyệt đối trước mọi routing. Template output tạo song song với phân tích prompt. |
 | **Epic 15.4 — Vòng lặp Execute-Test-Pivot-Audit** | Định nghĩa vòng lặp chuẩn execute → tự đánh giá → đổi góc → retest → auditor → thực thi lại. Chỉ định chiến lược pivot theo từng loại skill. Áp dụng cho gather, search, compose, và tất cả gen-* skills. |
+
+---
+
+## Phase 16 — Agent-Centric Architecture & Tool-Agnostic Search
+
+**Goal:** Formalize the agent-centric hard-flow as the canonical execution model. No agent replaces another — all agents are peer-level with single responsibilities. Introduce an Execution Agent that owns tool selection and task execution. Replace hard-coded search tool dependency with an auto-cascade fallback strategy. Failed steps trigger re-planning by Advisory/Strategist — not dumb retries. Accumulate experience templates from successful runs for future reuse.
+
+> **Origin:** Real-world failure — `vscode-websearchforcopilot_webSearch` requires Tavily auth popup, blocking non-tech users silently. Broader issue: pipeline has no agent dedicated to *execution* — orchestrator, strategist, and skills all partially own it. This phase formalizes the Hard-Flow agent protocol and makes tool selection adaptive.
+
+### Epics
+
+| Epic | Description |
+|------|-------------|
+| **Epic 16.1 — Tool-Agnostic Search Cascade** | `search` skill probes tool availability before each call. Cascade: (1) `vscode-websearchforcopilot` if available → (2) Playwright stealth mode → (3) HTTP zero-auth (DuckDuckGo/Brave free tier). No auth popup ever surfaced to user. Unavailability is silently handled, not reported as an error. |
+| **Epic 16.2 — Execution Agent** | Create `execution.agent.md` in `.github/agents/`. Receives task + available tools from orchestrator → executes → ships result to Auditor. Owns tool selection per task. Can self-request Advisory or Strategist to generate a child soft-flow if a step proves too complex or tool cascade exhausts all options. Peer-level with all other agents. |
+| **Epic 16.3 — Hard-Flow Protocol in RULE.md** | Formalize the canonical execution order in RULE.md as non-negotiable law: (1) Orchestrator creates state + audit checklist immediately on request → (2) Orchestrator calls Strategist for soft-flow → (3) Orchestrator routes to Execution Agent → (4) Execution Agent ships to Auditor → (5a) Pass: Auditor reports to Orchestrator → Orchestrator notifies user. (5b) Fail: Auditor calls Advisory → Advisory generates new soft plan → Execution Agent retries. Child soft-flows triggered by Execution Agent for complex steps. |
+| **Epic 16.4 — Adaptive Re-planning on Failure** | When any step fails (tool unavailable, quality below threshold), Execution Agent calls Advisory or Strategist to generate a *new approach* — different tool, different source, different query strategy. Never retries with the same method. Advisory response = new soft plan. Strategist response = revised workflow steps. |
+| **Epic 16.5 — Experience Template Accumulation** | After a successful pipeline run, Execution Agent calls a summary routine: extract what worked (tool path, query strategy, source list, pivot sequence) → save as experience template in `tmp/experience-templates/`. On future similar requests, orchestrator loads matching templates to prime the strategist's plan. Templates accumulate over sessions; stale templates are versioned, not deleted. |
+
+---
+
+## Phase 16 — Kiến trúc Agent-centric & Tìm kiếm Tool-Agnostic (Tiếng Việt)
+
+**Mục tiêu:** Chuẩn hóa Hard-Flow agent-centric làm mô hình thực thi chính thức. Không agent nào thay thế agent khác — tất cả ngang hàng, mỗi agent một trách nhiệm duy nhất. Thêm Execution Agent sở hữu lựa chọn tool và thực thi task. Thay thế phụ thuộc cứng vào search tool bằng chiến lược fallback tự động. Bước thất bại kích hoạt tái hoạch định qua Advisory/Strategist — không phải retry mù quáng. Tích lũy experience template từ các run thành công để tái sử dụng.
+
+> **Nguồn gốc:** Thất bại thực tế — `vscode-websearchforcopilot_webSearch` yêu cầu popup xác thực Tavily, block user non-tech trong im lặng. Vấn đề sâu hơn: pipeline không có agent nào chuyên về *thực thi* — orchestrator, strategist, và skill đều sở hữu một phần. Phase này chuẩn hóa giao thức Hard-Flow agent và làm cho lựa chọn tool thích nghi.
+
+| Epic | Mô tả |
+|------|-------|
+| **Epic 16.1 — Search Cascade Tool-Agnostic** | Skill `search` dò tool trước mỗi lần gọi. Cascade: (1) `vscode-websearchforcopilot` nếu có → (2) Playwright stealth → (3) HTTP zero-auth. Không có popup nào hiển thị với user. Không khả dụng thì xử lý ngầm, không báo lỗi ra ngoài. |
+| **Epic 16.2 — Execution Agent** | Tạo `execution.agent.md` trong `.github/agents/`. Nhận task + tool từ orchestrator → thực thi → ship kết quả đến Auditor. Sở hữu lựa chọn tool. Có thể tự request Advisory hoặc Strategist để tạo child soft-flow nếu bước quá phức tạp. Ngang hàng với tất cả agent khác. |
+| **Epic 16.3 — Hard-Flow Protocol trong RULE.md** | Chuẩn hóa thứ tự thực thi không thể thương lượng trong RULE.md: (1) Orchestrator tạo state + audit checklist ngay lập tức → (2) Gọi Strategist tạo soft-flow → (3) Điều phối đến Execution Agent → (4) Execution Agent ship đến Auditor → (5a) Pass: Auditor báo Orchestrator → thông báo user. (5b) Fail: Auditor gọi Advisory → Advisory tạo soft plan mới → Execution Agent retry. Child soft-flow do Execution Agent kích hoạt cho các bước phức tạp. |
+| **Epic 16.4 — Tái hoạch định thích nghi khi thất bại** | Khi bước thất bại, Execution Agent gọi Advisory hoặc Strategist để tạo *phương pháp mới* — tool khác, nguồn khác, chiến lược query khác. Không bao giờ retry cùng phương pháp. |
+| **Epic 16.5 — Tích lũy Experience Template** | Sau pipeline thành công, tổng kết những gì đã hoạt động → lưu thành experience template trong `tmp/experience-templates/`. Các request tương tự trong tương lai sẽ load template phù hợp để khởi động kế hoạch của Strategist. Template tích lũy qua session; template cũ được versioned, không xóa. |
 
 ---
 

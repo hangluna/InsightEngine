@@ -2451,3 +2451,95 @@ US-0.3.1 + US-2.5.1 → US-3.4.1                                   │
   - AC3: Max 2 pivot attempts; after exhausting, deliver with auditor score and failure reasons documented
   - AC4: Delivery message includes auditor score: "✅ Tạo file hoàn tất (điểm chất lượng: 87/100)"
 - Blocked By: `US-15.4.1`
+
+---
+
+## Phase 16 — Agent-Centric Architecture & Tool-Agnostic Search
+
+> **Origin:** `vscode-websearchforcopilot_webSearch` triggers a Tavily auth popup that silently blocks non-tech users. Broader gap: no dedicated Execution Agent — execution responsibility is split across orchestrator, strategist, and skills. Phase 16 formalizes the Hard-Flow agent protocol, introduces tool-agnostic search cascade, adaptive re-planning on failure, and experience template accumulation. **10 stories PLANNED.**
+
+### Epic 16.1 — Tool-Agnostic Search Cascade
+
+**US-16.1.1: Tool availability probe before search execution**
+- Description: As the search skill, I want to probe tool availability before each execution so that I never surface an auth popup or unavailability error to the user.
+- Acceptance Criteria:
+  - AC1: Before any search call, skill runs a lightweight availability check: can `vscode-websearchforcopilot_webSearch` be invoked? (no auth prompt, no error thrown)
+  - AC2: If check passes → use it. If fails → move to next tier silently.
+  - AC3: No error or config message shown to user when primary tool is unavailable
+- Blocked By: None
+
+**US-16.1.2: Playwright stealth fallback when primary search fails**
+- Description: As the search skill, I want to fall back to Playwright stealth when the primary tool is unavailable so that searches always proceed.
+- Acceptance Criteria:
+  - AC1: Cascade: `vscode-websearchforcopilot` unavailable → launch Playwright, search DuckDuckGo/Google
+  - AC2: Result format identical to primary tool output (list of {url, title, snippet})
+  - AC3: User sees "Đang tìm kiếm..." not "Using fallback Playwright"
+- Blocked By: `US-16.1.1`
+
+**US-16.1.3: HTTP zero-auth fallback as final tier**
+- Description: As the search skill, I want a zero-auth HTTP fallback as the final tier so that at least basic search works in any environment.
+- Acceptance Criteria:
+  - AC1: Cascade tier 3: httpx GET to DuckDuckGo Instant Answer API or Brave Search free tier
+  - AC2: If all 3 tiers fail → report clearly: "Không thể tìm kiếm web tự động. Vui lòng cung cấp URL trực tiếp."
+  - AC3: No API key required for HTTP tier
+- Blocked By: `US-16.1.2`
+
+### Epic 16.2 — Execution Agent
+
+**US-16.2.1: Create execution.agent.md**
+- Description: As the pipeline, I want a dedicated Execution Agent that owns task execution and tool selection so that orchestrator, strategist, and skills are not responsible for execution details.
+- Acceptance Criteria:
+  - AC1: `execution.agent.md` created in `.github/agents/` with VS Code agent standard frontmatter
+  - AC2: Agent receives: task description + available tools + soft-flow step → executes → returns result + quality signal to Auditor
+  - AC3: Agent owns tool selection per step: probes availability, picks best, executes, escalates if all fail
+  - AC4: Peer-level with orchestrator, auditor, advisory, strategist — no agent supersedes another
+- Blocked By: None
+
+**US-16.2.2: Execution Agent child soft-flow request**
+- Description: As the Execution Agent, I want to request Advisory or Strategist to create a child soft-flow when a step is too complex or my tool cascade is exhausted.
+- Acceptance Criteria:
+  - AC1: When a step exceeds complexity threshold (>3 tools tried, >2 failures), Execution Agent can call Strategist for a child sub-flow
+  - AC2: When a strategy seems wrong (wrong angle, wrong source), Execution Agent can call Advisory for alternative approach
+  - AC3: Child soft-flow has isolated state, runs to completion, reports back to parent
+- Blocked By: `US-16.2.1`
+
+### Epic 16.3 — Hard-Flow Protocol in RULE.md
+
+**US-16.3.1: Formalize Hard-Flow execution order in RULE.md**
+- Description: As the pipeline, I want the canonical execution order written as non-negotiable law in RULE.md so that every session follows it without deviation.
+- Acceptance Criteria:
+  - AC1: RULE.md updated with Hard-Flow section: Orchestrator → state+checklist immediately → Strategist → Execution Agent → Auditor → (pass: notify user) / (fail: Advisory → new plan → Execution Agent retry)
+  - AC2: Each step has explicit "MUST" language, no optionality
+  - AC3: Child soft-flow trigger condition documented: when Execution Agent requests it
+  - AC4: Existing RULE.md rules preserved unchanged
+- Blocked By: `US-16.2.1`
+
+### Epic 16.4 — Adaptive Re-planning on Failure
+
+**US-16.4.1: Failure triggers Advisory/Strategist re-planning, not same-method retry**
+- Description: As the Execution Agent, I want any step failure to trigger Advisory or Strategist re-planning so that I never retry the same approach twice.
+- Acceptance Criteria:
+  - AC1: On failure (tool cascade exhausted OR auditor score <60 after 2 attempts), Execution Agent calls Advisory with: what was tried, what failed, original requirement
+  - AC2: Advisory returns: 2-3 alternative approaches with rationale
+  - AC3: Execution Agent picks best alternative and executes with new approach
+  - AC4: Re-planning adds at most 1 Advisory call + 1 Strategist call per failed step. Budget respected.
+- Blocked By: `US-16.2.1`
+
+### Epic 16.5 — Experience Template Accumulation
+
+**US-16.5.1: Save experience template after successful pipeline run**
+- Description: As the pipeline, I want to save a structured experience template after each successful run so that similar future requests benefit from prior learning.
+- Acceptance Criteria:
+  - AC1: After pipeline passes final audit, Execution Agent runs summary routine: extract tool path used, query strategies, source selection, pivot sequence
+  - AC2: Template saved to `tmp/experience-templates/<request-type>-<date>.json` with schema: `{request_type, tools_used, sources_used, pivot_sequence, result_quality}`
+  - AC3: Template stored in `tmp/` (gitignored) — not committed
+- Blocked By: `US-16.4.1`
+
+**US-16.5.2: Load matching experience template at pipeline start**
+- Description: As the orchestrator, I want to load relevant experience templates at pipeline start so that the strategist can generate better-informed plans.
+- Acceptance Criteria:
+  - AC1: Orchestrator scans `tmp/experience-templates/` for templates matching current request type
+  - AC2: If match found: pass template summary to Strategist as context hint (not hard constraint)
+  - AC3: If no match: proceed normally with no degradation
+  - AC4: Template match is by request_type tag, not semantic similarity
+- Blocked By: `US-16.5.1`
