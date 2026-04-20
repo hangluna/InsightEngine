@@ -1347,8 +1347,8 @@ Wave 65 (sequential): US-17.2.2 (after 17.2.1) + US-17.3.2 (after 17.3.1) + US-1
 
 ### Epic 18.3: Multi-Artifact Synthesis
 
-- [ ] **US-18.3.1** — Compose skill accepts artifact bundle input
-  - Status: PLANNED
+- [x] **US-18.3.1** — Compose skill accepts artifact bundle input
+  - Status: DONE
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-18.3.1`
   - Blocked By: ~~US-18.2.2~~ ✅
@@ -1363,7 +1363,7 @@ Wave 65 (sequential): US-17.2.2 (after 17.2.1) + US-17.3.2 (after 17.3.1) + US-1
   - Status: PLANNED
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-18.3.3`
-  - Blocked By: US-18.3.1
+  - Blocked By: ~~US-18.3.1~~ ✅
 
 ### Epic 18.4: State-Filesystem Integrity Validator
 

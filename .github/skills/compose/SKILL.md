@@ -56,6 +56,50 @@ Call `save_state.py read-context compose` as FIRST action before any processing.
 
 ---
 
+## Step 0.5: Artifact Bundle Assembly (US-18.3.1)
+
+After read-context, assemble an **artifact bundle** — a unified view of all valuable
+intermediate outputs from earlier pipeline steps.
+
+```yaml
+ARTIFACT_BUNDLE_PROTOCOL:
+  1. Parse `relevant_artifacts[]` from read-context output
+  2. Filter: keep only artifacts with `retention: keep` AND `quality_score >= 60`
+  3. For EACH qualifying artifact:
+     - Read its `summary` field (already available from read-context)
+     - If artifact `type` is `gathered_content` or `search_results` → primary input
+     - If artifact `type` is `chart` or `image` → reference for citation
+     - If artifact `type` is `data_table` or `excel_data` → structured data source
+     - Read the artifact file content when summary alone is insufficient
+  4. Build bundle manifest (internal, for compose's own use):
+     ```
+     BUNDLE:
+       total_artifacts: {N}
+       primary_sources: [{path, summary, type}]    # gathered/search content
+       data_sources: [{path, summary, type}]        # tables, Excel data
+       reference_assets: [{path, summary, type}]    # charts, images
+       skipped: [{path, reason}]                    # low score or irrelevant type
+     ```
+  5. If bundle is EMPTY or has only 1 artifact → fall back to current behavior
+     (single-source synthesis, no regression)
+
+MERGE_STRATEGY:
+  - Primary sources: merge content as usual (Step 1-3 workflow)
+  - Data sources: extract key data points, use in analysis paragraphs and tables
+  - Reference assets: cite in text where relevant ("xem biểu đồ tại {path}")
+  - ALL artifacts used must be logged to state (Step 0.5b below)
+
+LOGGING (for audit visibility):
+  After synthesis is complete, log artifact usage to state:
+  ```bash
+  python3 scripts/save_state.py update --step compose --status completed \
+    --data '{"artifacts_used": ["path1", "path2"], "artifacts_skipped": ["path3"], "skip_reasons": {"path3": "low relevance"}}'
+  ```
+  This enables auditor to verify artifact utilization (US-18.3.3).
+```
+
+---
+
 ## Mode Selection
 
 Detect mode from user keywords:
