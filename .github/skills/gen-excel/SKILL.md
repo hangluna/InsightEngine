@@ -40,6 +40,12 @@ All responses to the user are in Vietnamese.
 
 ---
 
+## Step 0: State Read-Back (RULE-13)
+
+Call `save_state.py read-context gen-excel` as FIRST action before any processing. Check `relevant_artifacts[]` for upstream outputs to incorporate.
+
+---
+
 ## Script Architecture (US-4.3.3)
 
 ```yaml
@@ -371,6 +377,12 @@ AUDITOR_GATE:
   budget: Counts toward max 5 auditor calls per pipeline run
   skip_when: Standalone quick generation
 ```
+
+---
+
+## Step 6: Artifact Registration (RULE-13)
+
+Call `save_state.py register-artifact --step gen-excel --path <file> --type draft_output --summary "<text>"` for every file created in `tmp/` or `output/`.
 
 ---
 

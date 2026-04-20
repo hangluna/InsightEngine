@@ -59,6 +59,12 @@ URLS:
 
 ---
 
+## Step 0: State Read-Back (RULE-13)
+
+Call `save_state.py read-context gather` as FIRST action before any processing. Check `relevant_artifacts[]` for upstream outputs to incorporate.
+
+---
+
 ## Step 1: Identify Sources
 
 1. Extract file paths from the user request (absolute or relative)
@@ -127,6 +133,12 @@ Final summary: "📋 Thu thập hoàn tất: {N} nguồn / {total_chars} ký t�
 - "Đọc file report.pdf và data.xlsx" → markitdown both → combined Markdown
 - "Lấy nội dung từ https://example.com" → fetch_webpage → Markdown
 - "Đọc 3 file docx trong thư mục input/" → markitdown each → combined output
+
+---
+
+## Step 6: Artifact Registration (RULE-13)
+
+Call `save_state.py register-artifact --step gather --path <file> --type gathered_content --summary "<text>"` for every file created in `tmp/` or `output/`.
 
 ---
 

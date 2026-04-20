@@ -49,6 +49,12 @@ All responses to the user are in Vietnamese.
 
 ---
 
+## Step 0: State Read-Back (RULE-13)
+
+Call `save_state.py read-context search` as FIRST action before any processing. Check `relevant_artifacts[]` for upstream outputs to incorporate.
+
+---
+
 ## Step 1: Choose Search Mode
 
 ```yaml
@@ -264,6 +270,12 @@ Full protocol: `../gather/references/deep-research.md`.
 3. **Gap analysis** — which dimensions are thin? Missing specifics? Temporal gaps?
 4. **Round 2+** — targeted searches for gaps (max 3 rounds, max 15 URL fetches)
 5. **Consolidate** — structured output with dimension headers + honest coverage assessment
+
+---
+
+## Step 6: Artifact Registration (RULE-13)
+
+Call `save_state.py register-artifact --step search --path <file> --type search_result --summary "<text>"` for every file created in `tmp/` or `output/`.
 
 ---
 
