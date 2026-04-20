@@ -1271,9 +1271,9 @@ Wave 62 (sequential): US-16.5.2 (after 16.5.1)
   - Blocked By: ~~US-17.1.1~~ ✅
 
 - [ ] **US-17.2.2** — Question budget tracker in session state
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-17.2.2`
   - Blocked By: ~~US-17.2.1~~ ✅
 
 ### Epic 17.3: One-Time Script Isolation
