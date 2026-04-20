@@ -1245,9 +1245,9 @@ Wave 62 (sequential): US-16.5.2 (after 16.5.1)
 ### Epic 17.1: Orchestrator-Exclusive Delivery Channel
 
 - [ ] **US-17.1.1** — Add RULE-10 — orchestrator-only user channel
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-17.1.1`
   - Blocked By: None
 
 - [ ] **US-17.1.2** — Refactor non-orchestrator skills/agents to internal-return only

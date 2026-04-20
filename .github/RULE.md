@@ -305,4 +305,42 @@ what order; RULE-9 governs which agents own each transition between skills.
 
 ---
 
+## RULE-10: Orchestrator-Exclusive User Channel (US-17.1.1)
+
+Only the `orchestrator` agent may emit user-facing messages, questions, or status updates.
+All other skills and agents MUST return output internally to the orchestrator — never to the user.
+
+### MUST
+
+- `orchestrator` is the SOLE agent that sends messages to the user
+- All skill output (search, gather, compose, gen-*, design, verify) goes to orchestrator as internal return
+- All non-orchestrator agent output (strategist, execution, auditor, advisory) goes to orchestrator as internal return
+- Orchestrator validates and formats all user-facing output before emission
+
+### MUST_NOT
+
+- Skills MUST NOT print final results directly to the user
+- Skills MUST NOT ask the user questions
+- Skills MUST NOT emit delivery summaries
+- Non-orchestrator agents MUST NOT emit user-facing messages
+- No agent except orchestrator may call `vscode_askQuestions` or equivalent
+
+### Emission Types
+
+The orchestrator gates three types of user-facing emissions:
+
+| Type | Precondition | Example |
+|------|-------------|---------|
+| `result_delivery` | Auditor PASS (score ≥ 80/100) | Final output files + summary |
+| `user_question` | RULE-11 consultation protocol satisfied | Content ambiguity question |
+| `status_update` | Pipeline step boundary | Progress messages |
+
+### Enforcement
+
+If a non-orchestrator skill/agent attempts to emit user-facing output:
+- Orchestrator intercepts and reformats through jargon shield (RULE-7)
+- Incident logged to `tmp/session_state.json` under `rule_violations[]`
+
+---
+
 *These rules are loaded at maximum priority. SKILL.md files and agent instructions operate within these constraints.*
