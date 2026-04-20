@@ -289,6 +289,13 @@ ON_AUDITOR_FAIL:
   MUST_NOT: retry with the same approach that just failed (RULE-2 pivot rule)
 ```
 
+> Concrete trigger thresholds, request formats, and per-step budget caps for
+> auditor-driven re-planning are documented in
+> [`.github/agents/references/adaptive-replanning.md`](../agents/references/adaptive-replanning.md)
+> (US-16.4.1). Cascade-exhaustion (pre-Auditor) replan is documented in
+> [`.github/agents/references/child-soft-flow.md`](../agents/references/child-soft-flow.md)
+> (US-16.2.2). A single failed step uses AT MOST one of the two paths.
+
 ### What This Rule Replaces
 
 This rule does NOT remove or modify RULE-1 through RULE-8. It adds the
