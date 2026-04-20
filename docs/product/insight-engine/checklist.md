@@ -1216,8 +1216,10 @@ Wave 58 (sequential): US-15.1.3 ✅ + US-15.3.2 ✅ + US-15.3.3 ✅ + US-15.4.2 
   - Blocked By: ~~US-16.4.1~~ ✅
 
 - [ ] **US-16.5.2** — Load matching experience template at pipeline start
-  - Status: PLANNED
+  - Status: IN_PROGRESS
   - Assignee: copilot
+  - Device: Trucs-MacBook-Air-2
+  - AI: copilot
   - Branch: feature/insight-engine-us-16.5.2
   - Blocked By: ~~US-16.5.1~~ ✅
 
