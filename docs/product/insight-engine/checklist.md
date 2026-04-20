@@ -1319,8 +1319,8 @@ Wave 65 (sequential): US-17.2.2 (after 17.2.1) + US-17.3.2 (after 17.3.1) + US-1
 
 ### Epic 18.1: Artifact Registry Protocol
 
-- [ ] **US-18.1.1** — Extend session state schema v4 with artifacts[] per step
-  - Status: IN_PROGRESS
+- [x] **US-18.1.1** — Extend session state schema v4 with artifacts[] per step
+  - Status: DONE
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-18.1.1`
   - Blocked By: None
@@ -1329,7 +1329,7 @@ Wave 65 (sequential): US-17.2.2 (after 17.2.1) + US-17.3.2 (after 17.3.1) + US-1
   - Status: PLANNED
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-18.1.2`
-  - Blocked By: US-18.1.1
+  - Blocked By: ~~US-18.1.1~~ ✅
 
 ### Epic 18.2: Mandatory State Read-Back Gate
 
@@ -1371,7 +1371,7 @@ Wave 65 (sequential): US-17.2.2 (after 17.2.1) + US-17.3.2 (after 17.3.1) + US-1
   - Status: PLANNED
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-18.4.1`
-  - Blocked By: US-18.1.1
+  - Blocked By: ~~US-18.1.1~~ ✅
 
 - [ ] **US-18.4.2** — Pipeline gate — integrity check before each step
   - Status: PLANNED
