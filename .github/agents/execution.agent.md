@@ -147,6 +147,17 @@ PROTOCOL:
         - Tools succeeded but result feels wrong angle → advisory (request alternative approach)
         - Tools partially succeeded → return status=partial with quality_signal.notes
       Build RETURN object with escalation.needed=true and target/reason/requested_action.
+
+  step_6_audit_feedback_replan:
+    # NEW in US-16.4.1 — adaptive replan after Auditor returns FAIL
+    when: |
+      The output was delivered to Auditor (suggested_audit=true), Auditor returned
+      VERDICT=FAIL with score < 60 OR score < 80 for 2 consecutive attempts.
+    action: |
+      Initiate Advisory + Strategist replan cycle per
+      references/adaptive-replanning.md. NEVER retry with the same method.
+    contract: references/adaptive-replanning.md (US-16.4.1)
+    budget: 1 advisory + 1 strategist + 1 retry execution per failed step.
 ```
 
 ---
@@ -284,4 +295,56 @@ AC3: Child soft-flow has isolated state, runs to completion, reports back to par
   evidence: CHILD_FLOW_LIFECYCLE block (isolated in-memory state, only consolidated
             result returned, recursion limit) + references/child-soft-flow.md
             "State Isolation" + "Recursion Limit" sections
+```
+
+## Adaptive Re-Planning on Auditor Failure (US-16.4.1 — shipped)
+
+> Distinct from US-16.2.2's child soft-flow path. US-16.2.2 fires when the
+> Execution Agent's tool cascade exhausts BEFORE reaching Auditor. US-16.4.1
+> fires AFTER Auditor returns FAIL on the produced output. Full contract:
+> [`references/adaptive-replanning.md`](references/adaptive-replanning.md).
+
+```yaml
+TRIGGER (any one):
+  - Auditor returned VERDICT=FAIL with score < 60 (single attempt suffices)
+  - Auditor returned VERDICT=FAIL with score < 80 for 2 consecutive attempts
+  - Auditor flagged a BLOCKING_FAILURE (any requirement scored < 60)
+
+FORBIDDEN: same-method retry. Once triggered, the only allowed continuation is
+the Advisory → Strategist (replan mode) → Execution retry sequence. New
+attempt MUST differ in tool, source, framing, or skill mode.
+
+BUDGET (per failed step): 1 advisory call + 1 strategist replan call + 1
+re-execution. Inherits the standard pipeline budgets (advisory=2/run,
+strategist=5/run shared with child_workflow).
+
+INTERACTION WITH US-16.2.2: a single failed step uses AT MOST one of the two
+budgets — never both. If auditor-driven replan also fails, the step is
+delivered as partial (RULE-8). No second cycle allowed.
+```
+
+## Acceptance Criteria Mapping (US-16.4.1)
+
+```yaml
+AC1: On failure (cascade exhausted OR auditor score <60 after 2 attempts),
+     Execution Agent calls Advisory with what was tried, what failed, original requirement
+  evidence: Adaptive Re-Planning section TRIGGER block + Execution Protocol
+            step_6_audit_feedback_replan + references/adaptive-replanning.md
+            "Hard Triggers" + "Advisory Request Format"
+
+AC2: Advisory returns 2-3 alternative approaches with rationale
+  evidence: Advisory request prompt CONSTRAINTS block requires "2-3 alternatives,
+            each must differ"; advisory.agent.md returns PERSPECTIVES (3-5) +
+            RECOMMENDATION block
+
+AC3: Execution Agent picks best alternative and executes with new approach
+  evidence: "Forbidden: Same-Method Retry" rule + Strategist replan format
+            (replan mode produces single replacement step) +
+            execution loop GOTO step_6 → step_2_attempt with new plan
+
+AC4: Re-planning adds at most 1 Advisory + 1 Strategist call per failed step.
+     Budget respected.
+  evidence: BUDGET section ("1 advisory + 1 strategist + 1 retry per failed step");
+            references/adaptive-replanning.md "Budget (Hard Cap)" with explicit
+            PER_FAILED_STEP and PER_PIPELINE_RUN tables
 ```
