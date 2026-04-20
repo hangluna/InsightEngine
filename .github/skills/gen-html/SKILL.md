@@ -44,6 +44,12 @@ All responses to the user are in Vietnamese.
 
 ---
 
+## Step 0: State Read-Back (RULE-13)
+
+Call `save_state.py read-context gen-html` as FIRST action before any processing. Check `relevant_artifacts[]` for upstream outputs to incorporate.
+
+---
+
 ## Style Selection
 
 8 styles available: `corporate` | `academic` | `minimal` | `dark-modern` | `creative` | `warm-earth` | `dark-neon` | `dark-elegant`
@@ -264,6 +270,12 @@ AUDITOR_GATE:
   budget: Counts toward max 5 auditor calls per pipeline run
   skip_when: Standalone quick generation
 ```
+
+---
+
+## Step 6: Artifact Registration (RULE-13)
+
+Call `save_state.py register-artifact --step gen-html --path <file> --type draft_output --summary "<text>"` for every file created in `tmp/` or `output/`.
 
 ---
 

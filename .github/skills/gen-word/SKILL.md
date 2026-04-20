@@ -40,6 +40,12 @@ All responses to the user are in Vietnamese.
 
 ---
 
+## Step 0: State Read-Back (RULE-13)
+
+Call `save_state.py read-context gen-word` as FIRST action before any processing. Check `relevant_artifacts[]` for upstream outputs to incorporate.
+
+---
+
 ## Step 1: Pre-flight Check
 
 1. Check: `python3 -c "import docx"` → if fail: "Chạy: pip install --user python-docx"
@@ -251,6 +257,12 @@ AUDITOR_GATE:
   budget: Counts toward max 5 auditor calls per pipeline run
   skip_when: Standalone quick generation (user just wants a simple doc, no pipeline)
 ```
+
+---
+
+## Step 6: Artifact Registration (RULE-13)
+
+Call `save_state.py register-artifact --step gen-word --path <file> --type draft_output --summary "<text>"` for every file created in `tmp/` or `output/`.
 
 ---
 

@@ -50,6 +50,12 @@ All responses to the user are in Vietnamese.
 
 ---
 
+## Step 0: State Read-Back (RULE-13)
+
+Call `save_state.py read-context compose` as FIRST action before any processing. Check `relevant_artifacts[]` for upstream outputs to incorporate. Use `relevant_artifacts[]` from read-context as additional input sources — merge content from ALL keep-retention artifacts, not just the last generated file.
+
+---
+
 ## Mode Selection
 
 Detect mode from user keywords:
@@ -412,6 +418,12 @@ Output: Concise summary (~800 words), key decisions, action items, no elaboratio
 **Example 4 — Translation:**
 Input: Vietnamese technical document (~2,000 words)
 Output: English translation preserving structure, headings, and formatting
+
+---
+
+## Step 5: Artifact Registration (RULE-13)
+
+Call `save_state.py register-artifact --step compose --path <file> --type draft_output --summary "<text>"` for every file created in `tmp/` or `output/`.
 
 ---
 

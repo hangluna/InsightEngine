@@ -42,6 +42,12 @@ All responses to the user are in Vietnamese.
 
 ---
 
+## Step 0: State Read-Back (RULE-13)
+
+Call `save_state.py read-context design` as FIRST action before any processing. Check `relevant_artifacts[]` for upstream outputs to incorporate.
+
+---
+
 ## Bundled Template Scripts
 
 For common design types, use the bundled scripts as a starting point. They handle font
@@ -275,6 +281,12 @@ Output: `gen_certificate.py --name "Nguyễn Văn A" --course "Data Science" --s
 **Example 4 — Custom infographic (no template):**
 Input: "Tạo infographic layout cho 5 bước quy trình tuyển dụng"
 Output: Custom script `tmp/gen_design.py` → infographic.pdf (A4, 45 KB), follows Steps 1-4
+
+---
+
+## Step 6: Artifact Registration (RULE-13)
+
+Call `save_state.py register-artifact --step design --path <file> --type draft_output --summary "<text>"` for every file created in `tmp/` or `output/`.
 
 ---
 
