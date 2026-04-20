@@ -12,7 +12,7 @@ description: |
   "danh sách việc làm", "so sánh các nền tảng", or when the pipeline needs web content.
   Do NOT use for reading local files or fetching explicit user-provided URLs → use gather.
 argument-hint: "[search query or topic]"
-version: 1.0
+version: 1.1
 compatibility:
   requires:
     - Python >= 3.10
@@ -21,12 +21,12 @@ compatibility:
   tools:
     - run_in_terminal
     - fetch_webpage (fetching search result URLs)
-    - vscode-websearchforcopilot_webSearch (primary search)
+    - vscode-websearchforcopilot_webSearch (primary search, probed for availability)
 ---
 
 # Tìm Kiếm — Internet Search & Discovery Skill
 
-**References:** `references/web-search-enrichment.md` | `references/deep-research.md` | `references/playwright-stealth.md` | `references/data-collection.md` | `references/dom-exploration.md` | `references/adaptive-flow.md`
+**References:** `references/tool-availability-probe.md` | `references/web-search-enrichment.md` | `references/deep-research.md` | `references/playwright-stealth.md` | `references/data-collection.md` | `references/dom-exploration.md` | `references/adaptive-flow.md`
 
 **Governance:** Read and follow `.github/RULE.md` — it overrides all instructions below.
 
@@ -80,7 +80,47 @@ data_collection:
 
 ---
 
+## Step 2.5: Tool Availability Probe (Hard Gate Before Step 3)
+
+Before invoking the primary search tool, run the **availability probe** documented in
+`references/tool-availability-probe.md`. The probe is a Copilot-level decision
+procedure (not a Python script) that returns one of two verdicts:
+
+- `AVAILABLE` → primary tool is safe to invoke; proceed to Step 3 unchanged.
+- `UNAVAILABLE` → primary tool MUST be skipped; route to the **fallback tier** (see
+  contract below). NO Tavily/auth/configuration text is ever shown to the user.
+
+**Probe summary:**
+
+1. If a session-scoped `primary_unavailable` flag is already set → return UNAVAILABLE.
+2. If the user has previously declined a Tavily auth prompt this session, or any
+   prior search call surfaced a Tavily/auth/config error → set the flag, return
+   UNAVAILABLE.
+3. Otherwise, attempt `vscode-websearchforcopilot_webSearch`. If it returns results
+   without surfacing auth/config UI → cache AVAILABLE. If it surfaces an auth popup,
+   missing-key error, extension-absent error, or any exception → silently set the
+   `primary_unavailable` flag, append a single internal diagnostic line to
+   `docs/runs/<branch-slug>/diagnostics/search-probe.log`, and return UNAVAILABLE.
+
+**Fallback tier (placeholder until US-16.1.2 ships):**
+
+- Log the diagnostic note as above.
+- Skip Step 3 entirely.
+- Emit a single friendly Vietnamese message to the user:
+  `"Không tìm thấy kết quả tìm kiếm cho yêu cầu này."`
+- Continue the synthesize pipeline with empty search results (caller decides next).
+
+**Default:** If no unavailability signal exists, the probe returns AVAILABLE. The
+goal is to avoid regressing fully-configured installations.
+
+Full algorithm, rationale, and rollback notes: see
+`references/tool-availability-probe.md`.
+
+---
+
 ## Step 3: Execute Search & Fetch
+
+*(Skip this step if Step 2.5 returned UNAVAILABLE.)*
 
 For each query:
 1. Run `vscode-websearchforcopilot_webSearch` with the query
