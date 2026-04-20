@@ -5,6 +5,7 @@ description: |
   returns structured quality verdict with 100-point weighted scoring. Dynamically generates
   test cases from requirements, scores each, and provides targeted improvement guidance.
   Any skill can invoke this agent after file generation to verify quality before delivery.
+  Output returned to orchestrator, NOT to user (RULE-10).
 tools:
   - read_file
   - fetch_webpage
@@ -259,7 +260,7 @@ PER_REQUIREMENT_SCORING:
 
 ```yaml
 ON_PASS (>= 80/100 AND all requirements >= 60):
-  action: Continue pipeline / deliver to user
+  action: Continue pipeline / return to orchestrator
 
 ON_FAIL (< 80/100 OR any requirement < 60):
   action: Return FAILING_TESTS + BLOCKING_FAILURES with specific fix instructions
@@ -360,7 +361,7 @@ RETRY_LOOP:
        python3 scripts/save_state.py save '{...score_history...}'
     
     6. EXIT CONDITIONS:
-       pass: Score >= 80 → deliver to user
+       pass: Score >= 80 → return to orchestrator
        max_attempts: After 3 attempts → deliver best version with disclaimer:
          "⚠️ Đã thử {N} lần, điểm tốt nhất: {best_score}/100
           Vẫn chưa đạt yêu cầu ở: {remaining_failures}

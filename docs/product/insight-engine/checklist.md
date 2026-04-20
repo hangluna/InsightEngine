@@ -1250,8 +1250,8 @@ Wave 62 (sequential): US-16.5.2 (after 16.5.1)
   - Branch: `feature/insight-engine-us-17.1.1`
   - Blocked By: None
 
-- [ ] **US-17.1.2** — Refactor non-orchestrator skills/agents to internal-return only
-  - Status: IN_PROGRESS
+- [x] **US-17.1.2** — Refactor non-orchestrator skills/agents to internal-return only
+  - Status: DONE
   - Assignee: copilot
   - Branch: `feature/insight-engine-us-17.1.2`
   - Blocked By: ~~US-17.1.1~~ ✅

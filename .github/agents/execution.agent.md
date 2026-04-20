@@ -8,6 +8,7 @@ description: |
   and strategist — does not supersede any other agent. When a step is too complex or
   the tool cascade is exhausted, requests Strategist for a child sub-flow or Advisory
   for an alternative angle.
+  Output returned to orchestrator, NOT to user (RULE-10).
 tools:
   - read_file
   - run_in_terminal
