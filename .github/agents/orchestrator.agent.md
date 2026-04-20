@@ -548,6 +548,35 @@ QUESTION_BUDGET_PROTOCOL:
 
 ---
 
+## RULE-12 Runtime Validation (US-17.3.2)
+
+The orchestrator invokes `scripts/validate_script_placement.py` at two checkpoints:
+1. **Pipeline start** — after `save_state.py init`
+2. **After every step** — before proceeding to next step
+
+```yaml
+RULE12_VALIDATION_PROTOCOL:
+  invoke:
+    command: python3 scripts/validate_script_placement.py
+    # Automatically uses session start from tmp/.session-state.json
+
+  on_exit_0:
+    → Continue pipeline (no violations or all resolved)
+
+  on_exit_1:
+    → STOP pipeline
+    → Report unresolvable violation to user via status_update emission
+    → Do NOT proceed until violation is manually resolved
+
+  what_it_does:
+    - Scans /scripts/ for files created during current session
+    - Checks content for one-time markers (session_id, hardcoded paths, etc.)
+    - Auto-moves violations to /tmp/scripts/
+    - Logs relocations to session state (script_relocations[])
+```
+
+---
+
 ## Frustration Signal Detection
 
 On EVERY user message, orchestrator checks for frustration signals BEFORE processing intent.
