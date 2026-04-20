@@ -1251,9 +1251,9 @@ Wave 62 (sequential): US-16.5.2 (after 16.5.1)
   - Blocked By: None
 
 - [ ] **US-17.1.2** — Refactor non-orchestrator skills/agents to internal-return only
-  - Status: PLANNED
-  - Assignee: —
-  - Branch: —
+  - Status: IN_PROGRESS
+  - Assignee: copilot
+  - Branch: `feature/insight-engine-us-17.1.2`
   - Blocked By: ~~US-17.1.1~~ ✅
 
 - [ ] **US-17.1.3** — Orchestrator agent — gatekeeper for user-facing output
