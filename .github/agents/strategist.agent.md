@@ -39,10 +39,15 @@ PRIORITY:
 
 ---
 
-## Child Workflow Generation Mode (US-13.3.1)
+## Child Workflow Generation Mode (US-13.3.1, extended by US-16.2.2)
 
-Invoked by orchestrator when a step qualifies as "complex" — too many sub-tasks
-to execute as a single skill call. Returns a mini-plan for just that step.
+Invoked by **orchestrator** when a step qualifies as "complex" up-front — too
+many sub-tasks to execute as a single skill call. Also invoked by the
+**Execution Agent** (US-16.2.2) when the parent step's tool cascade is
+exhausted at runtime; the Execution Agent's trigger thresholds and request
+format are documented in [`execution.agent.md`](execution.agent.md) and
+[`references/child-soft-flow.md`](references/child-soft-flow.md). Returns a
+mini-plan for just that step.
 
 ### Complexity Criteria
 

@@ -1179,11 +1179,9 @@ Wave 58 (sequential): US-15.1.3 ✅ + US-15.3.2 ✅ + US-15.3.3 ✅ + US-15.4.2 
   - Branch: feature/insight-engine-us-16.2.1
   - Blocked By: None
 
-- [ ] **US-16.2.2** — Execution Agent child soft-flow request
-  - Status: IN_PROGRESS
+- [x] **US-16.2.2** — Execution Agent child soft-flow request
+  - Status: DONE
   - Assignee: copilot
-  - Device: Trucs-MacBook-Air-2
-  - AI: copilot
   - Branch: feature/insight-engine-us-16.2.2
   - Blocked By: ~~US-16.2.1~~ ✅
 

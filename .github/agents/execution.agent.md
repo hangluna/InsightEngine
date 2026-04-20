@@ -151,30 +151,52 @@ PROTOCOL:
 
 ---
 
-## Child Soft-Flow Request (US-16.2.2 hook)
+## Child Soft-Flow Request (US-16.2.2 — shipped)
 
-> Implementation completed in **US-16.2.2**. This section documents the contract.
+> Concrete lifecycle, request formats, state-isolation contract, and recursion
+> limit are documented in [`references/child-soft-flow.md`](references/child-soft-flow.md).
+> The summary below is the at-a-glance trigger table; consult the reference for
+> exact prompt formats and budget accounting.
 
 ```yaml
-WHEN_TO_REQUEST:
+WHEN_TO_REQUEST_STRATEGIST_DECOMPOSITION:
   trigger:
-    - tool_cascade_exhausted with no usable result
-    - step complexity exceeds threshold (>3 tools tried, >2 quality_signal=low results)
-    - parent_context indicates a skipped prerequisite
+    - tools_tried >= 3 from cascade AND no tool produced success_criteria match
+    - OR: 2+ consecutive attempts returned quality_signal.confidence = "low"
+    - OR: parent_context.complexity_hint == "high" AND first attempt failed
 
-REQUEST_FORMAT:
-  call: runSubagent(agentName="strategist", prompt=<request>, description="Generate child soft-flow for failed step")
-  prompt_includes:
-    - failed_task: original task_description
-    - attempted_tools: list of tools tried with outcomes
-    - failure_pattern: brief diagnosis
-    - constraint: child_flow_only (must complete in <=3 sub-steps)
+WHEN_TO_REQUEST_ADVISORY_REANGLE:
+  trigger:
+    - quality_signal.notes mention "off-topic" / "wrong angle" / "irrelevant" 2+ times
+    - OR: result_size > 0 but success_criteria semantically not satisfied
+    - OR: caller skill explicitly hints "consult advisory if first angle fails"
+
+DECISION (mechanical, pick at most one path):
+  if cascade_exhausted AND no_partial_result_was_useful:
+    target = strategist  # decompose via CHILD_WORKFLOW_MODE
+  elif cascade_exhausted AND partial_results_exist_but_wrong_angle:
+    target = advisory    # re-angle
+  elif quality_signal.confidence == "low" for >=2 attempts:
+    target = advisory    # re-angle first; decompose only if re-angle also fails
+  else:
+    target = none        # return status=partial, let Auditor decide
 
 CHILD_FLOW_LIFECYCLE:
-  - Strategist returns a child workflow (typically 2-3 sub-steps)
-  - Execution Agent runs the child flow with isolated state
-  - On child completion → reports result back to parent task
-  - On child failure → escalates upward (do not loop further)
+  - Strategist returns a child plan (2–5 steps, no nested children allowed)
+  - Execution Agent runs child steps with ISOLATED in-memory state
+    (NOT written to the run state file — only the consolidated result is)
+  - On child completion → consolidated result returned to parent step
+  - On child step cascade exhaustion → status=failed, recursion limit hit,
+    escalate upward (do NOT spawn grand-child)
+
+REQUEST_FORMATS:
+  strategist: see references/child-soft-flow.md → "Request Format → Strategist"
+  advisory:   see references/child-soft-flow.md → "Request Format → Advisory"
+
+QUALITY_SIGNAL_AFTER_CHILD_FLOW:
+  confidence: medium (minimum) — child flows always recommend Auditor verification
+  suggested_audit: true (always)
+  notes: "Child soft-flow with N steps used to recover from cascade exhaustion"
 ```
 
 ---
@@ -245,4 +267,21 @@ AC3: Owns tool selection — probes, picks best, executes, escalates if all fail
 
 AC4: Peer-level with orchestrator, auditor, advisory, strategist
   evidence: Role & Boundaries — explicit PEER_LEVEL declaration, no superseding
+```
+
+## Acceptance Criteria Mapping (US-16.2.2)
+
+```yaml
+AC1: Step >3 tools tried OR >2 failures → call Strategist for child sub-flow
+  evidence: Child Soft-Flow Request section → COMPLEXITY trigger table + DECISION block;
+            full request format in references/child-soft-flow.md
+
+AC2: Wrong angle suspected → call Advisory for alternative approach
+  evidence: Child Soft-Flow Request section → WRONG_ANGLE trigger table + DECISION block;
+            full request format in references/child-soft-flow.md
+
+AC3: Child soft-flow has isolated state, runs to completion, reports back to parent
+  evidence: CHILD_FLOW_LIFECYCLE block (isolated in-memory state, only consolidated
+            result returned, recursion limit) + references/child-soft-flow.md
+            "State Isolation" + "Recursion Limit" sections
 ```
